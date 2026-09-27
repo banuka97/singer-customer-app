@@ -143,6 +143,18 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
   </div>
 </div>
 <script>
+(function(){
+  function showRuntimeError(message){
+    var el=document.getElementById('status');
+    if(el){
+      el.textContent='The app encountered a temporary browser error. Please refresh the page and try again.';
+      el.className='status warn';
+    }
+    try{console.error('[Singer Customer App]',message)}catch(_){}
+  }
+  window.addEventListener('error',function(e){showRuntimeError(e&&e.message?e.message:'Unknown error')});
+  window.addEventListener('unhandledrejection',function(e){showRuntimeError(e&&e.reason?e.reason:'Unhandled promise rejection')});
+})();
 var CATALOG=[];
 var FALLBACK_CATALOG=[
  {category:'Television',product:'Singer 32" HD TV',sku:'SLE32E6A',price:44999,url:'https://www.singersl.com/product/singer-32-hd-tv-sle32e6a'},
