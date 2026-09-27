@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-09-27T06:46:55Z",
+  "source": "https://www.singersl.com/products",
+  "refreshMethod": "GitHub Actions scheduled scraper",
+  "refreshFrequency": "hourly",
+  "products": [
+    {
+      "category": "Television",
+      "product": "Singer 32\" HD TV",
+      "sku": "SLE32E6A",
+      "price": 44999,
+      "url": "https://www.singersl.com/products?search=SLE32E6A",
+      "mrp": 59999,
+      "discount": "25% OFF",
+      "offerNote": "",
+      "live": true,
+      "sourceStatus": "Singer Sri Lanka public catalogue snapshot"
+    },
+    {
+      "category": "Television",
+      "product": "Singer 40\" Full HD TV",
+      "sku": "SLE40F600A",
+      "price": 69999,
+      "discount": "12.5% OFF",
+      "offerNote": "Extra 10,000.00 off (Price is inclusive of Discount)",
+      "url": "https://www.singersl.com/products?search=SLE40F600A",
+      "mrp": 79999,
+      "live": true,
+      "sourceStatus": "Singer Sri Lanka public catalogue snapshot"
+    },
+    {
+      "category": "Television",
+      "product": "Singer 43\" Full HD Google TV",
+      "sku": "SLE43J890",
+      "price": 119999,
+      "url": "https://www.singersl.com/products?search=SLE43J890",
+      "mrp": 129999,
+      "discount": "7.69% OFF",
+      "offerNote": "",
+      "live": true,
+      "sourceStatus": "Singer Sri Lanka public catalogue snapshot"
+    },
+    {
+      "category": "Refrigerator",
+      "product": "Singer GEO Refrigerator 2 Door",
+      "sku": "GEO-260NF-TGYF",
+      "price": 139999,
+      "url": "https://www.singersl.com/products?search=GEO-260NF-TGYF",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Refrigerator",
+      "product": "Singer GEO Refrigerator 2 Door",
+      "sku": "GEO-200D-INV",
+      "price": 104999,
+      "url": "https://www.singersl.com/products?search=GEO-200D-INV",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Refrigerator",
+      "product": "Singer Digital Inverter Refrigerator",
+      "sku": "SN-276INV",
+      "price": 149999,
+      "url": "https://www.singersl.com/products?search=SN-276INV",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Washing Machine",
+      "product": "Singer Semi Automatic Washing Machine",
+      "sku": "SWM-SAR65",
+      "price": 54999,
+      "url": "https://www.singersl.com/products?search=SWM-SAR65",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Washing Machine",
+      "product": "Singer Fully Automatic Washing Machine",
+      "sku": "SWM-FA80R",
+      "price": 86999,
+      "discount": "13% OFF",
+      "offerNote": "Extra 13,000.00 off (Price is inclusive of Discount)",
+      "url": "https://www.singersl.com/products?search=SWM-FA80R",
+      "mrp": 99999,
+      "live": true,
+      "sourceStatus": "Singer Sri Lanka public catalogue snapshot"
+    },
+    {
+      "category": "Washing Machine",
+      "product": "Singer Washing Machine Top Load 7Kg",
+      "sku": "SWM-FA70R",
+      "price": 69999,
+      "discount": "22.22% OFF",
+      "offerNote": "Extra 20,000.00 off (Price is inclusive of Discount)",
+      "url": "https://www.singersl.com/products?search=SWM-FA70R",
+      "mrp": 89999,
+      "live": true,
+      "sourceStatus": "Singer Sri Lanka public catalogue snapshot"
+    },
+    {
+      "category": "Washing Machine",
+      "product": "Singer Glass Top Fully Automatic Washing Machine",
+      "sku": "SWM-FAR75GT",
+      "price": 84999,
+      "url": "https://www.singersl.com/products?search=SWM-FAR75GT",
+      "mrp": 99999,
+      "discount": "15% OFF",
+      "offerNote": "Extra 15,000.00 off (Price is inclusive of Discount)",
+      "live": true,
+      "sourceStatus": "Singer Sri Lanka public catalogue snapshot"
+    },
+    {
+      "category": "Air Conditioner",
+      "product": "Sisil Air Conditioner Non-Inverter 12000 BTU",
+      "sku": "SL-ELITE12",
+      "price": 164999,
+      "url": "https://www.singersl.com/products?search=SL-ELITE12",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Air Conditioner",
+      "product": "Sisil Air Conditioner Non-Inverter 18000 BTU",
+      "sku": "SL-ELITE18",
+      "price": 199999,
+      "url": "https://www.singersl.com/products?search=SL-ELITE18",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Air Conditioner",
+      "product": "Whirlpool Air Conditioner Inverter 12000 BTU",
+      "sku": "WP-12KINV",
+      "price": 204999,
+      "url": "https://www.singersl.com/products?search=WP-12KINV",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Air Conditioner",
+      "product": "Samsung Air Conditioner Inverter 18000 BTU",
+      "sku": "SMGAR50H19D1J",
+      "price": 299999,
+      "url": "https://www.singersl.com/products?search=SMGAR50H19D1J",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Rice Cooker",
+      "product": "Singer Rice Cooker 2.8L",
+      "sku": "SRC-1528HS",
+      "price": 11874,
+      "discount": "5% OFF",
+      "offerNote": "Special offer available",
+      "url": "https://www.singersl.com/products?search=SRC-1528HS",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Rice Cooker",
+      "product": "Singer Rice Cooker 4.5L",
+      "sku": "SRC-2545HS",
+      "price": 17574,
+      "discount": "5% OFF",
+      "offerNote": "Special offer available",
+      "url": "https://www.singersl.com/products?search=SRC-2545HS",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Kitchen Appliance",
+      "product": "Beko Telescopic Hood 60cm",
+      "sku": "B-CTB6250XH",
+      "price": 89999,
+      "url": "https://www.singersl.com/products?search=B-CTB6250XH",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Audio",
+      "product": "Sony Bravia Theatre Bar 5",
+      "sku": "HT-B500",
+      "price": 164999,
+      "url": "https://www.singersl.com/products?search=HT-B500",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    },
+    {
+      "category": "Furniture",
+      "product": "ENZO Center Table",
+      "sku": "LF-ENZO-CT-WHT-WN-S",
+      "price": 10899,
+      "url": "https://www.singersl.com/products?search=LF-ENZO-CT-WHT-WN-S",
+      "mrp": 12199,
+      "discount": "10.66% OFF",
+      "offerNote": "Extra 1,300.00 off (Price is inclusive of Discount)",
+      "live": true,
+      "sourceStatus": "Singer Sri Lanka public catalogue snapshot"
+    },
+    {
+      "category": "Computer",
+      "product": "Singer-listed Laptop / Computer Category",
+      "sku": "CATALOGUE",
+      "price": null,
+      "url": "https://www.singersl.com/products",
+      "live": false,
+      "sourceStatus": "Saved fallback catalogue"
+    }
+  ],
+  "notes": [
+    "Prices and offers are read from public Singer Sri Lanka product catalogue pages.",
+    "If a lookup fails, the previous saved value is retained.",
+    "Stock is not used as a hard recommendation filter in the app."
+  ]
+}

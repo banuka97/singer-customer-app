@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Singer Customer Next-Product Recommendation App</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+:root{--navy:#0b1f3a;--blue:#155eef;--light:#f5f7fb;--line:#e4e8f0;--text:#172033;--muted:#667085;--card:#fff;--green:#067647;--amber:#b54708}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--light);color:var(--text)}
+.header{background:linear-gradient(135deg,#071a33,#123f75);color:#fff;padding:28px 34px;position:sticky;top:0;z-index:10;box-shadow:0 3px 14px #0002}
+.header h1{margin:0;font-size:25px;letter-spacing:.2px}.header p{margin:7px 0 0;color:#d8e6ff;font-size:13px}
+.wrap{max-width:1420px;margin:0 auto;padding:24px 28px 50px}.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 8px #10182808}.card h2{font-size:16px;margin:0 0 12px}.card h3{font-size:14px;margin:16px 0 9px}
+.drop{border:2px dashed #b7c3d6;border-radius:12px;padding:23px;text-align:center;background:#fbfcfe}.drop strong{display:block;font-size:15px;margin-bottom:7px}.drop small{color:var(--muted)}
+input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:9px;padding:10px 15px;font-weight:600;cursor:pointer;font-size:13px}.filebtn{background:var(--blue);color:#fff;margin-top:13px}.btn{background:#eef3ff;color:#1744a5;margin-right:8px}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:var(--navy);color:#fff}.btn.green{background:#ecfdf3;color:#05603a}.btn:disabled{opacity:.45;cursor:not-allowed}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px}.kpi .n{font-size:22px;font-weight:700}.kpi .l{font-size:11px;color:var(--muted);margin-top:3px}
+.status{font-size:12px;color:var(--muted);min-height:18px;margin-top:10px}.status.ok{color:var(--green)}.status.warn{color:var(--amber)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.controls input,.controls select{padding:9px 10px;border:1px solid #cfd6e2;border-radius:8px;background:#fff;font-size:12px}.controls input{min-width:240px}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:11px;background:#fff}th{position:sticky;top:0;background:#f2f5fa;color:#344054;text-align:left;padding:9px;border-bottom:1px solid var(--line);white-space:nowrap}td{padding:8px 9px;border-bottom:1px solid #edf0f5;vertical-align:top}tr:hover td{background:#fafcff}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#eef3ff;color:#1744a5;font-weight:600;font-size:10px}.score{font-weight:700}.mono{font-family:Consolas,monospace;font-size:10px}
+.note{background:#f8faff;border-left:4px solid var(--blue);padding:11px 13px;border-radius:8px;font-size:12px;color:#344054;line-height:1.5}.muted{color:var(--muted)}
+.footer{margin-top:20px;font-size:11px;color:var(--muted);text-align:center}.hidden{display:none!important}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+
+.chartGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px}.chartBox{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}.chartTitle{font-size:13px;font-weight:700;margin-bottom:10px}.barRow{display:grid;grid-template-columns:1fr 70px;gap:10px;align-items:center;margin:8px 0}.barLabel{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.barTrack{height:16px;background:#edf2f7;border-radius:99px;overflow:hidden}.barFill{height:100%;border-radius:99px}.barCount{text-align:right;font-size:11px;font-weight:700;color:#344054}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#667085;margin-top:9px}.legend span{display:inline-flex;align-items:center;gap:5px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}.c1{background:#155eef}.c2{background:#12b76a}.c3{background:#f79009}.chartEmpty{font-size:11px;color:#98a2b3;padding:15px 0}.chartNote{margin-top:10px;font-size:11px;color:#667085}.waBtn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:8px;padding:7px 10px;background:#12b76a;color:#fff;font-weight:700;font-size:10px;cursor:pointer;text-decoration:none;white-space:nowrap}.waBtn.disabled{background:#e5e7eb;color:#98a2b3;cursor:not-allowed}.phone{white-space:nowrap}.msgBtn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #cfd6e2;border-radius:8px;padding:7px 10px;background:#fff;color:#344054;font-weight:700;font-size:10px;cursor:pointer;text-decoration:none;white-space:nowrap;margin-left:5px}.modal{position:fixed;inset:0;background:#0b1f3a66;display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.open{display:flex}.modalCard{width:min(680px,96vw);max-height:88vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;padding:20px}.modalHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.modalTitle{font-size:17px;font-weight:800}.closeBtn{border:0;background:#eef2f7;border-radius:8px;padding:7px 10px;cursor:pointer;font-weight:700}.messageBox{white-space:pre-wrap;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:15px;font-size:13px;line-height:1.6;color:#1f2937;margin-top:14px}.modalActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+@media(max-width:1000px){.chartGrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header"><h1>Singer Customer Next‑Product Recommendation App</h1><p>Upload transaction history → identify customer opportunities → map recommendations to Singer products → export customer recommendations. Singer price/offer data refreshes automatically from the public Singer catalogue via GitHub Actions.</p></div>
+<div class="wrap">
+  <div class="grid">
+    <div class="card">
+      <h2>1. Upload Customer Transaction File</h2>
+      <div class="drop" id="drop">
+        <strong>Excel file (.xlsx) required</strong>
+        <small>Expected fields: ORDER_NO, PRODUCT, PRODUCT DESCRIPTION, DATE OF SALE, UNITS, CUSTOMER ID NUMBER, CUSTOMER NAME, PHONE / MOBILE NUMBER (optional but recommended)</small><br>
+        <label class="filebtn"><input id="file" type="file" accept=".xlsx,.xls,.csv">Choose Excel File</label>
+        <div id="fileName" class="status"></div>
+      </div>
+      <div style="margin-top:14px">
+        <button class="btn primary" id="analyze" disabled>Analyze & Build Recommendations</button>
+        <button class="btn" id="reset">Reset</button>
+      </div>
+      <div id="status" class="status"></div>
+    </div>
+    <div class="card">
+      <h2>2. Export Recommendations</h2>
+      <div class="note">Export the completed customer-wise recommendation analysis to Excel. Includes customer phone/mobile number, three distinct product recommendations, three-language customer messages (English / Sinhala / Tamil), WhatsApp click-to-chat and normal SMS options when a valid number is available. Product prices and offers come from the latest catalogue.json generated by the GitHub scheduled updater.</div>
+      <div style="margin-top:15px">
+        <button class="btn green" id="xlsxBtn" disabled>Download Excel</button>
+        <button class="btn" id="liveBtn" type="button">Refresh Singer Live Data</button>
+      </div>
+      <div id="liveStatus" class="status" style="margin-top:8px">Singer catalogue: loading saved snapshot…</div>
+      <div style="margin-top:8px;font-size:11px;color:#667085">On mobile, WhatsApp opens a pre-filled message and SMS opens the phone's normal messaging app; you still tap <b>Send</b>. The GitHub Action refreshes Singer catalogue data hourly. The <b>Refresh Live Singer Data</b> button reloads the latest generated catalogue.json. Offers and prices can change.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Executive Summary</h2>
+    <div class="kpis" id="kpis"><div class="kpi"><div class="n">—</div><div class="l">Transactions</div></div><div class="kpi"><div class="n">—</div><div class="l">Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Repeat Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Categories</div></div></div>
+    <div id="insights" class="note" style="margin-top:13px">Upload a file and run the analysis.</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Customer Recommendations</h2>
+    <div class="controls">
+      <input id="search" placeholder="Search customer ID, name or product..." disabled>
+      <select id="catFilter" disabled><option value="">All recommended categories</option></select>
+      <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select>
+      <span class="muted" id="rowCount"></span>
+    </div>
+    <div class="tablewrap"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="11" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Recommendation Diversity Rule</h2>
+    <div class="note"><b>Primary + Alternative 1 + Alternative 2 are designed to be different products.</b> The engine avoids repeating the same SKU/product and prioritizes different product categories. When a customer has already purchased most new categories, additional catalogue products are used to preserve product-level diversity.</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Recommendation Mix — Primary vs Alternatives</h2>
+    <div class="chartGrid">
+      <div class="chartBox"><div class="chartTitle">Primary Recommendation</div><div id="chartPrimary"></div></div>
+      <div class="chartBox"><div class="chartTitle">Alternative 1</div><div id="chartAlt1"></div></div>
+      <div class="chartBox"><div class="chartTitle">Alternative 2</div><div id="chartAlt2"></div></div>
+    </div>
+    <div class="legend"><span><i class="dot c1"></i>Primary</span><span><i class="dot c2"></i>Alternative 1</span><span><i class="dot c3"></i>Alternative 2</span></div>
+    <div class="chartNote">Primary, Alternative 1 and Alternative 2 are counted separately. The same product is prevented from appearing twice for the same customer, and alternatives are selected from different categories whenever possible.</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Top Category Opportunities</h2>
+    <div id="opportunities" class="tablewrap"><table><thead><tr><th>From Category</th><th>Next Category Opportunity</th><th>Observed Transitions</th><th>Opportunity Share</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Product Catalogue Used for Recommendations</h2>
+    <div id="catalogue" class="tablewrap"><table><thead><tr><th>Category</th><th>Product</th><th>SKU</th><th>Indicative Price</th><th>Current Offer</th><th>Source</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="footer">Prepared as a decision-support tool. Recommendations are model-based opportunities, not guaranteed purchase outcomes.</div>
+</div>
+<div class="modal" id="msgModal" aria-hidden="true">
+  <div class="modalCard">
+    <div class="modalHead"><div><div class="modalTitle">Customer Message</div><div class="muted" id="msgCustomer"></div></div><button class="closeBtn" id="closeModal">Close</button></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px"><label for="msgLang" style="font-size:12px;font-weight:700;color:#344054">Message Language</label><select id="msgLang" style="padding:8px 10px;border:1px solid #cfd6e2;border-radius:8px;font-weight:600"><option value="en">English</option><option value="si">සිංහල</option><option value="ta">தமிழ்</option></select></div>
+    <div class="messageBox" id="msgContent"></div>
+    <div class="modalActions"><button class="btn green" id="copyMsg">Copy Message</button><button class="waBtn" id="sendMsg">Open WhatsApp</button><button class="msgBtn" id="sendSms">Open Normal SMS</button></div>
+  </div>
+</div>
+<script>
+const DEFAULT_CATALOG = [
+  {category:'Television',product:'Singer 32" HD TV',sku:'SLE32E6A',price:44999,url:'https://www.singersl.com/products?search=SLE32E6A'},
+  {category:'Television',product:'Singer 40" Full HD TV',sku:'SLE40F600A',price:69999,discount:'12.5% OFF',offerNote:'Extra LKR 10,000 off',url:'https://www.singersl.com/products?search=SLE40F600A'},
+  {category:'Television',product:'Singer 43" Full HD Google TV',sku:'SLE43J890',price:119999,url:'https://www.singersl.com/products?search=SLE43J890'},
+  {category:'Refrigerator',product:'Singer GEO Refrigerator 2 Door',sku:'GEO-260NF-TGYF',price:139999,url:'https://www.singersl.com/products?search=GEO-260NF-TGYF'},
+  {category:'Refrigerator',product:'Singer GEO Refrigerator 2 Door',sku:'GEO-200D-INV',price:104999,url:'https://www.singersl.com/products?search=GEO-200D-INV'},
+  {category:'Refrigerator',product:'Singer Digital Inverter Refrigerator',sku:'SN-276INV',price:149999,url:'https://www.singersl.com/products?search=SN-276INV'},
+  {category:'Washing Machine',product:'Singer Semi Automatic Washing Machine',sku:'SWM-SAR65',price:54999,url:'https://www.singersl.com/products?search=SWM-SAR65'},
+  {category:'Washing Machine',product:'Singer Fully Automatic Washing Machine',sku:'SWM-FA80R',price:86999,discount:'13% OFF',offerNote:'Extra LKR 13,000 off',url:'https://www.singersl.com/products?search=SWM-FA80R'},
+  {category:'Washing Machine',product:'Singer Washing Machine Top Load 7Kg',sku:'SWM-FA70R',price:69999,discount:'22.22% OFF',offerNote:'Extra LKR 20,000 off',url:'https://www.singersl.com/products?search=SWM-FA70R'},
+  {category:'Washing Machine',product:'Singer Glass Top Fully Automatic Washing Machine',sku:'SWM-FAR75GT',price:84999,url:'https://www.singersl.com/products?search=SWM-FAR75GT'},
+  {category:'Air Conditioner',product:'Sisil Air Conditioner Non-Inverter 12000 BTU',sku:'SL-ELITE12',price:164999,url:'https://www.singersl.com/products?search=SL-ELITE12'},
+  {category:'Air Conditioner',product:'Sisil Air Conditioner Non-Inverter 18000 BTU',sku:'SL-ELITE18',price:199999,url:'https://www.singersl.com/products?search=SL-ELITE18'},
+  {category:'Air Conditioner',product:'Whirlpool Air Conditioner Inverter 12000 BTU',sku:'WP-12KINV',price:204999,url:'https://www.singersl.com/products?search=WP-12KINV'},
+  {category:'Air Conditioner',product:'Samsung Air Conditioner Inverter 18000 BTU',sku:'SMGAR50H19D1J',price:299999,url:'https://www.singersl.com/products?search=SMGAR50H19D1J'},
+  {category:'Rice Cooker',product:'Singer Rice Cooker 2.8L',sku:'SRC-1528HS',price:11874,discount:'5% OFF',offerNote:'Special offer available',url:'https://www.singersl.com/products?search=SRC-1528HS'},
+  {category:'Rice Cooker',product:'Singer Rice Cooker 4.5L',sku:'SRC-2545HS',price:17574,discount:'5% OFF',offerNote:'Special offer available',url:'https://www.singersl.com/products?search=SRC-2545HS'},
+  {category:'Kitchen Appliance',product:'Beko Telescopic Hood 60cm',sku:'B-CTB6250XH',price:89999,url:'https://www.singersl.com/products?search=B-CTB6250XH'},
+  {category:'Audio',product:'Sony Bravia Theatre Bar 5',sku:'HT-B500',price:164999,url:'https://www.singersl.com/products?search=HT-B500'},
+  {category:'Furniture',product:'ENZO Center Table',sku:'LF-ENZO-CT-WHT-WN-S',price:10899,url:'https://www.singersl.com/products?search=LF-ENZO-CT-WHT-WN-S'},
+  {category:'Computer',product:'Singer-listed Laptop / Computer Category',sku:'CATALOGUE',price:null,url:'https://www.singersl.com/products'}
+];
+let CATALOG = DEFAULT_CATALOG.map(x=>({...x}));
+const RULES=[
+ ['Washing Machine',/washing|washer|wash machine|wm-|swm-/i],
+ ['Refrigerator',/refrigerator|fridge|freezer|geo-|sn-\d+inv/i],
+ ['Air Conditioner',/air conditioner|a\/c|ac\b|btu|elite\d+/i],
+ ['Television',/\btv\b|television|led tv|smart tv|google tv|sle\d+/i],
+ ['Rice Cooker',/rice cooker|src-/i],
+ ['Kitchen Appliance',/blender|grinder|mixer|kettle|oven|microwave|hood|toaster|air fryer|cooker|induction/i],
+ ['Audio',/speaker|soundbar|home theatre|theatre bar|audio|ht-b/i],
+ ['Mobile',/mobile|smartphone|phone|galaxy|iphone|oppo|vivo|redmi|realme/i],
+ ['Computer',/laptop|notebook|computer|desktop|printer|tablet|ipad|acer|asus|hp |dell/i],
+ ['Furniture',/sofa|table|chair|bed|mattress|wardrobe|cupboard|dressing|cabinet|furniture|sectional/i],
+ ['Water Pump',/water pump|pump|wp-/i],
+ ['Sewing Machine',/sewing|sewing machine/i],
+ ['Personal Care',/trimmer|shaver|hair dryer|hair care|fitness|massager/i]
+];
+function categoryOf(s){for(const [c,r] of RULES){if(r.test(s||''))return c}return 'Other';}
+function fmtDate(v){if(v==null||v==='')return ''; if(typeof v==='number'){const d=new Date(Math.round((v-25569)*86400*1000)); return isNaN(d)?'':d.toISOString().slice(0,10)} const d=new Date(v); return isNaN(d)?String(v):d.toISOString().slice(0,10)}
+function numDate(v){const s=fmtDate(v); const t=Date.parse(s); return isNaN(t)?0:t;}
+function norm(v){return String(v??'').trim().replace(/\s+/g,' ')}
+function findCol(headers, candidates){const lower=headers.map(x=>String(x).toLowerCase().replace(/[^a-z0-9]/g,'')); for(const c of candidates){const i=lower.indexOf(c); if(i>=0)return headers[i]} for(let i=0;i<lower.length;i++)for(const c of candidates)if(lower[i].includes(c))return headers[i]; return null}
+function escapeHtml(s){return String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function money(v){return v==null?'—':'LKR '+Number(v).toLocaleString('en-LK')}
+function normalizePhone(v){
+  let s=String(v??'').replace(/[^\d+]/g,'');
+  if(!s)return '';
+  if(s.startsWith('+'))s=s.slice(1);
+  if(s.startsWith('00'))s=s.slice(2);
+  if(s.startsWith('0'))s='94'+s.slice(1);
+  else if(s.length===9)s='94'+s;
+  return s;
+}
+function waUrl(phone,message){const n=normalizePhone(phone); return n?'https://wa.me/'+n+'?text='+encodeURIComponent(message):'';}
+function smsUrl(phone,message){const n=normalizePhone(phone); return n?'sms:'+n+'?body='+encodeURIComponent(message):'';}
+function recLine(x){if(!x||!x.product)return ''; const price=x.price==null?'':` — ${money(x.price)}`; const sku=x.sku?` (${x.sku})`:''; const offer=x.discount?` | ${x.discount}${x.offerNote?` — ${x.offerNote}`:''}`:''; return `${x.product}${sku}${price}${offer}`;}
+function buildSalesMessage(r,lang='en'){
+  const greeting = r.name ? ({en:`Hi ${r.name},`,si:`හිතවත් ${r.name},`,ta:`அன்புள்ள ${r.name},`}[lang]) : ({en:'Hi,',si:'හිතවත් පාරිභෝගිකතුමනි,',ta:'அன்புள்ள வாடிக்கையாளரே,'}[lang]);
+  const items=[r.primary,r.alt1,r.alt2].filter(x=>x?.product);
+  const productLines = items.map((x,i)=>{
+    const name=x.product || ''; const price=x.price!=null ? money(x.price) : ''; const off=x.discount ? ` | ${x.discount}` : '';
+    const link=x.url?`\n   ${x.url}`:'';
+    if(lang==='si') return `${i+1}. ${name}${price?` — ${price}`:''}${off}${link}`;
+    if(lang==='ta') return `${i+1}. ${name}${price?` — ${price}`:''}${off}${link}`;
+    return `${i+1}. ${name}${price?` — ${price}`:''}${off}${link}`;
+  });
+  const offerItems=items.filter(x=>x.discount);
+  const offerText = offerItems.length
+    ? ({
+        en:`🔥 Special offers are available on selected items: ${offerItems.map(x=>`${x.product} – ${x.discount}${x.offerNote?` (${x.offerNote})`:''}`).join('; ')}.`,
+        si:`🔥 තෝරාගත් නිෂ්පාදන සඳහා විශේෂ වට්ටම් දැනට ලබා ගත හැක: ${offerItems.map(x=>`${x.product} – ${x.discount}${x.offerNote?` (${x.offerNote})`:''}`).join('; ')}.`,
+        ta:`🔥 தேர்ந்தெடுக்கப்பட்ட பொருட்களுக்கு சிறப்பு சலுகைகள் தற்போது கிடைக்கின்றன: ${offerItems.map(x=>`${x.product} – ${x.discount}${x.offerNote?` (${x.offerNote})`:''}`).join('; ')}.`
+      }[lang])
+    : ({
+        en:'✨ Special promotions may change from time to time. Please contact us for the latest offer available.',
+        si:'✨ විශේෂ ප්‍රවර්ධන වරින් වර වෙනස් විය හැක. දැනට ලබා ගත හැකි නවතම වට්ටම් සහ දීමනා ගැන අප අමතන්න.',
+        ta:'✨ சிறப்பு சலுகைகள் காலத்துக்கு காலம் மாறக்கூடும். தற்போது கிடைக்கும் சமீபத்திய சலுகைகள் மற்றும் விலைகள் குறித்து எங்களை தொடர்பு கொள்ளுங்கள்.'
+      }[lang]);
+  const textByLang={
+    en:[greeting,'','Here are some Singer products currently available that may suit your home and everyday needs:','',...productLines,'',offerText,'','View the products on the Singer Sri Lanka website using the links above.','','Reply to this message and we can share the latest price, availability and offer details.'].join('\n'),
+    si:[greeting,'','ඔබගේ නිවසේ සහ දෛනික අවශ්‍යතා සඳහා ගැළපිය හැකි Singer නිෂ්පාදන කිහිපයක් මෙන්න:','',...productLines,'',offerText,'','ඉහත links මඟින් Singer Sri Lanka website එකෙන් නිෂ්පාදන විස්තර බලන්න.','','නවතම මිල, ලබාගත හැකි බව සහ දීමනා පිළිබඳ වැඩි විස්තර සඳහා මෙම පණිවිඩයට reply කරන්න.'].join('\n'),
+    ta:[greeting,'','உங்கள் வீட்டு மற்றும் அன்றாட தேவைகளுக்கு பொருத்தமான சில Singer தயாரிப்புகள் இதோ:','',...productLines,'',offerText,'','மேலே உள்ள links மூலம் Singer Sri Lanka இணையதளத்தில் தயாரிப்பு விவரங்களை பார்க்கலாம்.','','சமீபத்திய விலை, கிடைக்கும் நிலை மற்றும் சலுகை விவரங்களுக்கு இந்த செய்திக்கு பதிலளிக்கவும்.'].join('\n')
+  };
+  return textByLang[lang];
+}
+function buildWhatsAppMessage(r){ return buildSalesMessage(r,'en'); }
+function openWhatsApp(r){
+  const lang=document.getElementById('msgLang')?.value||'en';
+  const url=waUrl(r.phone,buildSalesMessage(r,lang));
+  if(!url){alert('No valid phone/mobile number is available for this customer.');return;}
+  window.open(url,'_blank');
+}
+function openSms(r){
+  const lang=document.getElementById('msgLang')?.value||'en';
+  const url=smsUrl(r.phone,buildSalesMessage(r,lang));
+  if(!url){alert('No valid phone/mobile number is available for this customer.');return;}
+  window.location.href=url;
+}
+function openMessagePreview(r){
+  const renderMessage=()=>{
+    const lang=document.getElementById('msgLang').value;
+    const m=buildSalesMessage(r,lang);
+    document.getElementById('msgContent').textContent=m;
+    document.getElementById('copyMsg').onclick=async()=>{try{await navigator.clipboard.writeText(m);document.getElementById('copyMsg').textContent='Copied ✓';setTimeout(()=>document.getElementById('copyMsg').textContent='Copy Message',1200)}catch(e){alert('Copy failed. Please select and copy the message manually.')}};
+    document.getElementById('sendMsg').onclick=()=>openWhatsApp(r);
+    document.getElementById('sendSms').onclick=()=>openSms(r);
+  };
+  document.getElementById('msgCustomer').textContent=`${r.name||'Customer'}${r.phone?' • '+r.phone:''}`;
+  document.getElementById('msgLang').value='en';
+  document.getElementById('msgLang').onchange=renderMessage;
+  renderMessage();
+  const modal=document.getElementById('msgModal'); modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+}
+let model=null, uploadedRows=[];
+let liveMeta={checkedAt:null,updated:0,failed:0,source:'github-catalogue'};
+
+async function loadLiveSingerData(manual=false){
+  const btn=document.getElementById('liveBtn');
+  const st=document.getElementById('liveStatus');
+  if(btn && manual){btn.disabled=true;btn.textContent='Refreshing…';}
+  if(st && manual){st.textContent='Loading the latest Singer catalogue snapshot…';st.className='status';}
+  try{
+    const candidates=[
+      new URL('catalogue.json',document.baseURI).href,
+      `${location.origin}/catalogue.json`
+    ];
+    let resp=null, lastError=null;
+    for(const base of [...new Set(candidates)]){
+      try{
+        const candidate=`${base}${base.includes('?')?'&':'?'}ts=${Date.now()}`;
+        const r=await fetch(candidate,{cache:'no-store',headers:{'Accept':'application/json'}});
+        if(r.ok){resp=r;break;}
+        lastError=new Error(`HTTP ${r.status} from ${candidate}`);
+      }catch(e){lastError=e;}
+    }
+    if(!resp) throw lastError||new Error('catalogue.json could not be fetched');
+    const payload=await resp.json();
+    if(!Array.isArray(payload.products) || !payload.products.length) throw new Error('catalogue.json has no products');
+    const incoming=new Map(payload.products.map(x=>[String(x.sku||'').trim().toLowerCase(),x]));
+    CATALOG=DEFAULT_CATALOG.map(fallback=>{
+      const live=incoming.get(String(fallback.sku||'').trim().toLowerCase());
+      return live?{...fallback,...live}:{...fallback};
+    });
+    liveMeta={
+      checkedAt: payload.checkedAt ? new Date(payload.checkedAt) : new Date(),
+      updated: CATALOG.filter(x=>x.live).length,
+      failed: CATALOG.filter(x=>x.sourceStatus && /fallback/i.test(x.sourceStatus) && !x.live).length,
+      source:'github-catalogue'
+    };
+    if(st){
+      st.textContent=`Singer catalogue loaded: ${liveMeta.updated.toLocaleString()} products have live snapshot data. Last update: ${liveMeta.checkedAt.toLocaleString()}.`;
+      st.className='status ok';
+    }
+    renderCatalogueOnly();
+    if(model) render();
+    return true;
+  }catch(err){
+    if(st){
+      const detail=err?.message?` (${err.message})`:'';
+      st.textContent=`Live catalogue file could not be loaded${detail}. Using the saved catalogue values. Make sure catalogue.json is uploaded to the same GitHub Pages site.`;
+      st.className='status warn';
+    }
+    renderCatalogueOnly();
+    return false;
+  }finally{
+    if(btn && manual){btn.disabled=false;btn.textContent='Refresh Live Singer Data';}
+  }
+}
+
+function renderCatalogueOnly(){
+  const body=document.getElementById('catalogue')?.querySelector('tbody');
+  if(!body)return;
+  body.innerHTML=CATALOG.map(x=>`<tr><td>${escapeHtml(x.category)}</td><td>${escapeHtml(x.product)}</td><td class="mono">${escapeHtml(x.sku)}</td><td>${money(x.price)}</td><td>${x.discount?`<b>${escapeHtml(x.discount)}</b>${x.offerNote?`<br><span class="muted">${escapeHtml(x.offerNote)}</span>`:''}`:'—'}</td><td><a href="${x.url}" target="_blank" rel="noopener">Singer Sri Lanka</a>${x.live?`<br><span class="muted">Live snapshot</span>`:`<br><span class="muted">Fallback</span>`}</td></tr>`).join('');
+}
+
+
+
+function analyze(rows){
+  const headers=Object.keys(rows[0]||{});
+  const cust=findCol(headers,['customeridnumber','customerid','customer','customernumber','customeridno']);
+  const name=findCol(headers,['customername','name']);
+  const phone=findCol(headers,['phonenumber','mobilephonenumber','mobilenumber','phone','mobile','contactnumber','contactno','telephone']);
+  const product=findCol(headers,['product']);
+  const desc=findCol(headers,['productdescription','description']);
+  const date=findCol(headers,['dateofsale','date','saledate']);
+  const units=findCol(headers,['units','qty','quantity']);
+  if(!cust||!product||!date) throw new Error('Required columns could not be identified. Expected CUSTOMER ID NUMBER, PRODUCT and DATE OF SALE.');
+  const clean=rows.map(r=>({cust:norm(r[cust]),name:norm(r[name]),phone:norm(r[phone]),product:norm(r[product]),desc:norm(r[desc]),date:r[date],units:Number(r[units]||1)||1})).filter(r=>r.cust&&r.product);
+  const by={}; clean.forEach(r=>(by[r.cust]??=[]).push(r)); Object.values(by).forEach(a=>a.sort((x,y)=>numDate(x.date)-numDate(y.date)));
+  const trans={}, global={}, catCust={};
+  Object.entries(by).forEach(([cid,a])=>{
+    const cats=new Set(); a.forEach(r=>{const c=categoryOf(r.product+' '+r.desc); r.cat=c; global[c]=(global[c]||0)+1; cats.add(c)}); catCust[cid]=cats.size;
+    for(let i=1;i<a.length;i++){const from=a[i-1].cat,to=a[i].cat;if(from!==to){trans[from]??={};trans[from][to]=(trans[from][to]||0)+1;}}
+  });
+  const globalTotal=Object.values(global).reduce((a,b)=>a+b,0);
+  const recs=[];
+  const allCats=Array.from(new Set([...Object.keys(global),...CATALOG.map(x=>x.category)])).filter(c=>c!=='Other');
+  Object.entries(by).forEach(([cid,a])=>{
+    const last=a[a.length-1], lastCat=last.cat, owned=new Set(a.map(x=>x.cat));
+    const totalTrans=trans[lastCat]?Object.values(trans[lastCat]).reduce((x,y)=>x+y,0):0;
+    const scored=allCats.filter(c=>!owned.has(c)).map(c=>{
+      const t=(trans[lastCat]&&trans[lastCat][c])||0;
+      const transProb=totalTrans?t/totalTrans:0;
+      const pop=(global[c]||0)/globalTotal;
+      const recencyDays=Math.max(0,Math.round((Date.now()-numDate(last.date))/86400000));
+      const freshness=recencyDays>0?Math.max(0,1-Math.min(recencyDays,1800)/1800):1;
+      const score=Math.min(99,Math.round(100*(0.62*transProb+0.25*pop+0.13*freshness)));
+      return {cat:c,score,trans:t,transProb,pop,freshness};
+    }).sort((a,b)=>b.score-a.score||b.trans-a.trans||b.pop-a.pop);
+    const pool=scored.length?scored:allCats.map(c=>({cat:c,score:50,trans:0,transProb:0,pop:(global[c]||0)/globalTotal,freshness:.5})).sort((a,b)=>b.pop-a.pop);
+    // Diversity-first recommendation selection:
+    // 1) Pick one representative product from the strongest NEW category.
+    // 2) Pick the best products from other NEW categories, avoiding duplicate SKUs/products.
+    // 3) If fewer than 3 categories are available, fill from additional catalogue products while
+    //    still avoiding exact product/SKU duplicates.
+    const rankedProducts=[];
+    const seenCats=new Set();
+    for(const s of pool){
+      const products=CATALOG.filter(x=>x.category===s.cat && x.product);
+      if(!products.length) continue;
+      const p=products[0];
+      rankedProducts.push({...s,...p});
+    }
+    const selected=[]; const seenProducts=new Set(); const selectedCats=new Set();
+    for(const x of rankedProducts){
+      const key=String(x.sku||x.p.product||'').trim().toLowerCase();
+      const productKey=String(x.product||'').trim().toLowerCase();
+      if(!key || seenProducts.has(key) || seenProducts.has(productKey) || selectedCats.has(x.cat)) continue;
+      selected.push(x); seenProducts.add(key); seenProducts.add(productKey); selectedCats.add(x.cat);
+      if(selected.length===3) break;
+    }
+    if(selected.length<3){
+      for(const s of pool){
+        for(const p of CATALOG.filter(x=>x.category===s.cat && x.product)){
+          const key=String(p.sku||p.product||'').trim().toLowerCase();
+          const productKey=String(p.product||'').trim().toLowerCase();
+          if(!key || seenProducts.has(key) || seenProducts.has(productKey)) continue;
+          selected.push({...s,...p}); seenProducts.add(key); seenProducts.add(productKey);
+          if(selected.length===3) break;
+        }
+        if(selected.length===3) break;
+      }
+    }
+    const top=selected;
+    const reason=lastCat!=='Other'&&top[0]?`Last purchased ${lastCat}. Historical category transitions + overall demand indicate ${top[0].cat} as the next cross-sell opportunity.`:`Based on the customer’s purchase profile and overall category demand, ${top[0]?.cat||'product'} is identified as a next-product opportunity.`;
+    recs.push({cid,name:a.find(x=>x.name)?.name||'',phone:a.slice().reverse().find(x=>normalizePhone(x.phone))?.phone||'',lastDate:fmtDate(last.date),lastCat,lastProduct:last.product,txCount:a.length,primary:top[0],alt1:top[1],alt2:top[2],score:top[0]?.score||0,reason});
+  });
+  recs.sort((a,b)=>b.score-a.score || b.txCount-a.txCount);
+  const opp=[]; Object.entries(trans).forEach(([from, tos])=>Object.entries(tos).forEach(([to,n])=>opp.push({from,to,n,total:Object.values(tos).reduce((x,y)=>x+y,0)}))); opp.sort((a,b)=>b.n-a.n);
+  return {clean,by,global,trans,recs,opp,headers};
+}
+function renderRecommendationCharts(){
+ const series=[
+  ['chartPrimary','primary','c1'],
+  ['chartAlt1','alt1','c2'],
+  ['chartAlt2','alt2','c3']
+ ];
+ for(const [id,key,colorClass] of series){
+  const el=document.getElementById(id);
+  const counts={};
+  for(const r of model.recs){const p=r[key]?.product||'—'; if(p && p!=='—') counts[p]=(counts[p]||0)+1;}
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(!top.length){el.innerHTML='<div class="chartEmpty">No recommendation data.</div>';continue;}
+  const max=top[0][1]||1;
+  el.innerHTML=top.map(([label,n])=>`<div class="barRow"><div><div class="barLabel" title="${escapeHtml(label)}">${escapeHtml(label)}</div><div class="barTrack"><div class="barFill ${colorClass}" style="width:${Math.max(5,(n/max)*100)}%"></div></div></div><div class="barCount">${n.toLocaleString()}</div></div>`).join('');
+ }
+}
+
+function render(){
+ const {clean,by,global,recs,opp}=model;
+ const customerCount=Object.keys(by).length, repeat=Object.values(by).filter(a=>a.length>1).length, cats=Object.keys(global).filter(c=>c!=='Other').length;
+ document.getElementById('kpis').innerHTML=[[clean.length,'Transactions'],[customerCount.toLocaleString(),'Customers'],[repeat.toLocaleString(),'Repeat Customers'],[cats,'Categories']].map(x=>`<div class="kpi"><div class="n">${x[0]}</div><div class="l">${x[1]}</div></div>`).join('');
+ const sortedCats=Object.entries(global).filter(([c])=>c!=='Other').sort((a,b)=>b[1]-a[1]).slice(0,5);
+ document.getElementById('insights').innerHTML=`Top historical categories: <b>${sortedCats.map(x=>`${escapeHtml(x[0])} (${x[1]})`).join(', ')}</b>. ${repeat.toLocaleString()} of ${customerCount.toLocaleString()} customers have repeat transactions. The model prioritizes observed next-category transitions, then overall category demand and purchase recency. Each customer receives up to three non-duplicate product recommendations, with category diversity prioritized.`;
+ const cf=document.getElementById('catFilter'); cf.innerHTML='<option value="">All recommended categories</option>'+Array.from(new Set(recs.map(r=>r.primary?.cat).filter(Boolean))).sort().map(c=>`<option>${escapeHtml(c)}</option>`).join('');
+ document.getElementById('search').disabled=document.getElementById('catFilter').disabled=document.getElementById('scoreFilter').disabled=false;
+ renderRows();
+ renderRecommendationCharts();
+ document.getElementById('opportunities').querySelector('tbody').innerHTML=opp.slice(0,12).map(x=>`<tr><td>${escapeHtml(x.from)}</td><td><span class="pill">${escapeHtml(x.to)}</span></td><td>${x.n}</td><td>${((x.n/x.total)*100).toFixed(1)}%</td></tr>`).join('')||'<tr><td colspan="4">No cross-category transitions available.</td></tr>';
+  renderCatalogueOnly();
+}
+function openWhatsAppById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(x=>String(x.cid)===String(cid));if(r)openWhatsApp(r);}
+function openMessagePreviewById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(x=>String(x.cid)===String(cid));if(r)openMessagePreview(r);}
+function openSmsById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(x=>String(x.cid)===String(cid));if(r)openSms(r);}
+function renderRows(){
+ const q=document.getElementById('search').value.toLowerCase(); const cat=document.getElementById('catFilter').value; const min=Number(document.getElementById('scoreFilter').value||0);
+ const rows=model.recs.filter(r=>{const txt=[r.cid,r.name,r.lastProduct,r.lastCat,r.primary?.product,r.alt1?.product,r.alt2?.product].join(' ').toLowerCase();return (!q||txt.includes(q))&&(!cat||r.primary?.cat===cat)&&(r.score>=min)});
+ document.getElementById('rowCount').textContent=`${rows.length.toLocaleString()} shown / ${model.recs.length.toLocaleString()}`;
+ document.getElementById('tbody').innerHTML=rows.slice(0,1000).map(r=>`<tr><td class="mono">${escapeHtml(r.cid)}</td><td>${escapeHtml(r.name)}</td><td class="phone">${escapeHtml(r.phone||'—')}</td><td>${r.phone?`<button class="msgBtn" onclick="openMessagePreviewById('${encodeURIComponent(r.cid)}')">Preview</button><button class="waBtn" onclick="openWhatsAppById('${encodeURIComponent(r.cid)}')">WhatsApp</button><button class="msgBtn" onclick="openSmsById('${encodeURIComponent(r.cid)}')">SMS</button>`:'<span class="waBtn disabled">No Number</span>'}</td><td>${r.lastDate}</td><td><span class="pill">${escapeHtml(r.lastCat)}</span></td><td><b>${escapeHtml(r.primary?.product||'—')}</b><br><span class="muted mono">${escapeHtml(r.primary?.sku||'')}</span></td><td>${escapeHtml(r.alt1?.product||'—')}</td><td>${escapeHtml(r.alt2?.product||'—')}</td><td class="score">${r.score}</td><td>${escapeHtml(r.reason)}</td></tr>`).join('')||'<tr><td colspan="11" style="text-align:center;padding:28px">No matching customers.</td></tr>';
+}
+function exportXlsx(){
+ const recRows=model.recs.map(r=>({
+  'Customer ID':r.cid,'Customer Name':r.name,'Phone / Mobile':r.phone||'','Transaction Count':r.txCount,'Last Purchase Date':r.lastDate,'Last Purchase Category':r.lastCat,'Last Product':r.lastProduct,
+  'Primary Recommendation':r.primary?.product||'','Primary SKU':r.primary?.sku||'','Primary Category':r.primary?.cat||'','Primary Score':r.primary?.score||'','Primary Offer':r.primary?.discount||'','Primary Offer Note':r.primary?.offerNote||'',
+  'Alternative 1':r.alt1?.product||'','Alternative 1 SKU':r.alt1?.sku||'','Alternative 1 Category':r.alt1?.cat||'','Alternative 1 Offer':r.alt1?.discount||'','Alternative 1 Offer Note':r.alt1?.offerNote||'',
+  'Alternative 2':r.alt2?.product||'','Alternative 2 SKU':r.alt2?.sku||'','Alternative 2 Category':r.alt2?.cat||'','Alternative 2 Offer':r.alt2?.discount||'','Alternative 2 Offer Note':r.alt2?.offerNote||'','Rationale':r.reason,'Singer Catalogue Snapshot':liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded','WhatsApp Message - English':buildSalesMessage(r,'en'),'WhatsApp Message - Sinhala':buildSalesMessage(r,'si'),'WhatsApp Message - Tamil':buildSalesMessage(r,'ta'),'WhatsApp Link - English':waUrl(r.phone,buildSalesMessage(r,'en')),'Normal SMS - English':buildSalesMessage(r,'en'),'Normal SMS - Sinhala':buildSalesMessage(r,'si'),'Normal SMS - Tamil':buildSalesMessage(r,'ta'),'Normal SMS Link - English':smsUrl(r.phone,buildSalesMessage(r,'en'))
+ }));
+ const summary=[['Metric','Value'],['Transactions',model.clean.length],['Customers',Object.keys(model.by).length],['Repeat Customers',Object.values(model.by).filter(a=>a.length>1).length],['Distinct Non-Other Categories',Object.keys(model.global).filter(c=>c!=='Other').length],['Analysis Date',new Date().toISOString().slice(0,10)],['Singer Catalogue Snapshot',liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded'],['Live Products Updated',liveMeta.updated||0],['Live Refresh Failures / Fallbacks',liveMeta.failed||0],['Stock Filter','Not used; out-of-stock products remain eligible']];
+ const opp=model.opp.map(x=>({'From Category':x.from,'Next Category':x.to,'Observed Transitions':x.n,'Opportunity Share':x.n/x.total}));
+ const cat=CATALOG.map(x=>({'Category':x.category,'Product':x.product,'SKU':x.sku,'Current Price (LKR)':x.price,'Current Discount':x.discount||'','Current Offer Note':x.offerNote||'','Live Refreshed':x.live?'Yes':'No','Singer Source URL':x.url}));
+ const wb=XLSX.utils.book_new();
+ const recWs=XLSX.utils.json_to_sheet(recRows);
+ const linkCol=Object.keys(recRows[0]||{}).indexOf('WhatsApp Link - English');
+ if(linkCol>=0){for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:linkCol}); const url=recRows[i]['WhatsApp Link - English']; if(url&&recWs[addr]){recWs[addr].l={Target:url,Tooltip:'Open WhatsApp with pre-filled sales message'};}}}
+ const smsLinkCol=Object.keys(recRows[0]||{}).indexOf('Normal SMS Link - English');
+ if(smsLinkCol>=0){for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:smsLinkCol}); const url=recRows[i]['Normal SMS Link - English']; if(url&&recWs[addr]){recWs[addr].l={Target:url,Tooltip:'Open the normal SMS app with pre-filled sales message'};}}}
+ [['Executive Summary',summary],['Customer Recommendations',recWs],['Category Opportunities',XLSX.utils.json_to_sheet(opp)],['Singer Product Catalogue',XLSX.utils.json_to_sheet(cat)],['Methodology',[['Step','Logic'],['1','Read customer transaction history and normalize date/product fields'],['2','Map purchased SKUs/descriptions to product categories using keyword rules'],['3','Measure category-to-category purchase transitions across customer histories'],['4','Score new category opportunities using transition probability, category demand and recency'],['5','Map recommended categories to representative Singer Sri Lanka catalogue products'],['6','Load the latest Singer prices, discounts and offer notes from catalogue.json, which is refreshed by a scheduled GitHub Action from public Singer Sri Lanka catalogue pages; stock status is intentionally ignored so out-of-stock items can still be recommended, and failed live lookups keep the saved catalogue value'],['7','Export customer-level actions with phone numbers, three-language customer messages, WhatsApp click-to-chat links and normal SMS links']]]].forEach(([name,obj])=>{let ws=Array.isArray(obj)?XLSX.utils.aoa_to_sheet(obj):obj;XLSX.utils.book_append_sheet(wb,ws,name.slice(0,31));});
+ XLSX.writeFile(wb,'Singer_Customer_Next_Product_Recommendations.xlsx');
+}
+document.getElementById('closeModal').addEventListener('click',()=>{document.getElementById('msgModal').classList.remove('open');});
+document.getElementById('msgModal').addEventListener('click',e=>{if(e.target.id==='msgModal')e.currentTarget.classList.remove('open');});
+document.getElementById('file').addEventListener('change',e=>{const f=e.target.files[0];if(f){document.getElementById('fileName').textContent=`Selected: ${f.name}`;document.getElementById('analyze').disabled=false;}});
+document.getElementById('analyze').addEventListener('click',async()=>{const f=document.getElementById('file').files[0];if(!f)return; try{document.getElementById('status').textContent='Reading and analysing transaction history…';const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:false});const sh=wb.Sheets[wb.SheetNames[0]];uploadedRows=XLSX.utils.sheet_to_json(sh,{defval:''}); if(!uploadedRows.length)throw new Error('No data rows found in the first sheet.');model=analyze(uploadedRows);render();const phoneCount=model.recs.filter(r=>normalizePhone(r.phone)).length; document.getElementById('status').textContent=`Analysis completed: ${model.recs.length.toLocaleString()} customers modelled. ${phoneCount.toLocaleString()} customers have a usable phone/mobile number. Singer prices/offers use the latest loaded catalogue snapshot.`;document.getElementById('status').className='status ok';document.getElementById('xlsxBtn').disabled=false;}catch(err){document.getElementById('status').textContent=err.message;document.getElementById('status').className='status warn';console.error(err);}});
+document.getElementById('xlsxBtn').addEventListener('click',exportXlsx);
+document.getElementById('liveBtn').addEventListener('click',()=>loadLiveSingerData(true));
+['search','catFilter','scoreFilter'].forEach(id=>document.getElementById(id).addEventListener('input',()=>model&&renderRows()));
+document.getElementById('reset').addEventListener('click',()=>location.reload());
+window.addEventListener('DOMContentLoaded',()=>{renderCatalogueOnly();loadLiveSingerData(false);});
+</script>
+</body>
+</html>
