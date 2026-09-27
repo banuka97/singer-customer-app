@@ -201,6 +201,33 @@ function findCol(keys,aliases){
  for(var j=0;j<aliases.length;j++){var b=normKey(aliases[j]),p=nk.find(function(x){return x.n.indexOf(b)>=0});if(p)return p.k}
  return ''
 }
+function findCustomerCol(keys){
+ var nk=keys.map(function(k){return {k:k,n:normKey(k)}});
+ var exactAliases=[
+  'CUSTOMER ID NUMBER','CUSTOMER ID','CUSTOMER NUMBER','CUSTOMER NO','CUSTOMER CODE','CUSTOMER KEY',
+  'CUSTOMER ACCOUNT NUMBER','CUSTOMER ACCOUNT NO','CUSTOMER ACCOUNT',
+  'CUST ID','CUST NUMBER','CUST NO','CUST CODE','CUST KEY',
+  'DEBTOR ID','DEBTOR NUMBER','DEBTOR NO','DEBTOR CODE',
+  'MEMBER ID','CLIENT ID','PARTY ID','ACCOUNT NUMBER','ACCOUNT NO'
+ ];
+ for(var i=0;i<exactAliases.length;i++){
+  var a=normKey(exactAliases[i]),e=nk.find(function(x){return x.n===a});
+  if(e)return e.k;
+ }
+ var semantic=nk.find(function(x){
+  var n=x.n;
+  if(!n||n.indexOf('name')>=0)return false;
+  return n.indexOf('customer')>=0 && /(id|no|num|number|code|key|account|acct)/.test(n);
+ });
+ if(semantic)return semantic.k;
+ var legacy=nk.find(function(x){
+  var n=x.n;
+  if(!n||n.indexOf('name')>=0)return false;
+  return (n.indexOf('cust')===0||n.indexOf('debtor')===0||n.indexOf('client')===0||n.indexOf('member')===0||n.indexOf('party')===0)
+    && /(id|no|num|number|code|key|account|acct)/.test(n);
+ });
+ return legacy?legacy.k:'';
+}
 function normalizePhone(v){
  var s=String(v==null?'':v).replace(/\D/g,'');if(!s)return '';
  if(s.indexOf('94')===0&&s.length===11)return s;
@@ -259,14 +286,16 @@ function analyse(rows){
   order:findCol(keys,['ORDER_NO','ORDER NUMBER','ORDER','INVOICE NO','INVOICE','BILL NO']),
   product:findCol(keys,['PRODUCT','ITEM','PRODUCT NAME']),desc:findCol(keys,['PRODUCT DESCRIPTION','DESCRIPTION','ITEM DESCRIPTION']),
   date:findCol(keys,['DATE OF SALE','SALE DATE','DATE','INVOICE DATE']),units:findCol(keys,['UNITS','QTY','QUANTITY']),
-  cid:findCol(keys,['CUSTOMER ID NUMBER','CUSTOMER ID','CUSTOMER CODE','CUST ID','ID NUMBER']),name:findCol(keys,['CUSTOMER NAME','NAME']),
-  phone:findCol(keys,['PHONE / MOBILE NUMBER','MOBILE NUMBER','PHONE','MOBILE','CONTACT NUMBER']),
+  cid:(findCustomerCol(keys)||findCol(keys,['CUSTOMER ID NUMBER','CUSTOMER ID','CUSTOMER CODE','CUSTOMER NUMBER','CUSTOMER NO','CUST ID','CUST NUMBER','CUST NO','CUST CODE','ID NUMBER'])),
+  name:findCol(keys,['CUSTOMER NAME','NAME']),
+  phone:findCol(keys,['PHONE / MOBILE NUMBER','MOBILE NUMBER','PHONE','MOBILE','MOBILE_NO','CONTACT NUMBER']),
   price:findCol(keys,['UNIT PRICE','SELLING PRICE','PRICE','UNIT AMOUNT','RATE']),amount:findCol(keys,['TOTAL AMOUNT','NET AMOUNT','AMOUNT','SALES VALUE','VALUE','TOTAL']),
   discount:findCol(keys,['DISCOUNT','DISCOUNT %','OFFER','PROMOTION'])
  };
  var invalidRequired=0,invalidDate=0,missingHistoricalPrice=0,unmapped=0,orderKeys={},clean=[];
  rows.forEach(function(r,idx){
   var cid=String(r[cols.cid]||'').trim(),name=String(r[cols.name]||'').trim(),phone=normalizePhone(r[cols.phone]),product=(String(r[cols.product]||'').trim()||String(r[cols.desc]||'').trim()),desc=String(r[cols.desc]||'').trim(),date=parseDate(r[cols.date]);
+  if(!cid&&name)cid=name;
   if(!cid||!product){invalidRequired++;return}if(!date){invalidDate++;return}
   var units=safeNum(r[cols.units]);if(units<=0)units=1;var unitPrice=safeNum(r[cols.price]),amount=safeNum(r[cols.amount]);if(!unitPrice&&amount)unitPrice=amount/units;if(!unitPrice)missingHistoricalPrice++;
   var match=cachedMatch(product+' '+desc),cat=match?.category||categoryOf(product+' '+desc),brand=match?.brand||brandOf(product+' '+desc);if(cat==='Other')unmapped++;
@@ -417,24 +446,27 @@ function processFile(file){
    sourceRows=rows;
    var keys=Array.from(new Set(rows.flatMap(function(r){return Object.keys(r)})));
    var detected={
-    customer:findCol(keys,['CUSTOMER ID NUMBER','CUSTOMER ID','CUSTOMER CODE','CUST ID','ID NUMBER']),
+    customer:findCustomerCol(keys),
     name:findCol(keys,['CUSTOMER NAME','NAME']),
     product:findCol(keys,['PRODUCT','ITEM','PRODUCT NAME']),
     description:findCol(keys,['PRODUCT DESCRIPTION','DESCRIPTION','ITEM DESCRIPTION']),
     date:findCol(keys,['DATE OF SALE','SALE DATE','DATE','INVOICE DATE']),
     units:findCol(keys,['UNITS','QTY','QUANTITY']),
-    phone:findCol(keys,['PHONE / MOBILE NUMBER','MOBILE NUMBER','PHONE','MOBILE','CONTACT NUMBER']),
+    phone:findCol(keys,['PHONE / MOBILE NUMBER','MOBILE NUMBER','PHONE','MOBILE','MOBILE_NO','CONTACT NUMBER']),
     price:findCol(keys,['UNIT PRICE','SELLING PRICE','PRICE','UNIT AMOUNT','RATE'])
    };
+   detected.customerKey=detected.customer||detected.name||'';
+   detected.customerFallback=!detected.customer&&!!detected.name;
    var missing=[];
-   if(!detected.customer)missing.push('Customer ID');
+   if(!detected.customerKey)missing.push('Customer ID / Customer Name');
    if(!detected.product&&!detected.description)missing.push('Product');
    if(!detected.date)missing.push('Sale Date');
    document.getElementById('fileName').textContent=file.name+' | '+rows.length.toLocaleString()+' source rows';
    var diag=document.getElementById('inputDiagnostics');
    if(diag){
     diag.style.display='block';
-    diag.innerHTML='<b>Detected fields:</b> Customer='+(detected.customer||'NOT FOUND')+' | Product='+(detected.product||detected.description||'NOT FOUND')+' | Date='+(detected.date||'NOT FOUND')+' | Units='+(detected.units||'not provided')+' | Mobile='+(detected.phone||'not provided')+' | Price='+(detected.price||'not provided')+(missing.length?'<br><br><b>Required fields missing:</b> '+escapeHtml(missing.join(', '))+' — analysis may produce no customer recommendations.':'<br><br><b>Input looks ready.</b> Analysis will run automatically now.');
+    var customerText=detected.customer?detected.customer:(detected.name?detected.name+' (fallback key — Customer ID column not detected)':'NOT FOUND');
+    diag.innerHTML='<b>Detected fields:</b> Customer='+escapeHtml(customerText)+' | Product='+escapeHtml(detected.product||detected.description||'NOT FOUND')+' | Date='+escapeHtml(detected.date||'NOT FOUND')+' | Units='+escapeHtml(detected.units||'not provided')+' | Mobile='+escapeHtml(detected.phone||'not provided')+' | Price='+escapeHtml(detected.price||'not provided')+(missing.length?'<br><br><b>Required fields missing:</b> '+escapeHtml(missing.join(', '))+' — analysis cannot build customer-wise recommendations.':(detected.customerFallback?'<br><br><b>Customer ID column not detected.</b> Customer Name will be used as the customer key so the customer-wise table can still be generated.':'<br><br><b>Input looks ready.</b> Customer-wise analysis will run automatically now.'));
    }
    if(missing.length){
     document.getElementById('analyze').disabled=true;
