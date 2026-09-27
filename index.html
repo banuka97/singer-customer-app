@@ -550,6 +550,18 @@ function processFile(file){
        ws=wb.Sheets[wb.SheetNames[0]],
        rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
    sourceRows=rows;
+   if(!rows.length){
+    document.getElementById('status').textContent='The selected file contains no transaction rows.';
+    document.getElementById('status').className='status bad';
+    document.getElementById('analyze').disabled=true;
+    return;
+   }
+   if(rows.length>250000){
+    document.getElementById('status').textContent='This file contains more than 250,000 rows. Please split the file into smaller batches for reliable browser processing.';
+    document.getElementById('status').className='status bad';
+    document.getElementById('analyze').disabled=true;
+    return;
+   }
    var keys=Array.from(new Set(rows.flatMap(function(r){return Object.keys(r)})));
    var detected={
     customer:findCustomerCol(keys),
