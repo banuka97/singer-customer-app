@@ -438,11 +438,19 @@ function plainCustomerReason(r,lang){
  return parts.join(' ');
 }
 function buildSalesMessage(r,lang){
- var name=r.name||'Customer',p=r.primary,a1=r.alt1,a2=r.alt2,price=p&&p.price?fmtMoney(p.price):'',offer=p&&p.discount? ' '+p.discount:'',why=plainCustomerReason(r,lang);
- var altLine=function(x){return x?'• '+x.product+' – '+fmtMoney(x.price)+(x.discount?' ('+x.discount+')':'')+'\\n  '+(x.url||''):''};
- var en='Hi '+name+' 👋\\n\\nThank you for choosing Singer. We looked at your previous purchase of '+r.lastProduct+' and found a product that may be a great next addition for you.\\n\\n⭐ '+(p?p.product:'A Singer product')+'\\n'+(price?'Price: '+price+offer:'')+'\\n\\nWhy we selected it:\\n'+why+'\\n\\nWould you like me to share the latest details and help you with the purchase? Just reply to this message and our sales team will assist you.\\n\\nYou can also compare these alternatives:\\n'+[a1,a2].map(altLine).filter(Boolean).join('\\n')+'\\n\\nThank you, Singer.';
- var si='හිතවත් '+name+' 👋\\n\\nSinger සමඟ නැවතත් සම්බන්ධ වීම ගැන ස්තුතියි. ඔබ අවසන් වරට මිලදීගත් '+r.lastProduct+' අනුව, ඔබට ගැළපිය හැකි ඊළඟ නිෂ්පාදනයක් අපි තෝරාගෙන ඇත.\\n\\n⭐ '+(p?p.product:'Singer නිෂ්පාදනයක්')+'\\n'+(price?'මිල: '+price+offer:'')+'\\n\\nඇයි මෙය තෝරාගත්තේ:\\n'+why+'\\n\\nඔබ කැමති නම්, නවතම විස්තර සහ මිලදී ගැනීමේ විකල්ප අපි මෙහිම share කරන්න පුළුවන්. මේ පණිවිඩයට reply කරන්න.\\n\\nවෙනත් විකල්ප:\\n'+[a1,a2].map(altLine).filter(Boolean).join('\\n')+'\\n\\nස්තුතියි, Singer.';
- var ta='அன்பார்ந்த '+name+' 👋\\n\\nSinger-ஐ தேர்வு செய்ததற்கு நன்றி. நீங்கள் கடைசியாக வாங்கிய '+r.lastProduct+' அடிப்படையில், உங்களுக்கு பொருந்தக்கூடிய அடுத்த தயாரிப்பாக ஒன்றைத் தேர்ந்தெடுத்துள்ளோம்.\\n\\n⭐ '+(p?p.product:'ஒரு Singer தயாரிப்பு')+'\\n'+(price?'விலை: '+price+offer:'')+'\\n\\nஏன் இதைத் தேர்ந்தெடுத்தோம்:\\n'+why+'\\n\\nநீங்கள் விரும்பினால், சமீபத்திய விவரங்கள் மற்றும் வாங்கும் விருப்பங்களை இங்கேயே பகிரலாம். இந்த செய்திக்கு reply செய்யுங்கள்.\\n\\nமற்ற விருப்பங்கள்:\\n'+[a1,a2].map(altLine).filter(Boolean).join('\\n')+'\\n\\nநன்றி, Singer.';
+ var name=r.name||'Customer',p=r.primary,price=p&&p.price?fmtMoney(p.price):'';
+ var promotion='';
+ if(p){
+   var promoParts=[];
+   if(p.discount) promoParts.push(p.discount);
+   if(p.offerNote) promoParts.push(String(p.offerNote).split('|')[0].trim());
+   promotion=promoParts.filter(Boolean).join(' • ');
+ }
+ var why=plainCustomerReason(r,lang);
+ var productUrl=p&&p.url?p.url:'';
+ var en='Hi '+name+' 👋\\n\\nThank you for choosing Singer.\\n\\nBased on your previous purchase of '+r.lastProduct+', we found a product that may be a good next choice for you.\\n\\n⭐ '+(p?p.product:'A Singer product')+'\\n'+(price?'💰 Price: '+price+'\\n':'')+(promotion?'🎁 Promotion: '+promotion+'\\n':'')+'\\nWhy it may suit you:\\n'+why+(productUrl?'\\n\\nView product: '+productUrl:'')+'\\n\\nInterested? Just reply to this message and our sales team will be happy to help.\\n\\nThank you, Singer.';
+ var si='හිතවත් '+name+' 👋\\n\\nSinger තෝරාගැනීම ගැන ස්තුතියි.\\n\\nඔබ අවසන් වරට මිලදීගත් '+r.lastProduct+' අනුව, ඔබට ගැළපිය හැකි ඊළඟ නිෂ්පාදනයක් අපි තෝරාගෙන ඇත.\\n\\n⭐ '+(p?p.product:'Singer නිෂ්පාදනයක්')+'\\n'+(price?'💰 මිල: '+price+'\\n':'')+(promotion?'🎁 විශේෂ දීමනාව: '+promotion+'\\n':'')+'\\nඇයි මෙය ඔබට ගැළපිය හැක්කේ:\\n'+why+(productUrl?'\\n\\nනිෂ්පාදනය බලන්න: '+productUrl:'')+'\\n\\nඔබ කැමති නම්, මේ පණිවිඩයට reply කරන්න. අපගේ sales team එක ඔබට උදව් කරන්න සූදානම්.\\n\\nස්තුතියි, Singer.';
+ var ta='அன்பார்ந்த '+name+' 👋\\n\\nSinger-ஐ தேர்வு செய்ததற்கு நன்றி.\\n\\nநீங்கள் கடைசியாக வாங்கிய '+r.lastProduct+' அடிப்படையில், உங்களுக்கு பொருந்தக்கூடிய அடுத்த தயாரிப்பை நாங்கள் தேர்ந்தெடுத்துள்ளோம்.\\n\\n⭐ '+(p?p.product:'ஒரு Singer தயாரிப்பு')+'\\n'+(price?'💰 விலை: '+price+'\\n':'')+(promotion?'🎁 சிறப்பு சலுகை: '+promotion+'\\n':'')+'\\nஏன் இது உங்களுக்கு பொருந்தலாம்:\\n'+why+(productUrl?'\\n\\nதயாரிப்பைப் பார்க்க: '+productUrl:'')+'\\n\\nவிருப்பம் இருந்தால், இந்த செய்திக்கு reply செய்யுங்கள். எங்கள் sales team உதவ தயாராக உள்ளது.\\n\\nநன்றி, Singer.';
  return lang==='si'?si:lang==='ta'?ta:en;
 }
 function waUrl(phone,msg){return phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):''}
