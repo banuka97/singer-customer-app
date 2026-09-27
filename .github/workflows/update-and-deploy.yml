@@ -2,19 +2,20 @@ name: Singer Customer App - Update & Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths-ignore:
+      - catalogue.json
   workflow_dispatch:
   schedule:
     - cron: "7 * * * *"
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: singer-pages
   cancel-in-progress: true
 
 jobs:
@@ -22,27 +23,27 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Install Python packages
-        run: pip install requests beautifulsoup4
-
+      - run: pip install requests beautifulsoup4
       - name: Refresh Singer catalogue
         run: python scripts/update_catalogue.py
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Commit refreshed catalogue
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add catalogue.json
+          if git diff --cached --quiet; then
+            echo "No catalogue changes."
+          else
+            git commit -m "chore: refresh Singer catalogue"
+            git push
+          fi
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: "."
-
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
