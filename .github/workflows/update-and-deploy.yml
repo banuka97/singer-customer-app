@@ -25,12 +25,37 @@ jobs:
       name: github-pages
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install requests beautifulsoup4
+      - name: Install scraper dependencies
+        run: pip install requests beautifulsoup4
       - name: Refresh Singer catalogue
         run: python scripts/update_catalogue.py
+      - name: Validate catalogue health
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("catalogue.json").read_text(encoding="utf-8"))
+          products=p.get("products",[])
+          if len(products) < 50:
+              raise SystemExit(f"Catalogue validation failed: only {len(products)} products.")
+          live=sum(1 for x in products if x.get("live"))
+          if live/max(1,len(products)) < 0.60:
+              raise SystemExit(f"Catalogue validation failed: live coverage {live}/{len(products)}.")
+          skus=[str(x.get("sku","")).strip().upper() for x in products if str(x.get("sku","")).strip()]
+          duplicate_skus=len(products)-len(set(skus))
+          if sum(1 for x in products if not x.get("sku")):
+              raise SystemExit("Catalogue validation failed: at least one product has no SKU.")
+          if sum(1 for x in products if not x.get("url")):
+              raise SystemExit("Catalogue validation failed: at least one product has no source URL.")
+          if duplicate_skus:
+              raise SystemExit(f"Catalogue validation failed: {duplicate_skus} duplicate SKU records.")
+          print(f"Catalogue validation passed: {len(products)} products, {live} live, {p.get('summary',{}).get('stockStatusKnown',0)} with known internal stock.")
+          PY
       - name: Commit refreshed catalogue
         run: |
           git config user.name github-actions[bot]
@@ -38,12 +63,12 @@ jobs:
           git add catalogue.json
           if git diff --cached --quiet; then
             echo "No catalogue changes."
-            exit 0
+          else
+            git commit -m "chore: refresh Singer catalogue"
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           fi
-          git commit -m "chore: refresh Singer catalogue"
-          git fetch origin main
-          git rebase origin/main
-          git push origin HEAD:main
       - uses: actions/upload-pages-artifact@v3
         with:
           path: "."
