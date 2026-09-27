@@ -14,13 +14,14 @@
 .wrap{max-width:1420px;margin:0 auto;padding:24px 28px 50px}.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 8px #10182808}.card h2{font-size:16px;margin:0 0 12px}.card h3{font-size:14px;margin:16px 0 9px}
 .drop{border:2px dashed #b7c3d6;border-radius:12px;padding:23px;text-align:center;background:#fbfcfe}.drop strong{display:block;font-size:15px;margin-bottom:7px}.drop small{color:var(--muted)}
 input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:9px;padding:10px 15px;font-weight:600;cursor:pointer;font-size:13px}.filebtn{background:var(--blue);color:#fff;margin-top:13px}.btn{background:#eef3ff;color:#1744a5;margin-right:8px}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:var(--navy);color:#fff}.btn.green{background:#ecfdf3;color:#05603a}.btn:disabled{opacity:.45;cursor:not-allowed}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px}.kpi .n{font-size:22px;font-weight:700}.kpi .l{font-size:11px;color:var(--muted);margin-top:3px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.qualityGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}.qualityItem{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}.qualityItem .qn{font-size:16px;font-weight:700}.qualityItem .ql{font-size:10px;color:var(--muted);margin-top:3px}.kpi{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px}.kpi .n{font-size:22px;font-weight:700}.kpi .l{font-size:11px;color:var(--muted);margin-top:3px}
 .status{font-size:12px;color:var(--muted);min-height:18px;margin-top:10px}.status.ok{color:var(--green)}.status.warn{color:var(--amber)}
 .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.controls input,.controls select{padding:9px 10px;border:1px solid #cfd6e2;border-radius:8px;background:#fff;font-size:12px}.controls input{min-width:240px}
 .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:11px;background:#fff}th{position:sticky;top:0;background:#f2f5fa;color:#344054;text-align:left;padding:9px;border-bottom:1px solid var(--line);white-space:nowrap}td{padding:8px 9px;border-bottom:1px solid #edf0f5;vertical-align:top}tr:hover td{background:#fafcff}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#eef3ff;color:#1744a5;font-weight:600;font-size:10px}.score{font-weight:700}.mono{font-family:Consolas,monospace;font-size:10px}
 .note{background:#f8faff;border-left:4px solid var(--blue);padding:11px 13px;border-radius:8px;font-size:12px;color:#344054;line-height:1.5}.muted{color:var(--muted)}
 .footer{margin-top:20px;font-size:11px;color:var(--muted);text-align:center}.hidden{display:none!important}
-@media(max-width:1000px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.qualityGrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.qualityGrid{grid-template-columns:repeat(2,1fr)}}
 
 .chartGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px}.chartBox{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}.chartTitle{font-size:13px;font-weight:700;margin-bottom:10px}.barRow{display:grid;grid-template-columns:1fr 70px;gap:10px;align-items:center;margin:8px 0}.barLabel{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.barTrack{height:16px;background:#edf2f7;border-radius:99px;overflow:hidden}.barFill{height:100%;border-radius:99px}.barCount{text-align:right;font-size:11px;font-weight:700;color:#344054}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#667085;margin-top:9px}.legend span{display:inline-flex;align-items:center;gap:5px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}.c1{background:#155eef}.c2{background:#12b76a}.c3{background:#f79009}.chartEmpty{font-size:11px;color:#98a2b3;padding:15px 0}.chartNote{margin-top:10px;font-size:11px;color:#667085}.waBtn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:8px;padding:7px 10px;background:#12b76a;color:#fff;font-weight:700;font-size:10px;cursor:pointer;text-decoration:none;white-space:nowrap}.waBtn.disabled{background:#e5e7eb;color:#98a2b3;cursor:not-allowed}.phone{white-space:nowrap}.msgBtn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #cfd6e2;border-radius:8px;padding:7px 10px;background:#fff;color:#344054;font-weight:700;font-size:10px;cursor:pointer;text-decoration:none;white-space:nowrap;margin-left:5px}.modal{position:fixed;inset:0;background:#0b1f3a66;display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.open{display:flex}.modalCard{width:min(680px,96vw);max-height:88vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;padding:20px}.modalHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.modalTitle{font-size:17px;font-weight:800}.closeBtn{border:0;background:#eef2f7;border-radius:8px;padding:7px 10px;cursor:pointer;font-weight:700}.messageBox{white-space:pre-wrap;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:15px;font-size:13px;line-height:1.6;color:#1f2937;margin-top:14px}.modalActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 @media(max-width:1000px){.chartGrid{grid-template-columns:1fr}}
@@ -46,7 +47,7 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
     </div>
     <div class="card">
       <h2>2. Export Recommendations</h2>
-      <div class="note">Export the completed customer-wise recommendation analysis to Excel. Includes customer phone/mobile number, three distinct product recommendations, three-language customer messages (English / Sinhala / Tamil), WhatsApp click-to-chat and normal SMS options when a valid number is available. Product prices and offers come from the latest catalogue.json generated by the GitHub scheduled updater.</div>
+      <div class="note">Export the completed customer-wise recommendation analysis to Excel. Includes customer phone/mobile number, three distinct product recommendations, three-language customer messages (English / Sinhala / Tamil), WhatsApp click-to-chat and normal SMS options when a valid number is available. Product prices and offers come from the latest catalogue.json generated by the GitHub scheduled updater.</div><div class="note" style="margin-top:10px"><b>Privacy:</b> the uploaded Excel file is processed in this browser and is not uploaded or stored by this page. Internal stock status is for sales-team use only and is never included in customer-facing WhatsApp/SMS messages.</div>
       <div style="margin-top:15px">
         <button class="btn green" id="xlsxBtn" disabled>Download Excel</button>
         <button class="btn" id="liveBtn" type="button">Refresh Singer Live Data</button>
@@ -58,8 +59,9 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
 
   <div class="card" style="margin-top:20px">
     <h2>Executive Summary</h2>
-    <div class="kpis" id="kpis"><div class="kpi"><div class="n">—</div><div class="l">Transactions</div></div><div class="kpi"><div class="n">—</div><div class="l">Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Repeat Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Categories</div></div></div>
+    <div class="kpis" id="kpis"><div class="kpi"><div class="n">—</div><div class="l">Transactions</div></div><div class="kpi"><div class="n">—</div><div class="l">Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Repeat Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Categories</div></div><div class="kpi"><div class="n">—</div><div class="l">High Opportunity</div></div><div class="kpi"><div class="n">—</div><div class="l">Valid WhatsApp/Mobile</div></div><div class="kpi"><div class="n">—</div><div class="l">Offer Opportunities</div></div><div class="kpi"><div class="n">—</div><div class="l">Indicative Rec. Value</div></div></div>
     <div id="insights" class="note" style="margin-top:13px">Upload a file and run the analysis.</div>
+    <div class="qualityGrid"><div class="qualityItem"><div class="qn" id="qValid">—</div><div class="ql">Valid transaction rows</div></div><div class="qualityItem"><div class="qn" id="qInvalid">—</div><div class="ql">Rows excluded for missing/invalid data</div></div><div class="qualityItem"><div class="qn" id="qDup">—</div><div class="ql">Duplicate order keys</div></div><div class="qualityItem"><div class="qn" id="qMissingPhone">—</div><div class="ql">Customers without valid mobile</div></div><div class="qualityItem"><div class="qn" id="qOther">—</div><div class="ql">Unmapped product categories</div></div><div class="qualityItem"><div class="qn" id="qStale">—</div><div class="ql">Catalogue freshness</div></div></div>
   </div>
 
   <div class="card" style="margin-top:20px">
@@ -67,10 +69,10 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
     <div class="controls">
       <input id="search" placeholder="Search customer ID, name or product..." disabled>
       <select id="catFilter" disabled><option value="">All recommended categories</option></select>
-      <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select>
+      <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select><select id="priorityFilter" disabled><option value="">All priorities</option><option value="High">High opportunity</option><option value="Medium">Medium opportunity</option><option value="Low">Low opportunity</option></select>
       <span class="muted" id="rowCount"></span>
     </div>
-    <div class="tablewrap"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="11" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Priority</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="11" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
   </div>
 
   <div class="card" style="margin-top:20px">
@@ -96,7 +98,7 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
 
   <div class="card" style="margin-top:20px">
     <h2>Product Catalogue Used for Recommendations</h2>
-    <div id="catalogue" class="tablewrap"><table><thead><tr><th>Category</th><th>Product</th><th>SKU</th><th>Indicative Price</th><th>Current Offer</th><th>Source</th></tr></thead><tbody></tbody></table></div>
+    <div id="catalogue" class="tablewrap"><table><thead><tr><th>Category</th><th>Product</th><th>SKU</th><th>Indicative Price</th><th>Current Offer</th><th>Source</th><th>Availability (Internal)</th></tr></thead><tbody></tbody></table></div>
   </div>
   <div class="footer">Prepared as a decision-support tool. Recommendations are model-based opportunities, not guaranteed purchase outcomes.</div>
 </div>
@@ -167,31 +169,26 @@ function waUrl(phone,message){const n=normalizePhone(phone); return n?'https://w
 function smsUrl(phone,message){const n=normalizePhone(phone); return n?'sms:'+n+'?body='+encodeURIComponent(message):'';}
 function recLine(x){if(!x||!x.product)return ''; const price=x.price==null?'':` — ${money(x.price)}`; const sku=x.sku?` (${x.sku})`:''; const offer=x.discount?` | ${x.discount}${x.offerNote?` — ${x.offerNote}`:''}`:''; return `${x.product}${sku}${price}${offer}`;}
 function buildSalesMessage(r,lang='en'){
-  const greeting = r.name ? ({en:`Hi ${r.name},`,si:`හිතවත් ${r.name},`,ta:`அன்புள்ள ${r.name},`}[lang]) : ({en:'Hi,',si:'හිතවත් පාරිභෝගිකතුමනි,',ta:'அன்புள்ள வாடிக்கையாளரே,'}[lang]);
-  const items=[r.primary,r.alt1,r.alt2].filter(x=>x?.product);
-  const productLines = items.map((x,i)=>{
-    const name=x.product || ''; const price=x.price!=null ? money(x.price) : ''; const off=x.discount ? ` | ${x.discount}` : '';
-    const link=x.url?`\n   ${x.url}`:'';
-    if(lang==='si') return `${i+1}. ${name}${price?` — ${price}`:''}${off}${link}`;
-    if(lang==='ta') return `${i+1}. ${name}${price?` — ${price}`:''}${off}${link}`;
-    return `${i+1}. ${name}${price?` — ${price}`:''}${off}${link}`;
+  const greeting=r.name?({en:'Hi '+r.name+',',si:'හිතවත් '+r.name+',',ta:'அன்புள்ள '+r.name+','}[lang]):({en:'Hi,',si:'හිතවත් පාරිභෝගிகருமனே,',ta:'அன்புள்ள வாடிக்கையாளரே,'}[lang]);
+  const items=[r.primary,r.alt1,r.alt2].filter(function(x){return x&&x.product;});
+  const productLines=items.map(function(x,i){
+    const price=x.price!=null?' — '+money(x.price):'';
+    const off=x.discount?' | '+x.discount:'';
+    const link=x.url?'\\n   '+x.url:'';
+    return (i+1)+'. '+x.product+price+off+link;
   });
-  const offerItems=items.filter(x=>x.discount);
-  const offerText = offerItems.length
-    ? ({
-        en:`🔥 Special offers are available on selected items: ${offerItems.map(x=>`${x.product} – ${x.discount}${x.offerNote?` (${x.offerNote})`:''}`).join('; ')}.`,
-        si:`🔥 තෝරාගත් නිෂ්පාදන සඳහා විශේෂ වට්ටම් දැනට ලබා ගත හැක: ${offerItems.map(x=>`${x.product} – ${x.discount}${x.offerNote?` (${x.offerNote})`:''}`).join('; ')}.`,
-        ta:`🔥 தேர்ந்தெடுக்கப்பட்ட பொருட்களுக்கு சிறப்பு சலுகைகள் தற்போது கிடைக்கின்றன: ${offerItems.map(x=>`${x.product} – ${x.discount}${x.offerNote?` (${x.offerNote})`:''}`).join('; ')}.`
-      }[lang])
-    : ({
-        en:'✨ Special promotions may change from time to time. Please contact us for the latest offer available.',
-        si:'✨ විශේෂ ප්‍රවර්ධන වරින් වර වෙනස් විය හැක. දැනට ලබා ගත හැකි නවතම වට්ටම් සහ දීමනා ගැන අප අමතන්න.',
-        ta:'✨ சிறப்பு சலுகைகள் காலத்துக்கு காலம் மாறக்கூடும். தற்போது கிடைக்கும் சமீபத்திய சலுகைகள் மற்றும் விலைகள் குறித்து எங்களை தொடர்பு கொள்ளுங்கள்.'
-      }[lang]);
+  const offerItems=items.filter(function(x){return x.discount;});
+  const offerText=offerItems.length
+    ?({en:'🔥 Selected items have current promotions: '+offerItems.map(function(x){return x.product+' – '+x.discount;}).join('; ')+'. Offers can change.',
+       si:'🔥 තෝරාගත් නිෂ්පාදන සඳහා වර්තමාන විශේෂ දීමනා ඇත: '+offerItems.map(function(x){return x.product+' – '+x.discount;}).join('; ')+'. දීමනා වෙනස් විය හැක.',
+       ta:'🔥 தேர்ந்தெடுக்கப்பட்ட பொருட்களுக்கு தற்போதைய சிறப்பு சலுகைகள் உள்ளன: '+offerItems.map(function(x){return x.product+' – '+x.discount;}).join('; ')+'. சலுகைகள் மாறக்கூடும்.'}[lang])
+    :({en:'✨ Prices and promotions can change. Please check the latest details with our team.',
+       si:'✨ මිල සහ දීමනා වෙනස් විය හැක. නවතම විස්තර සඳහා අපගේ කණ්ඩායම සමඟ පරීක්ෂා කරන්න.',
+       ta:'✨ விலைகள் மற்றும் சலுகைகள் மாறக்கூடும். சமீபத்திய விவரங்களுக்கு எங்கள் குழுவுடன் சரிபார்க்கவும்.'}[lang]);
   const textByLang={
-    en:[greeting,'','Here are some Singer products currently available that may suit your home and everyday needs:','',...productLines,'',offerText,'','View the products on the Singer Sri Lanka website using the links above.','','Reply to this message and we can share the latest price, availability and offer details.'].join('\n'),
-    si:[greeting,'','ඔබගේ නිවසේ සහ දෛනික අවශ්‍යතා සඳහා ගැළපිය හැකි Singer නිෂ්පාදන කිහිපයක් මෙන්න:','',...productLines,'',offerText,'','ඉහත links මඟින් Singer Sri Lanka website එකෙන් නිෂ්පාදන විස්තර බලන්න.','','නවතම මිල, ලබාගත හැකි බව සහ දීමනා පිළිබඳ වැඩි විස්තර සඳහා මෙම පණිවිඩයට reply කරන්න.'].join('\n'),
-    ta:[greeting,'','உங்கள் வீட்டு மற்றும் அன்றாட தேவைகளுக்கு பொருத்தமான சில Singer தயாரிப்புகள் இதோ:','',...productLines,'',offerText,'','மேலே உள்ள links மூலம் Singer Sri Lanka இணையதளத்தில் தயாரிப்பு விவரங்களை பார்க்கலாம்.','','சமீபத்திய விலை, கிடைக்கும் நிலை மற்றும் சலுகை விவரங்களுக்கு இந்த செய்திக்கு பதிலளிக்கவும்.'].join('\n')
+    en:[greeting,'','Based on your previous purchases, here are a few Singer products that may suit your needs:',''].concat(productLines,['',offerText,'','Please use the product links above to view the latest details on the Singer Sri Lanka website.','','Reply to this message and we can help with current pricing, availability and promotions.']).join('\\n'),
+    si:[greeting,'','ඔබගේ පෙර මිලදී ගැනීම් අනුව, ඔබට ගැළපිය හැකි Singer නිෂ්පාදන කිහිපයක් මෙන්න:',''].concat(productLines,['',offerText,'','ඉහත product links මඟින් Singer Sri Lanka website එකේ නවතම විස්තර බලන්න.','','වර්තමාන මිල, ලබාගත හැකි බව සහ දීමනා පිළිබඳ වැඩි විස්තර සඳහා මෙම පණිවිඩයට reply කරන්න.']).join('\\n'),
+    ta:[greeting,'','உங்கள் முந்தைய கொள்முதல்களின் அடிப்படையில், உங்களுக்கு பொருத்தமாக இருக்கக்கூடிய சில Singer தயாரிப்புகள் இதோ:',''].concat(productLines,['',offerText,'','மேலே உள்ள product links மூலம் Singer Sri Lanka இணையதளத்தின் சமீபத்திய விவரங்களைப் பார்க்கலாம்.','','தற்போதைய விலை, கிடைக்கும் நிலை மற்றும் சலுகைகளுக்கு இந்த செய்திக்கு பதிலளிக்கவும்.']).join('\\n')
   };
   return textByLang[lang];
 }
@@ -227,66 +224,61 @@ let model=null, uploadedRows=[];
 let liveMeta={checkedAt:null,updated:0,failed:0,source:'github-catalogue'};
 
 async function loadLiveSingerData(manual=false){
-  const btn=document.getElementById('liveBtn');
-  const st=document.getElementById('liveStatus');
-  if(btn && manual){btn.disabled=true;btn.textContent='Refreshing…';}
-  if(st && manual){st.textContent='Loading the latest Singer catalogue snapshot…';st.className='status';}
+  const btn=document.getElementById('liveBtn'),st=document.getElementById('liveStatus');
+  if(btn&&manual){btn.disabled=true;btn.textContent='Refreshing…';}
+  if(st&&manual){st.textContent='Loading the latest Singer catalogue snapshot…';st.className='status';}
   try{
-    const candidates=[
-      new URL('catalogue.json',document.baseURI).href,
-      `${location.origin}/catalogue.json`
-    ];
-    let resp=null, lastError=null;
-    for(const base of [...new Set(candidates)]){
+    const candidates=[new URL('catalogue.json',document.baseURI).href,location.origin+'/catalogue.json'];
+    let resp=null,lastError=null;
+    for(const base of Array.from(new Set(candidates))){
       try{
-        const candidate=`${base}${base.includes('?')?'&':'?'}ts=${Date.now()}`;
+        const candidate=base+(base.indexOf('?')>=0?'&':'?')+'ts='+Date.now();
         const r=await fetch(candidate,{cache:'no-store',headers:{'Accept':'application/json'}});
         if(r.ok){resp=r;break;}
-        lastError=new Error(`HTTP ${r.status} from ${candidate}`);
+        lastError=new Error('HTTP '+r.status+' from '+candidate);
       }catch(e){lastError=e;}
     }
-    if(!resp) throw lastError||new Error('catalogue.json could not be fetched');
+    if(!resp)throw lastError||new Error('catalogue.json could not be fetched');
     const payload=await resp.json();
-    if(!Array.isArray(payload.products) || !payload.products.length) throw new Error('catalogue.json has no products');
-    const incoming=new Map(payload.products.map(x=>[String(x.sku||'').trim().toLowerCase(),x]));
-    CATALOG=DEFAULT_CATALOG.map(fallback=>{
-      const live=incoming.get(String(fallback.sku||'').trim().toLowerCase());
-      return live?{...fallback,...live}:{...fallback};
-    });
-    liveMeta={
-      checkedAt: payload.checkedAt ? new Date(payload.checkedAt) : new Date(),
-      updated: CATALOG.filter(x=>x.live).length,
-      failed: CATALOG.filter(x=>x.sourceStatus && /fallback/i.test(x.sourceStatus) && !x.live).length,
-      source:'github-catalogue'
-    };
-    if(st){
-      st.textContent=`Singer catalogue loaded: ${liveMeta.updated.toLocaleString()} products have live snapshot data. Last update: ${liveMeta.checkedAt.toLocaleString()}.`;
-      st.className='status ok';
-    }
-    renderCatalogueOnly();
-    if(model) render();
-    return true;
+    if(!Array.isArray(payload.products)||!payload.products.length)throw new Error('catalogue.json has no products');
+    const fallbackMap=new Map(DEFAULT_CATALOG.map(function(x){return [String(x.sku||'').trim().toLowerCase(),x];}));
+    const incoming=payload.products.filter(function(x){return x&&x.product&&x.sku;}).map(function(x){return Object.assign({},fallbackMap.get(String(x.sku).trim().toLowerCase())||{},x);});
+    CATALOG=incoming.length>=10?incoming:DEFAULT_CATALOG.map(function(fallback){const live=payload.products.find(function(x){return String(x.sku||'').trim().toLowerCase()===String(fallback.sku||'').trim().toLowerCase();});return live?Object.assign({},fallback,live):Object.assign({},fallback);});
+    const checkedAt=payload.checkedAt?new Date(payload.checkedAt):new Date();
+    const ageHours=Math.max(0,(Date.now()-checkedAt.getTime())/3600000);
+    liveMeta={checkedAt:checkedAt,updated:CATALOG.filter(function(x){return x.live;}).length,failed:CATALOG.filter(function(x){return !x.live;}).length,total:CATALOG.length,stale:ageHours>3,ageHours:ageHours,source:'github-catalogue'};
+    if(st){st.textContent='Singer catalogue loaded: '+liveMeta.updated.toLocaleString()+' live products / '+liveMeta.total.toLocaleString()+' total. Last update: '+liveMeta.checkedAt.toLocaleString()+(liveMeta.stale?' • refresh is older than 3 hours.':'');st.className=liveMeta.stale?'status warn':'status ok';}
+    renderCatalogueOnly();if(model)render();return true;
   }catch(err){
-    if(st){
-      const detail=err?.message?` (${err.message})`:'';
-      st.textContent=`Live catalogue file could not be loaded${detail}. Using the saved catalogue values. Make sure catalogue.json is uploaded to the same GitHub Pages site.`;
-      st.className='status warn';
-    }
-    renderCatalogueOnly();
-    return false;
+    if(st){st.textContent='Live catalogue file could not be loaded ('+(err&&err.message?err.message:'unknown error')+'). Using saved catalogue values.';st.className='status warn';}
+    renderCatalogueOnly();return false;
   }finally{
-    if(btn && manual){btn.disabled=false;btn.textContent='Refresh Live Singer Data';}
+    if(btn&&manual){btn.disabled=false;btn.textContent='Refresh Live Singer Data';}
   }
 }
 
 function renderCatalogueOnly(){
-  const body=document.getElementById('catalogue')?.querySelector('tbody');
-  if(!body)return;
-  body.innerHTML=CATALOG.map(x=>`<tr><td>${escapeHtml(x.category)}</td><td>${escapeHtml(x.product)}</td><td class="mono">${escapeHtml(x.sku)}</td><td>${money(x.price)}</td><td>${x.discount?`<b>${escapeHtml(x.discount)}</b>${x.offerNote?`<br><span class="muted">${escapeHtml(x.offerNote)}</span>`:''}`:'—'}</td><td><a href="${x.url}" target="_blank" rel="noopener">Singer Sri Lanka</a>${x.live?`<br><span class="muted">Live snapshot</span>`:`<br><span class="muted">Fallback</span>`}</td></tr>`).join('');
+  const body=document.getElementById('catalogue')?.querySelector('tbody');if(!body)return;
+  const stockLabel=function(x){return x.inStock===true?'In stock':x.inStock===false?'Out of stock':'Unknown';};
+  body.innerHTML=CATALOG.map(function(x){return '<tr><td>'+escapeHtml(x.category)+'</td><td>'+escapeHtml(x.product)+'</td><td class="mono">'+escapeHtml(x.sku)+'</td><td>'+money(x.price)+'</td><td>'+(x.discount?'<b>'+escapeHtml(x.discount)+'</b>'+(x.offerNote?'<br><span class="muted">'+escapeHtml(x.offerNote)+'</span>':''):'—')+'</td><td><a href="'+x.url+'" target="_blank" rel="noopener">Singer Sri Lanka</a>'+(x.live?'<br><span class="muted">Live snapshot</span>':'<br><span class="muted">Fallback</span>')+'</td><td><span class="muted">'+stockLabel(x)+' • internal only</span></td></tr>';}).join('');
 }
 
-
-
+function median(values){
+  const a=values.filter(function(x){return Number.isFinite(x);}).sort(function(x,y){return x-y;});
+  if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2;
+}
+function brandOfText(text){
+  const brands=['Singer','Samsung','Sony','Whirlpool','Beko','Sisil','ASUS','LG','Philips','Panasonic','Dell','HP','Acer','Apple','Oppo','Vivo','Redmi','Realme','Haier','TCL'];
+  const s=String(text||'');
+  for(const b of brands)if(new RegExp('\\\\b'+b+'\\\\b','i').test(s))return b;
+  return '';
+}
+function catalogueMatchForRow(r){
+  const text=(r.product+' '+r.desc).toLowerCase();
+  const exact=CATALOG.find(function(x){return String(x.sku||'').toLowerCase()===String(r.product||'').trim().toLowerCase();});
+  if(exact)return exact;
+  return CATALOG.find(function(x){return x.product&&text.indexOf(String(x.product).toLowerCase().slice(0,36))>=0;})||null;
+}
 function analyze(rows){
   const headers=Object.keys(rows[0]||{});
   const cust=findCol(headers,['customeridnumber','customerid','customer','customernumber','customeridno']);
@@ -296,138 +288,102 @@ function analyze(rows){
   const desc=findCol(headers,['productdescription','description']);
   const date=findCol(headers,['dateofsale','date','saledate']);
   const units=findCol(headers,['units','qty','quantity']);
-  if(!cust||!product||!date) throw new Error('Required columns could not be identified. Expected CUSTOMER ID NUMBER, PRODUCT and DATE OF SALE.');
-  const clean=rows.map(r=>({cust:norm(r[cust]),name:norm(r[name]),phone:norm(r[phone]),product:norm(r[product]),desc:norm(r[desc]),date:r[date],units:Number(r[units]||1)||1})).filter(r=>r.cust&&r.product);
-  const by={}; clean.forEach(r=>(by[r.cust]??=[]).push(r)); Object.values(by).forEach(a=>a.sort((x,y)=>numDate(x.date)-numDate(y.date)));
-  const trans={}, global={}, catCust={};
-  Object.entries(by).forEach(([cid,a])=>{
-    const cats=new Set(); a.forEach(r=>{const c=categoryOf(r.product+' '+r.desc); r.cat=c; global[c]=(global[c]||0)+1; cats.add(c)}); catCust[cid]=cats.size;
+  const order=findCol(headers,['orderno','ordernumber','orderid','invoice','invoiceno','invoiceid']);
+  const unitPriceCol=findCol(headers,['unitprice','sellingprice','saleprice','unitcost']);
+  if(!cust||!product||!date)throw new Error('Required columns could not be identified. Expected CUSTOMER ID NUMBER, PRODUCT and DATE OF SALE.');
+  const normalized=rows.map(function(r,idx){const rawPrice=unitPriceCol?Number(String(r[unitPriceCol]??'').replace(/,/g,'')):NaN;return {_row:idx+2,cust:norm(r[cust]),name:norm(r[name]),phone:norm(r[phone]),product:norm(r[product]),desc:norm(r[desc]),date:r[date],units:Number(r[units]||1)||1,order:norm(r[order]),unitPrice:rawPrice};});
+  const invalidRequired=normalized.filter(function(r){return !r.cust||!r.product;}),invalidDate=normalized.filter(function(r){return r.cust&&r.product&&!fmtDate(r.date);});
+  const clean=normalized.filter(function(r){return r.cust&&r.product&&fmtDate(r.date);});
+  const orderKeys=new Map();for(const r of clean){const key=r.order||(r.cust+'|'+fmtDate(r.date)+'|'+r.product);orderKeys.set(key,(orderKeys.get(key)||0)+1);}
+  const duplicateOrderKeys=Array.from(orderKeys.values()).filter(function(n){return n>1;}).length;
+  const by={};clean.forEach(function(r){(by[r.cust]??=[]).push(r);});Object.values(by).forEach(function(a){a.sort(function(x,y){return numDate(x.date)-numDate(y.date);});});
+  const trans={},global={};
+  Object.values(by).forEach(function(a){
+    a.forEach(function(r){const c=categoryOf(r.product+' '+r.desc);r.cat=c;global[c]=(global[c]||0)+1;});
     for(let i=1;i<a.length;i++){const from=a[i-1].cat,to=a[i].cat;if(from!==to){trans[from]??={};trans[from][to]=(trans[from][to]||0)+1;}}
   });
-  const globalTotal=Object.values(global).reduce((a,b)=>a+b,0);
-  const recs=[];
-  const allCats=Array.from(new Set([...Object.keys(global),...CATALOG.map(x=>x.category)])).filter(c=>c!=='Other');
-  Object.entries(by).forEach(([cid,a])=>{
-    const last=a[a.length-1], lastCat=last.cat, owned=new Set(a.map(x=>x.cat));
-    const totalTrans=trans[lastCat]?Object.values(trans[lastCat]).reduce((x,y)=>x+y,0):0;
-    const scored=allCats.filter(c=>!owned.has(c)).map(c=>{
-      const t=(trans[lastCat]&&trans[lastCat][c])||0;
-      const transProb=totalTrans?t/totalTrans:0;
-      const pop=(global[c]||0)/globalTotal;
-      const recencyDays=Math.max(0,Math.round((Date.now()-numDate(last.date))/86400000));
-      const freshness=recencyDays>0?Math.max(0,1-Math.min(recencyDays,1800)/1800):1;
-      const score=Math.min(99,Math.round(100*(0.62*transProb+0.25*pop+0.13*freshness)));
-      return {cat:c,score,trans:t,transProb,pop,freshness};
-    }).sort((a,b)=>b.score-a.score||b.trans-a.trans||b.pop-a.pop);
-    const pool=scored.length?scored:allCats.map(c=>({cat:c,score:50,trans:0,transProb:0,pop:(global[c]||0)/globalTotal,freshness:.5})).sort((a,b)=>b.pop-a.pop);
-    // Diversity-first recommendation selection:
-    // 1) Pick one representative product from the strongest NEW category.
-    // 2) Pick the best products from other NEW categories, avoiding duplicate SKUs/products.
-    // 3) If fewer than 3 categories are available, fill from additional catalogue products while
-    //    still avoiding exact product/SKU duplicates.
-    const rankedProducts=[];
-    const seenCats=new Set();
-    for(const s of pool){
-      const products=CATALOG.filter(x=>x.category===s.cat && x.product);
-      if(!products.length) continue;
-      const p=products[0];
-      rankedProducts.push({...s,...p});
-    }
-    const selected=[]; const seenProducts=new Set(); const selectedCats=new Set();
-    for(const x of rankedProducts){
-      const key=String(x.sku||x.p.product||'').trim().toLowerCase();
-      const productKey=String(x.product||'').trim().toLowerCase();
-      if(!key || seenProducts.has(key) || seenProducts.has(productKey) || selectedCats.has(x.cat)) continue;
-      selected.push(x); seenProducts.add(key); seenProducts.add(productKey); selectedCats.add(x.cat);
-      if(selected.length===3) break;
+  const globalTotal=Object.values(global).reduce(function(x,y){return x+y;},0)||1;
+  const recs=[],allCats=Array.from(new Set(Object.keys(global).concat(CATALOG.map(function(x){return x.category;})))).filter(function(c){return c!=='Other';});
+
+  Object.entries(by).forEach(function(entry){
+    const cid=entry[0],a=entry[1],last=a[a.length-1],lastCat=last.cat,owned=new Set(a.map(function(x){return x.cat;}));
+    const matchedPrices=[],brandCounts={},discounted=0;
+    a.forEach(function(row){const p=catalogueMatchForRow(row);const price=Number.isFinite(row.unitPrice)&&row.unitPrice>0?row.unitPrice:(p&&p.price);if(price)matchedPrices.push(Number(price));const b=brandOfText(row.product+' '+row.desc);if(b)brandCounts[b]=(brandCounts[b]||0)+1;if(p&&p.discount)discounted++;});
+    const budget=median(matchedPrices),preferredBrand=Object.entries(brandCounts).sort(function(x,y){return y[1]-x[1];})[0]?.[0]||'',offerSensitivity=discounted/Math.max(1,matchedPrices.length);
+    const totalTrans=trans[lastCat]?Object.values(trans[lastCat]).reduce(function(x,y){return x+y;},0):0;
+    const scored=allCats.filter(function(c){return !owned.has(c);}).map(function(c){
+      const t=(trans[lastCat]&&trans[lastCat][c])||0,transProb=totalTrans?t/totalTrans:0,pop=(global[c]||0)/globalTotal;
+      const recencyDays=Math.max(0,Math.round((Date.now()-numDate(last.date))/86400000)),freshness=recencyDays?Math.max(0,1-Math.min(recencyDays,1800)/1800):1;
+      const score=Math.min(99,Math.round(100*(0.50*transProb+0.20*pop+0.10*freshness+(budget?0.10:0)+(preferredBrand?0.05:0)+offerSensitivity*0.05)));
+      return {cat:c,score:score,trans:t,transProb:transProb,pop:pop,freshness:freshness};
+    }).sort(function(x,y){return y.score-x.score||y.trans-x.trans||y.pop-x.pop;});
+    const pool=scored.length?scored:allCats.map(function(c){return {cat:c,score:50,trans:0,transProb:0,pop:(global[c]||0)/globalTotal,freshness:.5};}).sort(function(x,y){return y.pop-x.pop;});
+    const selected=[],seen=new Set(),usedCats=new Set();
+    for(const s0 of pool){
+      let products=CATALOG.filter(function(x){return x.category===s0.cat&&x.product&&(x.inStock!==false||!CATALOG.some(function(y){return y.category===s0.cat&&y.inStock===true;}));});
+      if(!products.length)products=CATALOG.filter(function(x){return x.category===s0.cat&&x.product;});
+      products=products.map(function(p){
+        const priceFit=budget&&p.price?Math.max(0,1-Math.abs(p.price-budget)/Math.max(budget,1)):.5;
+        const pBrand=brandOfText(p.product),brandFit=preferredBrand&&pBrand?(pBrand===preferredBrand?1:0):.5,offerFit=p.discount&&offerSensitivity>0?1:0,stockFit=p.inStock===true?1:(p.inStock===false?0:.5);
+        return Object.assign({},p,{productFit:.55*priceFit+.20*brandFit+.15*offerFit+.10*stockFit});
+      }).sort(function(x,y){return y.productFit-x.productFit||Number(y.price||0)-Number(x.price||0);});
+      const p=products[0];if(!p)continue;const key=String(p.sku||p.product||'').toLowerCase();if(seen.has(key)||usedCats.has(s0.cat))continue;
+      selected.push(Object.assign({},s0,p));seen.add(key);usedCats.add(s0.cat);if(selected.length===3)break;
     }
     if(selected.length<3){
-      for(const s of pool){
-        for(const p of CATALOG.filter(x=>x.category===s.cat && x.product)){
-          const key=String(p.sku||p.product||'').trim().toLowerCase();
-          const productKey=String(p.product||'').trim().toLowerCase();
-          if(!key || seenProducts.has(key) || seenProducts.has(productKey)) continue;
-          selected.push({...s,...p}); seenProducts.add(key); seenProducts.add(productKey);
-          if(selected.length===3) break;
-        }
-        if(selected.length===3) break;
+      for(const p of CATALOG.filter(function(x){return x.product&&(x.inStock!==false||!CATALOG.some(function(y){return y.inStock===true;}));})){
+        const key=String(p.sku||p.product||'').toLowerCase();if(seen.has(key))continue;
+        selected.push(Object.assign({cat:p.category,score:40,trans:0,transProb:0,pop:(global[p.category]||0)/globalTotal,freshness:.5},p));seen.add(key);if(selected.length===3)break;
       }
     }
-    const top=selected;
-    const reason=lastCat!=='Other'&&top[0]?`Last purchased ${lastCat}. Historical category transitions + overall demand indicate ${top[0].cat} as the next cross-sell opportunity.`:`Based on the customer’s purchase profile and overall category demand, ${top[0]?.cat||'product'} is identified as a next-product opportunity.`;
-    recs.push({cid,name:a.find(x=>x.name)?.name||'',phone:a.slice().reverse().find(x=>normalizePhone(x.phone))?.phone||'',lastDate:fmtDate(last.date),lastCat,lastProduct:last.product,txCount:a.length,primary:top[0],alt1:top[1],alt2:top[2],score:top[0]?.score||0,reason});
+    const top=selected,score=top[0]?.score||0,priority=score>=80?'High':score>=60?'Medium':'Low';
+    const reasonParts=[];if(lastCat&&top[0])reasonParts.push('Last purchased '+lastCat);if(budget)reasonParts.push('historical price fit around '+money(Math.round(budget)));if(preferredBrand)reasonParts.push('inferred brand affinity for '+preferredBrand);if(offerSensitivity>=0.25)reasonParts.push('discount-sensitive purchase history');reasonParts.push('category transitions, demand and recency');
+    recs.push({cid:cid,name:a.find(function(x){return x.name;})?.name||'',phone:a.slice().reverse().find(function(x){return normalizePhone(x.phone);})?.phone||'',lastDate:fmtDate(last.date),lastCat:lastCat,lastProduct:last.product,txCount:a.length,primary:top[0],alt1:top[1],alt2:top[2],score:score,priority:priority,reason:reasonParts.join('; ')+'.',budget:budget,preferredBrand:preferredBrand,offerOpportunity:!!top[0]?.discount,recValue:Number(top[0]?.price||0)});
   });
-  recs.sort((a,b)=>b.score-a.score || b.txCount-a.txCount);
-  const opp=[]; Object.entries(trans).forEach(([from, tos])=>Object.entries(tos).forEach(([to,n])=>opp.push({from,to,n,total:Object.values(tos).reduce((x,y)=>x+y,0)}))); opp.sort((a,b)=>b.n-a.n);
-  return {clean,by,global,trans,recs,opp,headers};
+  recs.sort(function(a,b){return b.score-a.score||b.txCount-a.txCount;});
+  const opp=[];Object.entries(trans).forEach(function(entry){Object.entries(entry[1]).forEach(function(pair){opp.push({from:entry[0],to:pair[0],n:pair[1],total:Object.values(entry[1]).reduce(function(x,y){return x+y;},0)});});});opp.sort(function(a,b){return b.n-a.n;});
+  const validation={totalRows:rows.length,validRows:clean.length,invalidRequired:invalidRequired.length,invalidDate:invalidDate.length,duplicateOrderKeys:duplicateOrderKeys,customers:Object.keys(by).length,customersMissingPhone:Object.values(by).filter(function(a){return !a.some(function(x){return normalizePhone(x.phone);});}).length,otherRows:clean.filter(function(r){return r.cat==='Other';}).length};
+  return {clean:clean,by:by,global:global,trans:trans,recs:recs,opp:opp,headers:headers,validation:validation};
 }
-function renderRecommendationCharts(){
- const series=[
-  ['chartPrimary','primary','c1'],
-  ['chartAlt1','alt1','c2'],
-  ['chartAlt2','alt2','c3']
- ];
- for(const [id,key,colorClass] of series){
-  const el=document.getElementById(id);
-  const counts={};
-  for(const r of model.recs){const p=r[key]?.product||'—'; if(p && p!=='—') counts[p]=(counts[p]||0)+1;}
-  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  if(!top.length){el.innerHTML='<div class="chartEmpty">No recommendation data.</div>';continue;}
-  const max=top[0][1]||1;
-  el.innerHTML=top.map(([label,n])=>`<div class="barRow"><div><div class="barLabel" title="${escapeHtml(label)}">${escapeHtml(label)}</div><div class="barTrack"><div class="barFill ${colorClass}" style="width:${Math.max(5,(n/max)*100)}%"></div></div></div><div class="barCount">${n.toLocaleString()}</div></div>`).join('');
- }
-}
-
 function render(){
- const {clean,by,global,recs,opp}=model;
- const customerCount=Object.keys(by).length, repeat=Object.values(by).filter(a=>a.length>1).length, cats=Object.keys(global).filter(c=>c!=='Other').length;
- document.getElementById('kpis').innerHTML=[[clean.length,'Transactions'],[customerCount.toLocaleString(),'Customers'],[repeat.toLocaleString(),'Repeat Customers'],[cats,'Categories']].map(x=>`<div class="kpi"><div class="n">${x[0]}</div><div class="l">${x[1]}</div></div>`).join('');
- const sortedCats=Object.entries(global).filter(([c])=>c!=='Other').sort((a,b)=>b[1]-a[1]).slice(0,5);
- document.getElementById('insights').innerHTML=`Top historical categories: <b>${sortedCats.map(x=>`${escapeHtml(x[0])} (${x[1]})`).join(', ')}</b>. ${repeat.toLocaleString()} of ${customerCount.toLocaleString()} customers have repeat transactions. The model prioritizes observed next-category transitions, then overall category demand and purchase recency. Each customer receives up to three non-duplicate product recommendations, with category diversity prioritized.`;
- const cf=document.getElementById('catFilter'); cf.innerHTML='<option value="">All recommended categories</option>'+Array.from(new Set(recs.map(r=>r.primary?.cat).filter(Boolean))).sort().map(c=>`<option>${escapeHtml(c)}</option>`).join('');
- document.getElementById('search').disabled=document.getElementById('catFilter').disabled=document.getElementById('scoreFilter').disabled=false;
- renderRows();
- renderRecommendationCharts();
- document.getElementById('opportunities').querySelector('tbody').innerHTML=opp.slice(0,12).map(x=>`<tr><td>${escapeHtml(x.from)}</td><td><span class="pill">${escapeHtml(x.to)}</span></td><td>${x.n}</td><td>${((x.n/x.total)*100).toFixed(1)}%</td></tr>`).join('')||'<tr><td colspan="4">No cross-category transitions available.</td></tr>';
-  renderCatalogueOnly();
+ const clean=model.clean,by=model.by,global=model.global,recs=model.recs,opp=model.opp,validation=model.validation;
+ const customerCount=Object.keys(by).length,repeat=Object.values(by).filter(function(a){return a.length>1;}).length,cats=Object.keys(global).filter(function(c){return c!=='Other';}).length;
+ const high=recs.filter(function(r){return r.priority==='High';}).length,validMobile=recs.filter(function(r){return normalizePhone(r.phone);}).length,offerOpps=recs.filter(function(r){return r.offerOpportunity;}).length,recValue=recs.reduce(function(sum,r){return sum+Number(r.recValue||0);},0);
+ document.getElementById('kpis').innerHTML=[
+  [clean.length.toLocaleString(),'Transactions'],[customerCount.toLocaleString(),'Customers'],[repeat.toLocaleString(),'Repeat Customers'],[cats,'Categories'],
+  [high.toLocaleString(),'High Opportunity'],[validMobile.toLocaleString(),'Valid WhatsApp/Mobile'],[offerOpps.toLocaleString(),'Offer Opportunities'],[money(recValue),'Indicative Rec. Value']
+ ].map(function(x){return '<div class="kpi"><div class="n">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>';}).join('');
+ const sortedCats=Object.entries(global).filter(function(x){return x[0]!=='Other';}).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+ document.getElementById('insights').innerHTML='Top historical categories: <b>'+sortedCats.map(function(x){return escapeHtml(x[0])+' ('+x[1]+')';}).join(', ')+'</b>. '+repeat.toLocaleString()+' of '+customerCount.toLocaleString()+' customers have repeat transactions. Recommendations combine category transitions, demand, recency, price fit, inferred brand affinity, offer sensitivity and internal stock eligibility.';
+ document.getElementById('qValid').textContent=validation.validRows.toLocaleString();document.getElementById('qInvalid').textContent=(validation.invalidRequired+validation.invalidDate).toLocaleString();document.getElementById('qDup').textContent=validation.duplicateOrderKeys.toLocaleString();document.getElementById('qMissingPhone').textContent=validation.customersMissingPhone.toLocaleString();document.getElementById('qOther').textContent=validation.otherRows.toLocaleString();document.getElementById('qStale').textContent=liveMeta.checkedAt?(liveMeta.stale?'Stale':'Fresh'):'Not loaded';
+ const cf=document.getElementById('catFilter');cf.innerHTML='<option value="">All recommended categories</option>'+Array.from(new Set(recs.map(function(r){return r.primary?.cat;}).filter(Boolean))).sort().map(function(c){return '<option>'+escapeHtml(c)+'</option>';}).join('');
+ document.getElementById('search').disabled=document.getElementById('catFilter').disabled=document.getElementById('scoreFilter').disabled=document.getElementById('priorityFilter').disabled=false;
+ renderRows();renderRecommendationCharts();renderCatalogueOnly();
+ document.getElementById('opportunities').querySelector('tbody').innerHTML=opp.slice(0,12).map(function(x){return '<tr><td>'+escapeHtml(x.from)+'</td><td><span class="pill">'+escapeHtml(x.to)+'</span></td><td>'+x.n+'</td><td>'+((x.n/x.total)*100).toFixed(1)+'%</td></tr>';}).join('')||'<tr><td colspan="4">No cross-category transitions available.</td></tr>';
 }
-function openWhatsAppById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(x=>String(x.cid)===String(cid));if(r)openWhatsApp(r);}
-function openMessagePreviewById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(x=>String(x.cid)===String(cid));if(r)openMessagePreview(r);}
-function openSmsById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(x=>String(x.cid)===String(cid));if(r)openSms(r);}
+function openWhatsAppById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(function(x){return String(x.cid)===String(cid);});if(r)openWhatsApp(r);}
+function openMessagePreviewById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(function(x){return String(x.cid)===String(cid);});if(r)openMessagePreview(r);}
+function openSmsById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(function(x){return String(x.cid)===String(cid);});if(r)openSms(r);}
 function renderRows(){
- const q=document.getElementById('search').value.toLowerCase(); const cat=document.getElementById('catFilter').value; const min=Number(document.getElementById('scoreFilter').value||0);
- const rows=model.recs.filter(r=>{const txt=[r.cid,r.name,r.lastProduct,r.lastCat,r.primary?.product,r.alt1?.product,r.alt2?.product].join(' ').toLowerCase();return (!q||txt.includes(q))&&(!cat||r.primary?.cat===cat)&&(r.score>=min)});
- document.getElementById('rowCount').textContent=`${rows.length.toLocaleString()} shown / ${model.recs.length.toLocaleString()}`;
- document.getElementById('tbody').innerHTML=rows.slice(0,1000).map(r=>`<tr><td class="mono">${escapeHtml(r.cid)}</td><td>${escapeHtml(r.name)}</td><td class="phone">${escapeHtml(r.phone||'—')}</td><td>${r.phone?`<button class="msgBtn" onclick="openMessagePreviewById('${encodeURIComponent(r.cid)}')">Preview</button><button class="waBtn" onclick="openWhatsAppById('${encodeURIComponent(r.cid)}')">WhatsApp</button><button class="msgBtn" onclick="openSmsById('${encodeURIComponent(r.cid)}')">SMS</button>`:'<span class="waBtn disabled">No Number</span>'}</td><td>${r.lastDate}</td><td><span class="pill">${escapeHtml(r.lastCat)}</span></td><td><b>${escapeHtml(r.primary?.product||'—')}</b><br><span class="muted mono">${escapeHtml(r.primary?.sku||'')}</span></td><td>${escapeHtml(r.alt1?.product||'—')}</td><td>${escapeHtml(r.alt2?.product||'—')}</td><td class="score">${r.score}</td><td>${escapeHtml(r.reason)}</td></tr>`).join('')||'<tr><td colspan="11" style="text-align:center;padding:28px">No matching customers.</td></tr>';
+ const q=document.getElementById('search').value.toLowerCase(),cat=document.getElementById('catFilter').value,min=Number(document.getElementById('scoreFilter').value||0),priority=document.getElementById('priorityFilter').value;
+ const rows=model.recs.filter(function(r){const txt=[r.cid,r.name,r.lastProduct,r.lastCat,r.primary?.product,r.alt1?.product,r.alt2?.product].join(' ').toLowerCase();return (!q||txt.includes(q))&&(!cat||r.primary?.cat===cat)&&(r.score>=min)&&(!priority||r.priority===priority);});
+ document.getElementById('rowCount').textContent=rows.length.toLocaleString()+' shown / '+model.recs.length.toLocaleString();
+ document.getElementById('tbody').innerHTML=rows.slice(0,1000).map(function(r){return '<tr><td class="mono">'+escapeHtml(r.cid)+'</td><td>'+escapeHtml(r.name)+'</td><td class="phone">'+escapeHtml(r.phone||'—')+'</td><td>'+(r.phone?'<button class="msgBtn" onclick="openMessagePreviewById(\''+encodeURIComponent(r.cid)+'\')">Preview</button><button class="waBtn" onclick="openWhatsAppById(\''+encodeURIComponent(r.cid)+'\')">WhatsApp</button><button class="msgBtn" onclick="openSmsById(\''+encodeURIComponent(r.cid)+'\')">SMS</button>':'<span class="waBtn disabled">No Number</span>')+'</td><td>'+r.lastDate+'</td><td><span class="pill">'+escapeHtml(r.lastCat)+'</span></td><td><b>'+escapeHtml(r.primary?.product||'—')+'</b><br><span class="muted mono">'+escapeHtml(r.primary?.sku||'')+'</span></td><td>'+escapeHtml(r.alt1?.product||'—')+'</td><td>'+escapeHtml(r.alt2?.product||'—')+'</td><td class="score">'+r.score+'</td><td><span class="pill">'+r.priority+'</span></td><td>'+escapeHtml(r.reason)+'</td></tr>';}).join('')||'<tr><td colspan="12" style="text-align:center;padding:28px">No matching customers.</td></tr>';
 }
 function exportXlsx(){
- const recRows=model.recs.map(r=>({
-  'Customer ID':r.cid,'Customer Name':r.name,'Phone / Mobile':r.phone||'','Transaction Count':r.txCount,'Last Purchase Date':r.lastDate,'Last Purchase Category':r.lastCat,'Last Product':r.lastProduct,
-  'Primary Recommendation':r.primary?.product||'','Primary SKU':r.primary?.sku||'','Primary Category':r.primary?.cat||'','Primary Score':r.primary?.score||'','Primary Offer':r.primary?.discount||'','Primary Offer Note':r.primary?.offerNote||'',
-  'Alternative 1':r.alt1?.product||'','Alternative 1 SKU':r.alt1?.sku||'','Alternative 1 Category':r.alt1?.cat||'','Alternative 1 Offer':r.alt1?.discount||'','Alternative 1 Offer Note':r.alt1?.offerNote||'',
-  'Alternative 2':r.alt2?.product||'','Alternative 2 SKU':r.alt2?.sku||'','Alternative 2 Category':r.alt2?.cat||'','Alternative 2 Offer':r.alt2?.discount||'','Alternative 2 Offer Note':r.alt2?.offerNote||'','Rationale':r.reason,'Singer Catalogue Snapshot':liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded','WhatsApp Message - English':buildSalesMessage(r,'en'),'WhatsApp Message - Sinhala':buildSalesMessage(r,'si'),'WhatsApp Message - Tamil':buildSalesMessage(r,'ta'),'WhatsApp Link - English':waUrl(r.phone,buildSalesMessage(r,'en')),'Normal SMS - English':buildSalesMessage(r,'en'),'Normal SMS - Sinhala':buildSalesMessage(r,'si'),'Normal SMS - Tamil':buildSalesMessage(r,'ta'),'Normal SMS Link - English':smsUrl(r.phone,buildSalesMessage(r,'en'))
- }));
- const summary=[['Metric','Value'],['Transactions',model.clean.length],['Customers',Object.keys(model.by).length],['Repeat Customers',Object.values(model.by).filter(a=>a.length>1).length],['Distinct Non-Other Categories',Object.keys(model.global).filter(c=>c!=='Other').length],['Analysis Date',new Date().toISOString().slice(0,10)],['Singer Catalogue Snapshot',liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded'],['Live Products Updated',liveMeta.updated||0],['Live Refresh Failures / Fallbacks',liveMeta.failed||0],['Stock Filter','Not used; out-of-stock products remain eligible']];
- const opp=model.opp.map(x=>({'From Category':x.from,'Next Category':x.to,'Observed Transitions':x.n,'Opportunity Share':x.n/x.total}));
- const cat=CATALOG.map(x=>({'Category':x.category,'Product':x.product,'SKU':x.sku,'Current Price (LKR)':x.price,'Current Discount':x.discount||'','Current Offer Note':x.offerNote||'','Live Refreshed':x.live?'Yes':'No','Singer Source URL':x.url}));
- const wb=XLSX.utils.book_new();
- const recWs=XLSX.utils.json_to_sheet(recRows);
- const linkCol=Object.keys(recRows[0]||{}).indexOf('WhatsApp Link - English');
- if(linkCol>=0){for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:linkCol}); const url=recRows[i]['WhatsApp Link - English']; if(url&&recWs[addr]){recWs[addr].l={Target:url,Tooltip:'Open WhatsApp with pre-filled sales message'};}}}
- const smsLinkCol=Object.keys(recRows[0]||{}).indexOf('Normal SMS Link - English');
- if(smsLinkCol>=0){for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:smsLinkCol}); const url=recRows[i]['Normal SMS Link - English']; if(url&&recWs[addr]){recWs[addr].l={Target:url,Tooltip:'Open the normal SMS app with pre-filled sales message'};}}}
- [['Executive Summary',summary],['Customer Recommendations',recWs],['Category Opportunities',XLSX.utils.json_to_sheet(opp)],['Singer Product Catalogue',XLSX.utils.json_to_sheet(cat)],['Methodology',[['Step','Logic'],['1','Read customer transaction history and normalize date/product fields'],['2','Map purchased SKUs/descriptions to product categories using keyword rules'],['3','Measure category-to-category purchase transitions across customer histories'],['4','Score new category opportunities using transition probability, category demand and recency'],['5','Map recommended categories to representative Singer Sri Lanka catalogue products'],['6','Load the latest Singer prices, discounts and offer notes from catalogue.json, which is refreshed by a scheduled GitHub Action from public Singer Sri Lanka catalogue pages; stock status is intentionally ignored so out-of-stock items can still be recommended, and failed live lookups keep the saved catalogue value'],['7','Export customer-level actions with phone numbers, three-language customer messages, WhatsApp click-to-chat links and normal SMS links']]]].forEach(([name,obj])=>{let ws=Array.isArray(obj)?XLSX.utils.aoa_to_sheet(obj):obj;XLSX.utils.book_append_sheet(wb,ws,name.slice(0,31));});
+ const recRows=model.recs.map(function(r){return {'Customer ID':r.cid,'Customer Name':r.name,'Phone / Mobile':r.phone||'','Transaction Count':r.txCount,'Last Purchase Date':r.lastDate,'Last Purchase Category':r.lastCat,'Last Product':r.lastProduct,'Priority':r.priority,'Opportunity Score':r.score,'Estimated Customer Price Band (LKR)':r.budget?Math.round(r.budget):'','Preferred Brand (inferred)':r.preferredBrand||'','Primary Recommendation':r.primary?.product||'','Primary SKU':r.primary?.sku||'','Primary Category':r.primary?.cat||'','Primary Price (LKR)':r.primary?.price||'','Primary Discount':r.primary?.discount||'','Primary Offer Note':r.primary?.offerNote||'','Primary Internal Stock':'INTERNAL: '+(r.primary?.inStock===true?'In stock':r.primary?.inStock===false?'Out of stock':'Unknown'),'Alternative 1':r.alt1?.product||'','Alternative 1 SKU':r.alt1?.sku||'','Alternative 1 Category':r.alt1?.cat||'','Alternative 1 Price (LKR)':r.alt1?.price||'','Alternative 1 Discount':r.alt1?.discount||'','Alternative 1 Internal Stock':'INTERNAL: '+(r.alt1?.inStock===true?'In stock':r.alt1?.inStock===false?'Out of stock':'Unknown'),'Alternative 2':r.alt2?.product||'','Alternative 2 SKU':r.alt2?.sku||'','Alternative 2 Category':r.alt2?.cat||'','Alternative 2 Price (LKR)':r.alt2?.price||'','Alternative 2 Discount':r.alt2?.discount||'','Alternative 2 Internal Stock':'INTERNAL: '+(r.alt2?.inStock===true?'In stock':r.alt2?.inStock===false?'Out of stock':'Unknown'),'Rationale':r.reason,'Singer Catalogue Snapshot':liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded','WhatsApp Message - English':buildSalesMessage(r,'en'),'WhatsApp Message - Sinhala':buildSalesMessage(r,'si'),'WhatsApp Message - Tamil':buildSalesMessage(r,'ta'),'WhatsApp Link - English':waUrl(r.phone,buildSalesMessage(r,'en')),'Normal SMS - English':buildSalesMessage(r,'en'),'Normal SMS - Sinhala':buildSalesMessage(r,'si'),'Normal SMS - Tamil':buildSalesMessage(r,'ta'),'Normal SMS Link - English':smsUrl(r.phone,buildSalesMessage(r,'en'))};});
+ const summary=[['Metric','Value'],['Transactions',model.clean.length],['Customers',Object.keys(model.by).length],['Repeat Customers',Object.values(model.by).filter(function(a){return a.length>1;}).length],['High Opportunity Customers',model.recs.filter(function(r){return r.priority==='High';}).length],['Valid Mobile/WhatsApp Contacts',model.recs.filter(function(r){return normalizePhone(r.phone);}).length],['Offer Opportunities',model.recs.filter(function(r){return r.offerOpportunity;}).length],['Indicative Recommended Product Value (LKR)',model.recs.reduce(function(a,r){return a+Number(r.recValue||0);},0)],['Distinct Non-Other Categories',Object.keys(model.global).filter(function(c){return c!=='Other';}).length],['Singer Catalogue Snapshot',liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded'],['Live Products Updated',liveMeta.updated||0],['Total Catalogue Products',liveMeta.total||CATALOG.length],['Catalogue Freshness',liveMeta.stale?'STALE (>3h)':'Fresh'],['Invalid/Excluded Rows',model.validation.invalidRequired+model.validation.invalidDate],['Duplicate Order Keys',model.validation.duplicateOrderKeys],['Stock Communication','INTERNAL ONLY - never included in customer-facing messages']];
+ const opp=model.opp.map(function(x){return {'From Category':x.from,'Next Category':x.to,'Observed Transitions':x.n,'Opportunity Share':x.n/x.total};});
+ const cat=CATALOG.map(function(x){return {'Category':x.category,'Product':x.product,'SKU':x.sku,'Current Price (LKR)':x.price,'MRP (LKR)':x.mrp??'','Current Discount':x.discount||'','Current Offer Note':x.offerNote||'','Live Refreshed':x.live?'Yes':'No','Internal Stock':x.inStock===true?'In stock':x.inStock===false?'Out of stock':'Unknown','Singer Source URL':x.url};});
+ const wb=XLSX.utils.book_new(),setWidths=function(ws,headers){ws['!cols']=headers.map(function(h){return {wch:Math.min(48,Math.max(12,String(h).length+2))};});};
+ const recWs=XLSX.utils.json_to_sheet(recRows);setWidths(recWs,Object.keys(recRows[0]||{}));
+ const linkCol=Object.keys(recRows[0]||{}).indexOf('WhatsApp Link - English');if(linkCol>=0)for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:linkCol}),url=recRows[i]['WhatsApp Link - English'];if(url&&recWs[addr])recWs[addr].l={Target:url,Tooltip:'Open WhatsApp with pre-filled customer message'};}
+ const smsLinkCol=Object.keys(recRows[0]||{}).indexOf('Normal SMS Link - English');if(smsLinkCol>=0)for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:smsLinkCol}),url=recRows[i]['Normal SMS Link - English'];if(url&&recWs[addr])recWs[addr].l={Target:url,Tooltip:'Open normal SMS with pre-filled customer message'};}
+ const summaryWs=XLSX.utils.aoa_to_sheet(summary);setWidths(summaryWs,['Metric','Value']);
+ const oppWs=XLSX.utils.json_to_sheet(opp);setWidths(oppWs,Object.keys(opp[0]||{}));
+ const catWs=XLSX.utils.json_to_sheet(cat);setWidths(catWs,Object.keys(cat[0]||{}));
+ const mWs=XLSX.utils.aoa_to_sheet([['Step','Logic'],['1','Validate and normalize transaction history; invalid required rows and invalid dates are counted and excluded.'],['2','Map transaction product text to categories and measure next-category transitions.'],['3','Score opportunities using transitions, category demand, recency, historical price fit, inferred brand affinity and offer sensitivity.'],['4','Choose up to three different products using internal stock as an eligibility signal when stock data is available.'],['5','Load live Singer public prices, MRP, discounts, offers and internal stock metadata through the hourly GitHub Action.'],['6','Uploaded Excel data is processed in the browser and is not uploaded by the page.'],['7','Stock status is internal-only and deliberately excluded from customer-facing WhatsApp/SMS messages.']]);setWidths(mWs,['Step','Logic']);
+ XLSX.utils.book_append_sheet(wb,summaryWs,'Executive Summary');XLSX.utils.book_append_sheet(wb,recWs,'Customer Recommendations');XLSX.utils.book_append_sheet(wb,oppWs,'Category Opportunities');XLSX.utils.book_append_sheet(wb,catWs,'Singer Product Catalogue');XLSX.utils.book_append_sheet(wb,mWs,'Methodology');
  XLSX.writeFile(wb,'Singer_Customer_Next_Product_Recommendations.xlsx');
 }
-document.getElementById('closeModal').addEventListener('click',()=>{document.getElementById('msgModal').classList.remove('open');});
-document.getElementById('msgModal').addEventListener('click',e=>{if(e.target.id==='msgModal')e.currentTarget.classList.remove('open');});
-document.getElementById('file').addEventListener('change',e=>{const f=e.target.files[0];if(f){document.getElementById('fileName').textContent=`Selected: ${f.name}`;document.getElementById('analyze').disabled=false;}});
-document.getElementById('analyze').addEventListener('click',async()=>{const f=document.getElementById('file').files[0];if(!f)return; try{document.getElementById('status').textContent='Reading and analysing transaction history…';const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:false});const sh=wb.Sheets[wb.SheetNames[0]];uploadedRows=XLSX.utils.sheet_to_json(sh,{defval:''}); if(!uploadedRows.length)throw new Error('No data rows found in the first sheet.');model=analyze(uploadedRows);render();const phoneCount=model.recs.filter(r=>normalizePhone(r.phone)).length; document.getElementById('status').textContent=`Analysis completed: ${model.recs.length.toLocaleString()} customers modelled. ${phoneCount.toLocaleString()} customers have a usable phone/mobile number. Singer prices/offers use the latest loaded catalogue snapshot.`;document.getElementById('status').className='status ok';document.getElementById('xlsxBtn').disabled=false;}catch(err){document.getElementById('status').textContent=err.message;document.getElementById('status').className='status warn';console.error(err);}});
-document.getElementById('xlsxBtn').addEventListener('click',exportXlsx);
-document.getElementById('liveBtn').addEventListener('click',()=>loadLiveSingerData(true));
-['search','catFilter','scoreFilter'].forEach(id=>document.getElementById(id).addEventListener('input',()=>model&&renderRows()));
-document.getElementById('reset').addEventListener('click',()=>location.reload());
-window.addEventListener('DOMContentLoaded',()=>{renderCatalogueOnly();loadLiveSingerData(false);});
-</script>
-</body>
-</html>
+
