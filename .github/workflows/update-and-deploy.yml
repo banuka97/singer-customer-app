@@ -38,10 +38,12 @@ jobs:
           git add catalogue.json
           if git diff --cached --quiet; then
             echo "No catalogue changes."
-          else
-            git commit -m "chore: refresh Singer catalogue"
-            git push
+            exit 0
           fi
+          git commit -m "chore: refresh Singer catalogue"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
       - uses: actions/upload-pages-artifact@v3
         with:
           path: "."
