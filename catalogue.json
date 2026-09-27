@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-27T07:12:12.384928Z",
+  "checkedAt": "2026-09-27T07:13:38.053616Z",
   "source": "https://www.singersl.com/products",
   "refreshMethod": "GitHub Actions scheduled scraper",
   "refreshFrequency": "hourly",
@@ -29,7 +29,7 @@
       "mrp": 379999,
       "live": true,
       "sourceStatus": "Live Singer public catalogue",
-      "liveCheckedAt": "2026-09-27T07:08:52.375764Z"
+      "liveCheckedAt": "2026-09-27T07:12:47.199841Z"
     },
     {
       "category": "Television",
@@ -42,7 +42,7 @@
       "offerNote": "",
       "live": true,
       "sourceStatus": "Live Singer public catalogue",
-      "liveCheckedAt": "2026-09-27T07:08:56.049883Z"
+      "liveCheckedAt": "2026-09-27T07:12:49.681605Z"
     },
     {
       "category": "Refrigerator",
@@ -224,14 +224,14 @@
       "category": "Computer",
       "product": "Singer-listed Laptop / Computer Category",
       "sku": "CATALOGUE",
-      "price": 132999,
+      "price": 134899,
       "url": "https://www.singersl.com/products?search=CATALOGUE",
       "live": true,
       "sourceStatus": "Live Singer public catalogue",
       "discount": "5% OFF",
       "offerNote": "",
-      "mrp": 139999,
-      "liveCheckedAt": "2026-09-27T07:12:12.383989Z"
+      "mrp": 141999,
+      "liveCheckedAt": "2026-09-27T07:13:38.052530Z"
     }
   ],
   "notes": [
