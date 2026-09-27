@@ -1,6 +1,8 @@
-# Singer Customer Next-Product Recommendation App
+# Singer Customer Recommendation Hub
 
-This repository is ready for GitHub Pages.
+This repository contains the browser-based Singer customer next-product recommendation and sales action tool.
+
+The published page is intended for internal sales decision support. It is a static GitHub Pages application: transaction files are analyzed in the user's browser and are not uploaded to the page.
 
 ## Included
 
@@ -21,15 +23,24 @@ The existing recommendation engine, Excel upload/export, WhatsApp/SMS actions an
 
 The scheduled job runs once per hour at minute 7 UTC. GitHub scheduled workflows can be delayed during periods of high Actions load.
 
-## `www.singersl.com`
+## Custom domain
 
-The app reads public Singer Sri Lanka product information from `www.singersl.com`; it does not claim or host that domain.
+For a professional internal URL, a subdomain such as `app.singersl.com` is the cleaner choice than using `www.singersl.com`, because `www` normally serves the main public website.
+
+To use `app.singersl.com`, configure that custom domain in the repository's GitHub Pages settings and add the required DNS record at the domain/DNS provider. DNS control and authorization for `singersl.com` are required. This repository intentionally does not claim ownership of that domain.
 
 You can only use `www.singersl.com` as your own custom GitHub Pages domain if you control that domain's DNS and have authorization to change it. For a domain you control, configure the custom domain under **Settings → Pages** and add the DNS records at your domain provider.
 
 ## Local testing
 
 Opening `index.html` directly on your computer still works with the saved fallback catalogue. The automatic catalogue file is intended to be loaded from GitHub Pages or another web server.
+
+## Production-use notes
+
+- The GitHub Pages site is public unless access is separately restricted by your hosting architecture; client-side passwords are not a security boundary.
+- Customer transaction files are processed locally in the browser and are not sent to the site by the application code.
+- Do not upload customer data unless the operator is authorized to process it.
+- The application deliberately keeps stock labels out of customer-facing WhatsApp/SMS messages.
 
 ## Data behavior
 
