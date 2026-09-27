@@ -58,6 +58,19 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
   </div>
 
   <div class="card" style="margin-top:20px">
+    <h2>Customer Recommendations — Customer Wise</h2>
+    <div class="controls">
+      <input id="search" placeholder="Search customer ID, name or product..." disabled>
+      <select id="catFilter" disabled><option value="">All recommended categories</option></select>
+      <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select><select id="priorityFilter" disabled><option value="">All priorities</option><option value="High">High opportunity</option><option value="Medium">Medium opportunity</option><option value="Low">Low opportunity</option></select><select id="segmentFilter" disabled><option value="">All RFM segments</option></select>
+      <span class="muted" id="rowCount"></span>
+    </div>
+    <div class="tablewrap customerResults"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Priority</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="12" style="text-align:center;color:#98a2b3;padding:30px">Upload an Excel file. The app will process it automatically and show customer recommendations here.</td></tr></tbody></table></div>
+  </div>
+
+
+
+  <div class="card" style="margin-top:20px">
     <h2>Executive Summary</h2>
     <div class="kpis" id="kpis"><div class="kpi"><div class="n">—</div><div class="l">Transactions</div></div><div class="kpi"><div class="n">—</div><div class="l">Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Repeat Customers</div></div><div class="kpi"><div class="n">—</div><div class="l">Categories</div></div><div class="kpi"><div class="n">—</div><div class="l">High Opportunity</div></div><div class="kpi"><div class="n">—</div><div class="l">Valid WhatsApp/Mobile</div></div><div class="kpi"><div class="n">—</div><div class="l">Offer Opportunities</div></div><div class="kpi"><div class="n">—</div><div class="l">Indicative Rec. Value</div></div></div>
     <div id="insights" class="note" style="margin-top:13px">Upload a file and run the analysis.</div>
@@ -67,17 +80,6 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
   <div class="card" style="margin-top:20px">
     <h2>Data Quality Controls</h2>
     <div id="qualityDetails" class="note">Run an analysis to see transaction, customer, catalogue and recommendation quality checks.</div>
-  </div>
-
-  <div class="card" style="margin-top:20px">
-    <h2>Customer Recommendations</h2>
-    <div class="controls">
-      <input id="search" placeholder="Search customer ID, name or product..." disabled>
-      <select id="catFilter" disabled><option value="">All recommended categories</option></select>
-      <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select><select id="priorityFilter" disabled><option value="">All priorities</option><option value="High">High opportunity</option><option value="Medium">Medium opportunity</option><option value="Low">Low opportunity</option></select><select id="segmentFilter" disabled><option value="">All RFM segments</option></select>
-      <span class="muted" id="rowCount"></span>
-    </div>
-    <div class="tablewrap"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Priority</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="12" style="text-align:center;color:#98a2b3;padding:30px">Upload an Excel file. The app will process it automatically and show customer recommendations here.</td></tr></tbody></table></div>
   </div>
 
   <div class="card" style="margin-top:20px">
