@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /
+
+# This is an internal sales decision-support site.
+# robots.txt is not an access-control mechanism.
