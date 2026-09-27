@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-27T07:13:38.053616Z",
+  "checkedAt": "2026-09-27T07:36:33.707Z",
   "source": "https://www.singersl.com/products",
-  "refreshMethod": "GitHub Actions scheduled scraper",
+  "refreshMethod": "GitHub Actions catalogue crawl + exact product pages",
   "refreshFrequency": "hourly",
   "products": [
     {
@@ -10,7 +10,7 @@
       "product": "Singer 32\" HD TV",
       "sku": "SLE32E6A",
       "price": 44999,
-      "url": "https://www.singersl.com/products?search=SLE32E6A",
+      "url": "https://www.singersl.com/product/singer-32-hd-tv-sle32e6a",
       "mrp": 59999,
       "discount": "25% OFF",
       "offerNote": "",
@@ -69,7 +69,7 @@
       "product": "Singer Digital Inverter Refrigerator",
       "sku": "SN-276INV",
       "price": 149999,
-      "url": "https://www.singersl.com/products?search=SN-276INV",
+      "url": "https://www.singersl.com/product/singer-digital-inverter-refrigerator-sn-276inv-276l-silver",
       "live": false,
       "sourceStatus": "Fallback retained",
       "liveError": "SKU not found in Singer page"
@@ -104,7 +104,7 @@
       "price": 69999,
       "discount": "22.22% OFF",
       "offerNote": "Extra 20,000.00 off (Price is inclusive of Discount)",
-      "url": "https://www.singersl.com/products?search=SWM-FA70R",
+      "url": "https://www.singersl.com/product/singer-washing-machine-top-load-7kg",
       "mrp": 89999,
       "live": false,
       "sourceStatus": "Fallback retained",
@@ -115,7 +115,7 @@
       "product": "Singer Glass Top Fully Automatic Washing Machine",
       "sku": "SWM-FAR75GT",
       "price": 84999,
-      "url": "https://www.singersl.com/products?search=SWM-FAR75GT",
+      "url": "https://www.singersl.com/product/singer-glass-top-fully-automatic-washing-machine-swm-far75gt-75kg",
       "mrp": 99999,
       "discount": "15% OFF",
       "offerNote": "Extra 15,000.00 off (Price is inclusive of Discount)",
@@ -170,7 +170,7 @@
       "price": 11874,
       "discount": "5% OFF",
       "offerNote": "Special offer available",
-      "url": "https://www.singersl.com/products?search=SRC-1528HS",
+      "url": "https://www.singersl.com/product/singer-rice-cooker-28l",
       "live": false,
       "sourceStatus": "Fallback retained",
       "liveError": "SKU not found in Singer page"
@@ -182,7 +182,7 @@
       "price": 17574,
       "discount": "5% OFF",
       "offerNote": "Special offer available",
-      "url": "https://www.singersl.com/products?search=SRC-2545HS",
+      "url": "https://www.singersl.com/product/singer-rice-cooker-45l",
       "live": false,
       "sourceStatus": "Fallback retained",
       "liveError": "SKU not found in Singer page"
@@ -222,15 +222,15 @@
     },
     {
       "category": "Computer",
-      "product": "Singer-listed Laptop / Computer Category",
-      "sku": "CATALOGUE",
-      "price": 134899,
-      "url": "https://www.singersl.com/products?search=CATALOGUE",
-      "live": true,
-      "sourceStatus": "Live Singer public catalogue",
-      "discount": "5% OFF",
+      "product": "ASUS Vivobook 15 X1504VAP-BQ7658WS",
+      "sku": "AS-14-I7-16-512-7658-SIL",
+      "price": 344999,
+      "url": "https://www.singersl.com/product/asus-vivobook-15-x1504vap-bq7658ws-14th-intel-core-7-150u-16gb-ddr5-ram-512gb-ssd-microsoft-office-home-cool-silver",
+      "live": false,
+      "sourceStatus": "Fallback retained",
+      "discount": "",
       "offerNote": "",
-      "mrp": 141999,
+      "mrp": null,
       "liveCheckedAt": "2026-09-27T07:13:38.052530Z"
     }
   ],
@@ -241,7 +241,7 @@
   ],
   "summary": {
     "total": 20,
-    "liveUpdated": 3,
-    "fallbackRetained": 17
+    "liveUpdated": 2,
+    "fallbackRetained": 18
   }
 }
