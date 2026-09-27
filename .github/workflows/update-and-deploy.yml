@@ -9,9 +9,13 @@ on:
     - cron: "7 * * * *"
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -33,23 +37,6 @@ jobs:
 
       - name: Refresh Singer catalogue
         run: python scripts/update_catalogue.py
-
-      - name: Save updated catalogue
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add catalogue.json
-          if git diff --cached --quiet; then
-            echo "No catalogue changes."
-          else
-            git commit -m "chore: refresh Singer catalogue"
-            git push
-          fi
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
