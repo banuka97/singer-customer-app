@@ -448,53 +448,55 @@ function plainCustomerReason(r,lang){
 }
 function buildSalesMessage(r,lang){
  var name=cleanMessageText(r.name||'Customer');
- var lastProduct=cleanMessageText(r.lastProduct||'your previous purchase');
- var p=r.primary,alt1=r.alt1,alt2=r.alt2,alt3=r.alt3;
+ var items=[r.primary,r.alt1,r.alt2,r.alt3].filter(Boolean);
 
- function promoText(x){
+ function productName(x){return cleanMessageText(x&&x.product||'Singer product')}
+ function itemPromotion(x){
    if(!x)return '';
    var parts=[];
    if(x.discount)parts.push(cleanMessageText(x.discount));
-   if(x.offerNote){
-     var note=String(x.offerNote).split('|')[0].trim();
-     if(note)parts.push(cleanMessageText(note));
-   }
-   return parts.filter(Boolean).join(' • ');
+   return parts.join(' | ');
  }
-
- function productLine(x,index,langCode){
+ function itemOffer(x){
+   if(!x||!x.offerNote)return '';
+   var note=String(x.offerNote).split('|')[0].trim();
+   return cleanMessageText(note);
+ }
+ function line(x,i){
    if(!x)return '';
-   var product=cleanMessageText(x.product||'');
-   var price=x.price?fmtMoney(x.price):'';
-   var promo=promoText(x);
-   var url=x.url||'';
-   if(langCode==='si'){
-     return '\\n\\n'+index+'. '+product+'\\n'+(price?'මිල: '+price+'\\n':'')+(promo?'දීමනාව: '+promo+'\\n':'')+(url?'බලන්න: '+url:'');
-   }
-   if(langCode==='ta'){
-     return '\\n\\n'+index+'. '+product+'\\n'+(price?'விலை: '+price+'\\n':'')+(promo?'சலுகை: '+promo+'\\n':'')+(url?'பார்க்க: '+url:'');
-   }
-   return '\\n\\n'+index+'. '+product+'\\n'+(price?'Price: '+price+'\\n':'')+(promo?'Promotion: '+promo+'\\n':'')+(url?'View: '+url:'');
+   var p=[];
+   var promo=itemPromotion(x);
+   if(promo)p.push(promo);
+   return '\\n'+i+'. '+productName(x)+(x.price?' — '+fmtMoney(x.price):'')+(p.length?' | '+p.join(' | '):'')+'\\n   '+(x.url||'');
+ }
+ function specialOffers(){
+   var offers=[];
+   items.forEach(function(x){
+     var promo=itemPromotion(x);
+     var note=itemOffer(x);
+     if(promo||note){
+       var detail=promo;
+       if(note)detail=detail?(detail+' ('+note+'.)'):note;
+       offers.push(productName(x)+' – '+detail);
+     }
+   });
+   return offers;
  }
 
- var primaryProduct=cleanMessageText(p&&p.product||'A Singer product');
- var primaryPrice=p&&p.price?fmtMoney(p.price):'';
- var primaryPromo=promoText(p);
- var primaryUrl=p&&p.url?p.url:'';
- var reason=cleanMessageText(plainCustomerReason(r,lang));
+ var lines=[];
+ items.forEach(function(x,i){lines.push(line(x,i+1))});
+ var offers=specialOffers();
+ var offerBlock=offers.length?'\\n\\nSpecial offers currently shown on selected items: '+offers.join('; ')+'.':'';
+ var en='Hi '+name+',\\n\\nWe have some great Singer products available that may suit your home and everyday needs:'+lines.join('')+
+ offerBlock+'\\n\\nTap the product link above to view the item on the Singer Sri Lanka website.\\n\\nReply to this message and we can share the latest price, availability and offer details for you.';
 
- var en='Hi '+name+',\\n\\nThank you for choosing Singer.\\n\\nBased on your previous purchase of '+lastProduct+', here are a few products you may like.\\n\\nRECOMMENDED\\n'+primaryProduct+'\\n'+(primaryPrice?'Price: '+primaryPrice+'\\n':'')+(primaryPromo?'Promotion: '+primaryPromo+'\\n':'')+(primaryUrl?'View: '+primaryUrl:'')+
- productLine(alt1,1,'en')+productLine(alt2,2,'en')+productLine(alt3,3,'en')+
- '\\n\\nInterested in any of these? Reply to this message and our Singer sales team will be happy to help.\\n\\nThank you,\\nSinger.';
+ var si='ආයුබෝවන් '+name+',\\n\\nඔබගේ නිවසට සහ දෛනික අවශ්‍යතාවලට ගැළපිය හැකි Singer නිෂ්පාදන කිහිපයක් මෙන්න:'+lines.map(function(v){return v}).join('')+
+ (offers.length?'\\n\\nතෝරාගත් නිෂ්පාදන සඳහා දැනට පෙන්වන විශේෂ දීමනා: '+offers.join('; ')+'.':'')+
+ '\\n\\nඉහත product link එකෙන් Singer Sri Lanka website එකේ විස්තර බලන්න.\\n\\nනවතම මිල, ලබාගත හැකිද යන්න සහ දීමනා පිළිබඳ විස්තර සඳහා මේ පණිවිඩයට reply කරන්න.';
 
- var si='ආයුබෝවන් '+name+',\\n\\nSinger තෝරාගැනීම ගැන ස්තුතියි.\\n\\nඔබ අවසන් වරට මිලදීගත් '+lastProduct+' අනුව, ඔබට කැමති විය හැකි නිෂ්පාදන කිහිපයක් මෙන්න.\\n\\nඔබ සඳහා නිර්දේශිතයි\\n'+primaryProduct+'\\n'+(primaryPrice?'මිල: '+primaryPrice+'\\n':'')+(primaryPromo?'දීමනාව: '+primaryPromo+'\\n':'')+(primaryUrl?'බලන්න: '+primaryUrl:'')+
- productLine(alt1,1,'si')+productLine(alt2,2,'si')+productLine(alt3,3,'si')+
- '\\n\\nමේවායින් ඔබ කැමති එකක් තියෙනවා නම්, මේ පණිවිඩයට reply කරන්න. අපගේ Singer sales team එක උදව් කරනු ඇත.\\n\\nස්තුතියි,\\nSinger.';
-
- var ta='வணக்கம் '+name+',\\n\\nSinger-ஐ தேர்வு செய்ததற்கு நன்றி.\\n\\nநீங்கள் கடைசியாக வாங்கிய '+lastProduct+' அடிப்படையில், உங்களுக்கு பிடிக்கக்கூடிய சில தயாரிப்புகள் இதோ.\\n\\nஉங்களுக்கான பரிந்துரை\\n'+primaryProduct+'\\n'+(primaryPrice?'விலை: '+primaryPrice+'\\n':'')+(primaryPromo?'சலுகை: '+primaryPromo+'\\n':'')+(primaryUrl?'பார்க்க: '+primaryUrl:'')+
- productLine(alt1,1,'ta')+productLine(alt2,2,'ta')+productLine(alt3,3,'ta')+
- '\\n\\nஇவற்றில் விருப்பமானது இருந்தால், இந்த செய்திக்கு reply செய்யுங்கள். எங்கள் Singer sales team உதவ தயாராக உள்ளது.\\n\\nநன்றி,\\nSinger.';
-
+ var ta='வணக்கம் '+name+',\\n\\nஉங்கள் வீட்டு மற்றும் தினசரி தேவைகளுக்கு பொருந்தக்கூடிய சில Singer தயாரிப்புகள் இதோ:'+lines.join('')+
+ (offers.length?'\\n\\nதேர்ந்தெடுக்கப்பட்ட தயாரிப்புகளில் தற்போது காணப்படும் சிறப்பு சலுகைகள்: '+offers.join('; ')+'.':'')+
+ '\\n\\nமேலுள்ள product link மூலம் Singer Sri Lanka இணையதளத்தில் தயாரிப்பைப் பார்க்கலாம்.\\n\\nசமீபத்திய விலை, கிடைக்கும் நிலை மற்றும் சலுகை விவரங்களுக்கு இந்த செய்திக்கு reply செய்யுங்கள்.';
  return lang==='si'?si:lang==='ta'?ta:en;
 }
 function waUrl(phone,msg){return phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):''}
