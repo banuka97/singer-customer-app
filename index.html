@@ -159,7 +159,7 @@ var RULES=[
  ['Iron',/\biron\b|steam iron/i]
 ];
 var BRANDS=['Singer','Samsung','Sony','Whirlpool','Beko','Sisil','ASUS','LG','Philips','Panasonic','Dell','HP','Acer','Apple','Oppo','Vivo','Redmi','Realme','Haier','TCL','Hitachi'];
-var COMPLEMENTS={Television:['Audio','Furniture'],Audio:['Television'],Refrigerator:['Kitchen Appliance'],Washing Machine:['Personal Care','Kitchen Appliance'],Air Conditioner:['Fan'],Fan:['Air Conditioner'],Computer:['Mobile','Audio'],Mobile:['Computer'],Rice Cooker:['Kitchen Appliance'],Kitchen Appliance:['Furniture','Rice Cooker'],Furniture:['Television'],Sewing Machine:['Personal Care'],Personal Care:['Mobile'],Water Pump:['Refrigerator'],Iron:['Personal Care']};
+var COMPLEMENTS={Television:['Audio','Furniture'],Audio:['Television'],Refrigerator:['Kitchen Appliance'],'Washing Machine':['Personal Care','Kitchen Appliance'],'Air Conditioner':['Fan'],Fan:['Air Conditioner'],Computer:['Mobile','Audio'],Mobile:['Computer'],'Rice Cooker':['Kitchen Appliance'],'Kitchen Appliance':['Furniture','Rice Cooker'],Furniture:['Television'],'Sewing Machine':['Personal Care'],'Personal Care':['Mobile'],'Water Pump':['Refrigerator'],Iron:['Personal Care']};
 
 function norm(v){return String(v==null?'':v).trim().toLowerCase().replace(/\s+/g,' ')}
 function normKey(v){return norm(v).replace(/[^a-z0-9]/g,'')}
