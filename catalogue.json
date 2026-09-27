@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-27T07:36:33.707Z",
+  "checkedAt": "2026-09-27T07:39:57.353091Z",
   "source": "https://www.singersl.com/products",
-  "refreshMethod": "GitHub Actions catalogue crawl + exact product pages",
+  "refreshMethod": "GitHub Actions catalogue crawl + exact product pages + structured ecommerce data",
   "refreshFrequency": "hourly",
   "products": [
     {
@@ -14,88 +14,88 @@
       "mrp": 59999,
       "discount": "25% OFF",
       "offerNote": "",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:54.947669Z"
     },
     {
       "category": "Television",
       "product": "Singer 40\" Full HD TV",
       "sku": "SLE40F600A",
-      "price": 99999,
+      "price": 69999,
       "discount": "5% OFF",
       "offerNote": "",
-      "url": "https://www.singersl.com/products?search=SLE40F600A",
+      "url": "https://www.singersl.com/product/singer-40-full-hd-tv-sle40f600a",
       "mrp": 379999,
       "live": true,
-      "sourceStatus": "Live Singer public catalogue",
-      "liveCheckedAt": "2026-09-27T07:12:47.199841Z"
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:53.640430Z"
     },
     {
       "category": "Television",
       "product": "Singer 43\" Full HD Google TV",
       "sku": "SLE43J890",
-      "price": 99999,
-      "url": "https://www.singersl.com/products?search=SLE43J890",
+      "price": 119999,
+      "url": "https://www.singersl.com/product/singer-43-full-hd-google-tv-sle43j890",
       "mrp": 379999,
       "discount": "5% OFF",
       "offerNote": "",
       "live": true,
-      "sourceStatus": "Live Singer public catalogue",
-      "liveCheckedAt": "2026-09-27T07:12:49.681605Z"
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:54.390143Z"
     },
     {
       "category": "Refrigerator",
-      "product": "Singer GEO Refrigerator 2 Door",
+      "product": "Singer GEO Refrigerator GEO-260NF-TGYF - 2 Doors, No Frost, 227L (Yellow Floral)",
       "sku": "GEO-260NF-TGYF",
       "price": 139999,
-      "url": "https://www.singersl.com/products?search=GEO-260NF-TGYF",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/singer-geo-refrigerator-geo-260nf-tgyf-2-doors-no-frost-227l-yellow-floral",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:53.855685Z"
     },
     {
       "category": "Refrigerator",
-      "product": "Singer GEO Refrigerator 2 Door",
+      "product": "Singer GEO Refrigerator GEO-200D-INV - 2 Doors, Inverter, 185L (Silver)",
       "sku": "GEO-200D-INV",
       "price": 104999,
-      "url": "https://www.singersl.com/products?search=GEO-200D-INV",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/singer-geo-refrigerator-geo-200d-inv-2-doors-inverter-185l-silver",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:53.568838Z"
     },
     {
       "category": "Refrigerator",
-      "product": "Singer Digital Inverter Refrigerator",
+      "product": "Singer Digital Inverter Refrigerator SN-276INV - 276L (Silver)",
       "sku": "SN-276INV",
       "price": 149999,
       "url": "https://www.singersl.com/product/singer-digital-inverter-refrigerator-sn-276inv-276l-silver",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:54.404634Z"
     },
     {
       "category": "Washing Machine",
-      "product": "Singer Semi Automatic Washing Machine",
+      "product": "Singer Semi Automatic Washing Machine SWM-SAR65 - 6.5Kg",
       "sku": "SWM-SAR65",
       "price": 54999,
-      "url": "https://www.singersl.com/products?search=SWM-SAR65",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/singer-semi-automatic-washing-machine-swm-sar65-65kg",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:52.534517Z"
     },
     {
       "category": "Washing Machine",
-      "product": "Singer Fully Automatic Washing Machine",
+      "product": "SINGER Fully Automatic Washing Machine Top Loading SWM-FA80R - 8kg",
       "sku": "SWM-FA80R",
       "price": 86999,
       "discount": "13% OFF",
       "offerNote": "Extra 13,000.00 off (Price is inclusive of Discount)",
-      "url": "https://www.singersl.com/products?search=SWM-FA80R",
+      "url": "https://www.singersl.com/product/singer-fully-automatic-washing-machine-top-loading-swm-fa80r-8kg",
       "mrp": 99999,
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:54.630673Z"
     },
     {
       "category": "Washing Machine",
@@ -103,65 +103,65 @@
       "sku": "SWM-FA70R",
       "price": 69999,
       "discount": "22.22% OFF",
-      "offerNote": "Extra 20,000.00 off (Price is inclusive of Discount)",
+      "offerNote": "Extra 20000 off (Price is inclusive of Discount)",
       "url": "https://www.singersl.com/product/singer-washing-machine-top-load-7kg",
-      "mrp": 89999,
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "mrp": 79999,
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:52.916792Z"
     },
     {
       "category": "Washing Machine",
-      "product": "Singer Glass Top Fully Automatic Washing Machine",
+      "product": "Singer Glass Top Fully Automatic Washing Machine SWM-FAR75GT - 7.5kg",
       "sku": "SWM-FAR75GT",
       "price": 84999,
       "url": "https://www.singersl.com/product/singer-glass-top-fully-automatic-washing-machine-swm-far75gt-75kg",
       "mrp": 99999,
       "discount": "15% OFF",
       "offerNote": "Extra 15,000.00 off (Price is inclusive of Discount)",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:54.799097Z"
     },
     {
       "category": "Air Conditioner",
-      "product": "Sisil Air Conditioner Non-Inverter 12000 BTU",
+      "product": "Sisil Air Conditioner - Non-Inverter 12000 BTU (SL-ELITE12)",
       "sku": "SL-ELITE12",
       "price": 164999,
-      "url": "https://www.singersl.com/products?search=SL-ELITE12",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/sisil-air-conditioner-non-inverter-12000-btu-sl-elite12",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:55.212219Z"
     },
     {
       "category": "Air Conditioner",
-      "product": "Sisil Air Conditioner Non-Inverter 18000 BTU",
+      "product": "Sisil Air Conditioner - Non-Inverter 18000 BTU (SL-ELITE18)",
       "sku": "SL-ELITE18",
       "price": 199999,
-      "url": "https://www.singersl.com/products?search=SL-ELITE18",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/sisil-air-conditioner-non-inverter-18000-btu-sl-elite18",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:55.375109Z"
     },
     {
       "category": "Air Conditioner",
-      "product": "Whirlpool Air Conditioner Inverter 12000 BTU",
+      "product": "Whirlpool Air Conditioner - Inverter 12000 BTU (WP-12KINV)",
       "sku": "WP-12KINV",
       "price": 204999,
-      "url": "https://www.singersl.com/products?search=WP-12KINV",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/whirlpool-air-conditioner-inverter-12000-btu-wp-12kinv",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:56.097570Z"
     },
     {
       "category": "Air Conditioner",
-      "product": "Samsung Air Conditioner Inverter 18000 BTU",
+      "product": "Samsung Air Conditioner - Inverter 18000 BTU (Wi-Fi) (SMGAR50H19D1J)",
       "sku": "SMGAR50H19D1J",
       "price": 299999,
-      "url": "https://www.singersl.com/products?search=SMGAR50H19D1J",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/samsung-air-conditioner-inverter-18000-btu-wi-fi-smgar50h19d1j",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:55.983654Z"
     },
     {
       "category": "Rice Cooker",
@@ -169,11 +169,12 @@
       "sku": "SRC-1528HS",
       "price": 11874,
       "discount": "5% OFF",
-      "offerNote": "Special offer available",
+      "offerNote": "Extra 5% off (Price is inclusive of Discount) | Checkout using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO payment method and get extra 10% off | Checkout Using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO Payment Methods And Get Extra Discount.",
       "url": "https://www.singersl.com/product/singer-rice-cooker-28l",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "mrp": 11999,
+      "liveCheckedAt": "2026-09-27T07:39:55.616847Z"
     },
     {
       "category": "Rice Cooker",
@@ -181,44 +182,48 @@
       "sku": "SRC-2545HS",
       "price": 17574,
       "discount": "5% OFF",
-      "offerNote": "Special offer available",
+      "offerNote": "Extra 5% off (Price is inclusive of Discount) | Checkout using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO payment method and get extra 10% off | Checkout Using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO Payment Methods And Get Extra Discount.",
       "url": "https://www.singersl.com/product/singer-rice-cooker-45l",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "mrp": 17999,
+      "liveCheckedAt": "2026-09-27T07:39:56.587830Z"
     },
     {
       "category": "Kitchen Appliance",
-      "product": "Beko Telescopic Hood 60cm",
+      "product": "Beko Telescopic Hood - 60 cm Stainless Steel (B-CTB6250XH)",
       "sku": "B-CTB6250XH",
       "price": 89999,
-      "url": "https://www.singersl.com/products?search=B-CTB6250XH",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/beko-telescopic-hood-60-cm-stainless-steel-b-ctb6250xh",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:57.349818Z"
     },
     {
       "category": "Audio",
       "product": "Sony Bravia Theatre Bar 5",
       "sku": "HT-B500",
       "price": 164999,
-      "url": "https://www.singersl.com/products?search=HT-B500",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "url": "https://www.singersl.com/product/sony-bravia-theatre-bar-5-250w-31ch-soundbar-with-powerful-wireless-subwoofer",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "mrp": 179999,
+      "discount": "8.33% OFF",
+      "offerNote": "Extra 15000 off (Price is inclusive of Discount) | Checkout using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO payment method and get extra 5% off | Checkout Using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO Payment Methods And Get Extra Discount.",
+      "liveCheckedAt": "2026-09-27T07:39:56.361934Z"
     },
     {
       "category": "Furniture",
-      "product": "ENZO Center Table",
+      "product": "ENZO Center Table - White And Walnut (LF-ENZO-CT-WHT-WN-S)",
       "sku": "LF-ENZO-CT-WHT-WN-S",
       "price": 10899,
-      "url": "https://www.singersl.com/products?search=LF-ENZO-CT-WHT-WN-S",
+      "url": "https://www.singersl.com/product/enzo-center-table-white-and-walnut-lf-enzo-ct-wht-wn-s",
       "mrp": 12199,
       "discount": "10.66% OFF",
       "offerNote": "Extra 1,300.00 off (Price is inclusive of Discount)",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "liveError": "SKU not found in Singer page"
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "liveCheckedAt": "2026-09-27T07:39:57.161163Z"
     },
     {
       "category": "Computer",
@@ -226,22 +231,26 @@
       "sku": "AS-14-I7-16-512-7658-SIL",
       "price": 344999,
       "url": "https://www.singersl.com/product/asus-vivobook-15-x1504vap-bq7658ws-14th-intel-core-7-150u-16gb-ddr5-ram-512gb-ssd-microsoft-office-home-cool-silver",
-      "live": false,
-      "sourceStatus": "Fallback retained",
-      "discount": "",
+      "live": true,
+      "sourceStatus": "Live Singer product page",
+      "discount": "4.35% OFF",
       "offerNote": "",
       "mrp": null,
-      "liveCheckedAt": "2026-09-27T07:13:38.052530Z"
+      "liveCheckedAt": "2026-09-27T07:39:56.937685Z"
     }
   ],
   "notes": [
-    "Prices and offers are read from public Singer Sri Lanka product catalogue pages.",
-    "If a lookup fails, the previous saved value is retained.",
+    "The updater prefers known public Singer product URLs and supplements them by crawling catalogue pages.",
+    "Current price/MRP are read from structured ecommerce data where available, avoiding delivery-fee amounts.",
+    "Discounts and visible offers are also extracted from the product page.",
+    "If an exact lookup fails, the previous saved value is retained.",
+    "The obsolete CATALOGUE placeholder was replaced with a real Singer-listed laptop SKU.",
     "Stock is not used as a hard recommendation filter in the app."
   ],
   "summary": {
     "total": 20,
-    "liveUpdated": 2,
-    "fallbackRetained": 18
+    "liveUpdated": 20,
+    "fallbackRetained": 0,
+    "productUrlsDiscovered": 20
   }
 }
