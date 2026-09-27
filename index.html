@@ -3,19 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Singer Customer Next-Product Recommendation App | Engine v3.0</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<title>Singer Customer Recommendation Hub | Internal Sales Tool</title>
+<meta name="description" content="Singer customer next-product recommendation and sales action tool for internal decision support. Browser-side transaction analysis with a refreshed product catalogue snapshot.">
+<meta name="theme-color" content="#0b1f3a">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{--navy:#0b1f3a;--blue:#155eef;--light:#f5f7fb;--line:#e4e8f0;--text:#172033;--muted:#667085;--card:#fff;--green:#067647;--amber:#b54708}
 *{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--light);color:var(--text)}
-.header{background:linear-gradient(135deg,#071a33,#123f75);color:#fff;padding:28px 34px;position:sticky;top:0;z-index:10;box-shadow:0 3px 14px #0002}
-.header h1{margin:0;font-size:25px;letter-spacing:.2px}.header p{margin:7px 0 0;color:#d8e6ff;font-size:13px}
+.header{background:linear-gradient(135deg,#071a33,#123f75);color:#fff;padding:24px 34px;position:sticky;top:0;z-index:10;box-shadow:0 3px 14px #0002}
+.headerTop{display:flex;align-items:center;justify-content:space-between;gap:14px}.header h1{margin:0;font-size:25px;letter-spacing:.2px}.header p{margin:7px 0 0;color:#d8e6ff;font-size:13px}.headerBadge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #ffffff33;border-radius:999px;background:#ffffff12;color:#fff;font-size:10px;font-weight:700;white-space:nowrap}
 .wrap{max-width:1420px;margin:0 auto;padding:24px 28px 50px}.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 8px #10182808}.card h2{font-size:16px;margin:0 0 12px}.card h3{font-size:14px;margin:16px 0 9px}
 .drop{border:2px dashed #b7c3d6;border-radius:12px;padding:23px;text-align:center;background:#fbfcfe}.drop strong{display:block;font-size:15px;margin-bottom:7px}.drop small{color:var(--muted)}
 input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:9px;padding:10px 15px;font-weight:600;cursor:pointer;font-size:13px}.filebtn{background:var(--blue);color:#fff;margin-top:13px}.btn{background:#eef3ff;color:#1744a5;margin-right:8px}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:var(--navy);color:#fff}.btn.green{background:#ecfdf3;color:#05603a}.btn:disabled{opacity:.45;cursor:not-allowed}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.qualityGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}.qualityItem{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}.qualityItem .qn{font-size:16px;font-weight:700}.qualityItem .ql{font-size:10px;color:var(--muted);margin-top:3px}.kpi{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px}.kpi .n{font-size:22px;font-weight:700}.kpi .l{font-size:11px;color:var(--muted);margin-top:3px}
-.status{font-size:12px;color:var(--muted);min-height:18px;margin-top:10px}.status.ok{color:var(--green)}.status.warn{color:var(--amber)}
+.status{font-size:12px;color:var(--muted);min-height:18px;margin-top:10px}.status.ok{color:var(--green)}.status.warn{color:var(--amber)}.status.bad{color:#b42318}.small{font-size:10px}.empty{padding:24px;text-align:center;color:#98a2b3}.pill.red{background:#fef3f2;color:#b42318}.pill.amber{background:#fffaeb;color:#b54708}.pill.green{background:#ecfdf3;color:#067647}
 .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.controls input,.controls select{padding:9px 10px;border:1px solid #cfd6e2;border-radius:8px;background:#fff;font-size:12px}.controls input{min-width:240px}
 .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:11px;background:#fff}th{position:sticky;top:0;background:#f2f5fa;color:#344054;text-align:left;padding:9px;border-bottom:1px solid var(--line);white-space:nowrap}td{padding:8px 9px;border-bottom:1px solid #edf0f5;vertical-align:top}tr:hover td{background:#fafcff}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#eef3ff;color:#1744a5;font-weight:600;font-size:10px}.score{font-weight:700}.mono{font-family:Consolas,monospace;font-size:10px}
 .note{background:#f8faff;border-left:4px solid var(--blue);padding:11px 13px;border-radius:8px;font-size:12px;color:#344054;line-height:1.5}.muted{color:var(--muted)}
@@ -31,14 +33,14 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
 </style>
 </head>
 <body>
-<div class="header"><h1>Singer Customer Next‑Product Recommendation App</h1><p>Upload transaction history → identify customer opportunities → map recommendations to Singer products → export customer recommendations. Singer price/offer data refreshes automatically from the public Singer catalogue via GitHub Actions.</p></div>
+<div class="header"><div class="headerTop"><div><h1>Singer Customer Recommendation Hub</h1><p>Internal sales decision support · customer opportunity analysis · product recommendations · sales follow-up actions.</p></div><span class="headerBadge">INTERNAL SALES USE</span></div></div>
 <div class="wrap">
   <div class="grid">
     <div class="card">
       <h2>1. Upload Customer Transaction File</h2>
       <div class="drop" id="drop">
-        <strong>Excel file (.xlsx) required</strong>
-        <small>Expected fields: ORDER_NO, PRODUCT, PRODUCT DESCRIPTION, DATE OF SALE, UNITS, CUSTOMER ID NUMBER, CUSTOMER NAME, PHONE / MOBILE NUMBER (optional but recommended)</small><br>
+        <strong>Upload transaction file</strong>
+        <small>Supported: .xlsx, .xls, .csv · processed locally in this browser · recommended fields include customer ID, product, sale date, units and mobile number.</small><br>
         <label class="filebtn"><input id="file" type="file" accept=".xlsx,.xls,.csv">Choose Excel File</label>
         <div id="fileName" class="status"></div><div id="inputDiagnostics" class="note" style="margin-top:10px;display:none"></div>
       </div>
@@ -50,7 +52,7 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
     </div>
     <div class="card">
       <h2>2. Export Recommendations</h2>
-      <div class="note">Export the completed customer-wise recommendation analysis to Excel. Includes customer phone/mobile number, three distinct product recommendations, three-language customer messages (English / Sinhala / Tamil), WhatsApp click-to-chat and normal SMS options when a valid number is available. Product prices and offers come from the latest catalogue.json generated by the GitHub scheduled updater.</div><div class="note" style="margin-top:10px"><b>Privacy:</b> the uploaded Excel file is processed in this browser and is not uploaded or stored by this page. Internal stock status is for sales-team use only and is never included in customer-facing WhatsApp/SMS messages.</div>
+      <div class="note">Export the completed customer-wise recommendation analysis to Excel. Includes customer phone/mobile number, three distinct product recommendations, three-language customer messages (English / Sinhala / Tamil), WhatsApp click-to-chat and normal SMS options when a valid number is available. Product prices and offers come from the latest catalogue.json generated by the GitHub scheduled updater.</div><div class="note" style="margin-top:10px"><b>Data protection:</b> the uploaded transaction file is processed in this browser and is not uploaded or stored by this page. Internal stock status stays sales-team-only and is never included in customer-facing WhatsApp/SMS messages. Use only customer data you are authorized to process.</div>
       <div style="margin-top:15px">
         <button class="btn green" id="xlsxBtn" disabled>Download Excel</button>
         <button class="btn" id="liveBtn" type="button">Refresh Singer Live Data</button>
@@ -116,14 +118,14 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
 
   <div class="card" style="margin-top:20px">
     <h2>Top Category Opportunities</h2>
-    <div id="opportunities" class="tablewrap"><table><thead><tr><th>From Category</th><th>Next Category Opportunity</th><th>Observed Transitions</th><th>Opportunity Share</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
+    <div id="opportunities" class="tablewrap"><table><thead><tr><th>From Category</th><th>Next Category Opportunity</th><th>Customers</th><th>Observed Transitions</th><th>Opportunity Share</th><th>Indicative Value</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
   </div>
 
   <div class="card" style="margin-top:20px">
     <h2>Product Catalogue Used for Recommendations</h2>
     <div id="catalogue" class="tablewrap"><table><thead><tr><th>Category</th><th>Product</th><th>SKU</th><th>Indicative Price</th><th>Current Offer</th><th>Source</th><th>Availability (Internal)</th></tr></thead><tbody></tbody></table></div>
   </div>
-  <div class="footer">Prepared as a decision-support tool. Recommendations are model-based opportunities, not guaranteed purchase outcomes.</div>
+  <div class="footer">Internal sales decision-support tool. Recommendations are model-based opportunities, not guaranteed purchase outcomes. Customer transaction files remain in the browser during analysis.</div>
 </div>
 <div class="modal" id="customerModal" aria-hidden="true">
   <div class="modalCard" style="width:min(920px,97vw)">
@@ -445,7 +447,17 @@ function buildSalesMessage(r,lang){
 function waUrl(phone,msg){return phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):''}
 function smsUrl(phone,msg){return phone?'sms:+'+phone+'?body='+encodeURIComponent(msg):''}
 function openMessage(cid){var r=model.recs.find(function(x){return x.cid===cid});if(!r)return;selectedCustomerId=cid;document.getElementById('msgCustomer').textContent=r.name+' | '+r.cid+' | '+(r.phone?('+'+r.phone):'No mobile');document.getElementById('msgLang').value='en';updateMessage();document.getElementById('msgModal').classList.add('open');document.getElementById('msgModal').setAttribute('aria-hidden','false')}
-function updateMessage(){var r=model.recs.find(function(x){return x.cid===selectedCustomerId});if(!r)return;var msg=buildSalesMessage(r,document.getElementById('msgLang').value);document.getElementById('msgContent').textContent=msg;document.getElementById('copyMsg').onclick=function(){navigator.clipboard.writeText(msg).then(function(){document.getElementById('copyMsg').textContent='Copied'}).catch(function(){alert('Copy failed; select the message and copy it manually.')})};document.getElementById('sendMsg').onclick=function(){var u=waUrl(r.phone,msg);if(u)window.open(u,'_blank','noopener')};document.getElementById('sendSms').onclick=function(){var u=smsUrl(r.phone,msg);if(u)window.location.href=u}}
+function copyMessageSafe(msg,button){
+ var done=function(){button.textContent='Copied';setTimeout(function(){button.textContent='Copy Message'},1800)};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(msg).then(done).catch(function(){copyMessageLegacy(msg,button)})}
+ else copyMessageLegacy(msg,button);
+}
+function copyMessageLegacy(msg,button){
+ var ta=document.createElement('textarea');ta.value=msg;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+ try{document.execCommand('copy');button.textContent='Copied';setTimeout(function(){button.textContent='Copy Message'},1800)}catch(_){alert('Copy failed; select the message and copy it manually.')}
+ document.body.removeChild(ta);
+}
+function updateMessage(){var r=model.recs.find(function(x){return x.cid===selectedCustomerId});if(!r)return;var msg=buildSalesMessage(r,document.getElementById('msgLang').value);document.getElementById('msgContent').textContent=msg;document.getElementById('copyMsg').onclick=function(){copyMessageSafe(msg,document.getElementById('copyMsg'))};document.getElementById('sendMsg').onclick=function(){var u=waUrl(r.phone,msg);if(u)window.open(u,'_blank','noopener')};document.getElementById('sendSms').onclick=function(){var u=smsUrl(r.phone,msg);if(u)window.location.href=u}}
 function closeModal(){document.getElementById('msgModal').classList.remove('open');document.getElementById('msgModal').setAttribute('aria-hidden','true')}
 function renderSalesQueue(){
  var el=document.getElementById('salesQueue'),filter=document.getElementById('salesQueueFilter')?.value||'',q=norm(document.getElementById('salesQueueSearch')?.value||'');
@@ -514,6 +526,21 @@ function runAnalysis(){
  }
 }
 function processFile(file){
+ if(!window.XLSX){
+  document.getElementById('status').textContent='Excel engine is unavailable. Check the internet connection and refresh the page.';
+  document.getElementById('status').className='status bad';
+  return;
+ }
+ if(!file || !/\.(xlsx|xls|csv)$/i.test(file.name||'')){
+  document.getElementById('status').textContent='Unsupported file. Please choose an .xlsx, .xls or .csv transaction file.';
+  document.getElementById('status').className='status bad';
+  return;
+ }
+ if(file.size>25*1024*1024){
+  document.getElementById('status').textContent='File is too large. Please use a transaction file up to 25 MB.';
+  document.getElementById('status').className='status bad';
+  return;
+ }
  var reader=new FileReader();
  reader.onload=function(ev){
   try{
@@ -566,6 +593,10 @@ function processFile(file){
 }
 document.addEventListener('DOMContentLoaded',function(){
  rebuildCatalogueMaps();renderCatalogue();renderCatalogueHealth();loadLiveSingerData();
+ if(!window.XLSX){
+  document.getElementById('status').textContent='Excel engine is still loading. Please refresh once if file upload remains unavailable.';
+  document.getElementById('status').className='status warn';
+ }
  document.getElementById('file').addEventListener('change',function(e){if(e.target.files[0])processFile(e.target.files[0])});
  var drop=document.getElementById('drop');drop.addEventListener('dragover',function(e){e.preventDefault();drop.style.background='#f5f8ff'});drop.addEventListener('dragleave',function(){drop.style.background='#fbfcfe'});drop.addEventListener('drop',function(e){e.preventDefault();drop.style.background='#fbfcfe';var f=e.dataTransfer.files[0];if(f)processFile(f)});
  document.getElementById('analyze').addEventListener('click',runAnalysis);document.getElementById('xlsxBtn').addEventListener('click',exportXlsx);document.getElementById('reset').addEventListener('click',function(){location.reload()});document.getElementById('liveBtn').addEventListener('click',loadLiveSingerData);
