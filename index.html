@@ -449,8 +449,7 @@ function plainCustomerReason(r,lang){
 function buildSalesMessage(r,lang){
  var name=cleanMessageText(r.name||'Customer');
  var lastProduct=cleanMessageText(r.lastProduct||'your previous purchase');
- var p=r.primary;
- var alt1=r.alt1,alt2=r.alt2,alt3=r.alt3;
+ var p=r.primary,alt1=r.alt1,alt2=r.alt2,alt3=r.alt3;
 
  function promoText(x){
    if(!x)return '';
@@ -463,42 +462,38 @@ function buildSalesMessage(r,lang){
    return parts.filter(Boolean).join(' • ');
  }
 
- function whyText(langCode){
-   var text=plainCustomerReason(r,langCode)||'';
-   return cleanMessageText(text);
- }
-
- function productBlock(x,label,langCode){
+ function productLine(x,index,langCode){
    if(!x)return '';
    var product=cleanMessageText(x.product||'');
    var price=x.price?fmtMoney(x.price):'';
    var promo=promoText(x);
    var url=x.url||'';
    if(langCode==='si'){
-     return '\\n\\n'+label+'\\n'+product+'\\n'+(price?'මිල: '+price+'\\n':'')+(promo?'දීමනාව: '+promo+'\\n':'')+(url?'බලන්න: '+url:'');
+     return '\\n\\n'+index+'. '+product+'\\n'+(price?'මිල: '+price+'\\n':'')+(promo?'දීමනාව: '+promo+'\\n':'')+(url?'බලන්න: '+url:'');
    }
    if(langCode==='ta'){
-     return '\\n\\n'+label+'\\n'+product+'\\n'+(price?'விலை: '+price+'\\n':'')+(promo?'சலுகை: '+promo+'\\n':'')+(url?'பார்க்க: '+url:'');
+     return '\\n\\n'+index+'. '+product+'\\n'+(price?'விலை: '+price+'\\n':'')+(promo?'சலுகை: '+promo+'\\n':'')+(url?'பார்க்க: '+url:'');
    }
-   return '\\n\\n'+label+'\\n'+product+'\\n'+(price?'Price: '+price+'\\n':'')+(promo?'Promotion: '+promo+'\\n':'')+(url?'View: '+url:'');
+   return '\\n\\n'+index+'. '+product+'\\n'+(price?'Price: '+price+'\\n':'')+(promo?'Promotion: '+promo+'\\n':'')+(url?'View: '+url:'');
  }
 
  var primaryProduct=cleanMessageText(p&&p.product||'A Singer product');
  var primaryPrice=p&&p.price?fmtMoney(p.price):'';
  var primaryPromo=promoText(p);
  var primaryUrl=p&&p.url?p.url:'';
+ var reason=cleanMessageText(plainCustomerReason(r,lang));
 
- var en='Hi '+name+',\\n\\nThank you for choosing Singer.\\n\\nBased on your previous purchase of '+lastProduct+', we found some products you may like.\\n\\nRECOMMENDED FOR YOU\\n'+primaryProduct+'\\n'+(primaryPrice?'Price: '+primaryPrice+'\\n':'')+(primaryPromo?'Promotion: '+primaryPromo+'\\n':'')+(primaryUrl?'View: '+primaryUrl+'\\n':'')+'\\nWhy this may suit you\\n'+whyText('en')+
- productBlock(alt1,'ALTERNATIVE 1','en')+productBlock(alt2,'ALTERNATIVE 2','en')+productBlock(alt3,'ALTERNATIVE 3','en')+
- '\\n\\nInterested? Reply to this message and our Singer sales team will be happy to help you.\\n\\nThank you,\\nSinger.';
+ var en='Hi '+name+',\\n\\nThank you for choosing Singer.\\n\\nBased on your previous purchase of '+lastProduct+', here are a few products you may like.\\n\\nRECOMMENDED\\n'+primaryProduct+'\\n'+(primaryPrice?'Price: '+primaryPrice+'\\n':'')+(primaryPromo?'Promotion: '+primaryPromo+'\\n':'')+(primaryUrl?'View: '+primaryUrl:'')+
+ productLine(alt1,1,'en')+productLine(alt2,2,'en')+productLine(alt3,3,'en')+
+ '\\n\\nInterested in any of these? Reply to this message and our Singer sales team will be happy to help.\\n\\nThank you,\\nSinger.';
 
- var si='ආයුබෝවන් '+name+',\\n\\nSinger තෝරාගැනීම ගැන ස්තුතියි.\\n\\nඔබ අවසන් වරට මිලදීගත් '+lastProduct+' අනුව, ඔබට කැමති විය හැකි නිෂ්පාදන කිහිපයක් අපි තෝරාගෙන ඇත.\\n\\nඔබ සඳහා නිර්දේශිතයි\\n'+primaryProduct+'\\n'+(primaryPrice?'මිල: '+primaryPrice+'\\n':'')+(primaryPromo?'දීමනාව: '+primaryPromo+'\\n':'')+(primaryUrl?'බලන්න: '+primaryUrl+'\\n':'')+'\\nමෙය ඔබට ගැළපිය හැක්කේ\\n'+whyText('si')+
- productBlock(alt1,'විකල්පය 1','si')+productBlock(alt2,'විකල්පය 2','si')+productBlock(alt3,'විකල්පය 3','si')+
- '\\n\\nඔබ කැමති නම්, මේ පණිවිඩයට reply කරන්න. අපගේ Singer sales team එක ඔබට සතුටින් උදව් කරනු ඇත.\\n\\nස්තුතියි,\\nSinger.';
+ var si='ආයුබෝවන් '+name+',\\n\\nSinger තෝරාගැනීම ගැන ස්තුතියි.\\n\\nඔබ අවසන් වරට මිලදීගත් '+lastProduct+' අනුව, ඔබට කැමති විය හැකි නිෂ්පාදන කිහිපයක් මෙන්න.\\n\\nඔබ සඳහා නිර්දේශිතයි\\n'+primaryProduct+'\\n'+(primaryPrice?'මිල: '+primaryPrice+'\\n':'')+(primaryPromo?'දීමනාව: '+primaryPromo+'\\n':'')+(primaryUrl?'බලන්න: '+primaryUrl:'')+
+ productLine(alt1,1,'si')+productLine(alt2,2,'si')+productLine(alt3,3,'si')+
+ '\\n\\nමේවායින් ඔබ කැමති එකක් තියෙනවා නම්, මේ පණිවිඩයට reply කරන්න. අපගේ Singer sales team එක උදව් කරනු ඇත.\\n\\nස්තුතියි,\\nSinger.';
 
- var ta='வணக்கம் '+name+',\\n\\nSinger-ஐ தேர்வு செய்ததற்கு நன்றி.\\n\\nநீங்கள் கடைசியாக வாங்கிய '+lastProduct+' அடிப்படையில், உங்களுக்கு பிடிக்கக்கூடிய சில தயாரிப்புகளைத் தேர்ந்தெடுத்துள்ளோம்.\\n\\nஉங்களுக்கான பரிந்துரை\\n'+primaryProduct+'\\n'+(primaryPrice?'விலை: '+primaryPrice+'\\n':'')+(primaryPromo?'சலுகை: '+primaryPromo+'\\n':'')+(primaryUrl?'பார்க்க: '+primaryUrl+'\\n':'')+'\\nஏன் இது உங்களுக்கு பொருந்தலாம்\\n'+whyText('ta')+
- productBlock(alt1,'மாற்று 1','ta')+productBlock(alt2,'மாற்று 2','ta')+productBlock(alt3,'மாற்று 3','ta')+
- '\\n\\nவிருப்பம் இருந்தால், இந்த செய்திக்கு reply செய்யுங்கள். எங்கள் Singer sales team உங்களுக்கு உதவ தயாராக உள்ளது.\\n\\nநன்றி,\\nSinger.';
+ var ta='வணக்கம் '+name+',\\n\\nSinger-ஐ தேர்வு செய்ததற்கு நன்றி.\\n\\nநீங்கள் கடைசியாக வாங்கிய '+lastProduct+' அடிப்படையில், உங்களுக்கு பிடிக்கக்கூடிய சில தயாரிப்புகள் இதோ.\\n\\nஉங்களுக்கான பரிந்துரை\\n'+primaryProduct+'\\n'+(primaryPrice?'விலை: '+primaryPrice+'\\n':'')+(primaryPromo?'சலுகை: '+primaryPromo+'\\n':'')+(primaryUrl?'பார்க்க: '+primaryUrl:'')+
+ productLine(alt1,1,'ta')+productLine(alt2,2,'ta')+productLine(alt3,3,'ta')+
+ '\\n\\nஇவற்றில் விருப்பமானது இருந்தால், இந்த செய்திக்கு reply செய்யுங்கள். எங்கள் Singer sales team உதவ தயாராக உள்ளது.\\n\\nநன்றி,\\nSinger.';
 
  return lang==='si'?si:lang==='ta'?ta:en;
 }
