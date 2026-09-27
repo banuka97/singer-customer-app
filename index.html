@@ -65,11 +65,16 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
   </div>
 
   <div class="card" style="margin-top:20px">
+    <h2>Data Quality Controls</h2>
+    <div id="qualityDetails" class="note">Run an analysis to see transaction, customer, catalogue and recommendation quality checks.</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
     <h2>Customer Recommendations</h2>
     <div class="controls">
       <input id="search" placeholder="Search customer ID, name or product..." disabled>
       <select id="catFilter" disabled><option value="">All recommended categories</option></select>
-      <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select><select id="priorityFilter" disabled><option value="">All priorities</option><option value="High">High opportunity</option><option value="Medium">Medium opportunity</option><option value="Low">Low opportunity</option></select>
+      <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select><select id="priorityFilter" disabled><option value="">All priorities</option><option value="High">High opportunity</option><option value="Medium">Medium opportunity</option><option value="Low">Low opportunity</option></select><select id="segmentFilter" disabled><option value="">All RFM segments</option></select>
       <span class="muted" id="rowCount"></span>
     </div>
     <div class="tablewrap"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Priority</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="11" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
@@ -81,14 +86,18 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
   </div>
 
   <div class="card" style="margin-top:20px">
-    <h2>Recommendation Mix — Primary vs Alternatives</h2>
+    <h2>Customer Behaviour & Sales Action Dashboard</h2>
     <div class="chartGrid">
-      <div class="chartBox"><div class="chartTitle">Primary Recommendation</div><div id="chartPrimary"></div></div>
-      <div class="chartBox"><div class="chartTitle">Alternative 1</div><div id="chartAlt1"></div></div>
-      <div class="chartBox"><div class="chartTitle">Alternative 2</div><div id="chartAlt2"></div></div>
+      <div class="chartBox"><div class="chartTitle">RFM Segments</div><div id="chartPrimary"></div></div>
+      <div class="chartBox"><div class="chartTitle">Top Recommended Categories</div><div id="chartAlt1"></div></div>
+      <div class="chartBox"><div class="chartTitle">Sales Action Queue</div><div id="chartAlt2"></div></div>
     </div>
-    <div class="legend"><span><i class="dot c1"></i>Primary</span><span><i class="dot c2"></i>Alternative 1</span><span><i class="dot c3"></i>Alternative 2</span></div>
-    <div class="chartNote">Primary, Alternative 1 and Alternative 2 are counted separately. The same product is prevented from appearing twice for the same customer, and alternatives are selected from different categories whenever possible.</div>
+    <div class="chartNote">RFM combines Recency, Frequency and Monetary signals. The action queue is a sales workflow output based on the recommendation score and mobile readiness.</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Product-Level Opportunity Summary</h2>
+    <div id="productOpp" class="tablewrap"><table><thead><tr><th>Product</th><th>Category</th><th>SKU</th><th>Recommended Customers</th><th>Average Score</th><th>Indicative Value</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
   </div>
 
   <div class="card" style="margin-top:20px">
@@ -111,279 +120,281 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
   </div>
 </div>
 <script>
-const DEFAULT_CATALOG = [
-  {category:'Television',product:'Singer 32" HD TV',sku:'SLE32E6A',price:44999,url:'https://www.singersl.com/products?search=SLE32E6A'},
-  {category:'Television',product:'Singer 40" Full HD TV',sku:'SLE40F600A',price:69999,discount:'12.5% OFF',offerNote:'Extra LKR 10,000 off',url:'https://www.singersl.com/products?search=SLE40F600A'},
-  {category:'Television',product:'Singer 43" Full HD Google TV',sku:'SLE43J890',price:119999,url:'https://www.singersl.com/products?search=SLE43J890'},
-  {category:'Refrigerator',product:'Singer GEO Refrigerator 2 Door',sku:'GEO-260NF-TGYF',price:139999,url:'https://www.singersl.com/products?search=GEO-260NF-TGYF'},
-  {category:'Refrigerator',product:'Singer GEO Refrigerator 2 Door',sku:'GEO-200D-INV',price:104999,url:'https://www.singersl.com/products?search=GEO-200D-INV'},
-  {category:'Refrigerator',product:'Singer Digital Inverter Refrigerator',sku:'SN-276INV',price:149999,url:'https://www.singersl.com/products?search=SN-276INV'},
-  {category:'Washing Machine',product:'Singer Semi Automatic Washing Machine',sku:'SWM-SAR65',price:54999,url:'https://www.singersl.com/products?search=SWM-SAR65'},
-  {category:'Washing Machine',product:'Singer Fully Automatic Washing Machine',sku:'SWM-FA80R',price:86999,discount:'13% OFF',offerNote:'Extra LKR 13,000 off',url:'https://www.singersl.com/products?search=SWM-FA80R'},
-  {category:'Washing Machine',product:'Singer Washing Machine Top Load 7Kg',sku:'SWM-FA70R',price:69999,discount:'22.22% OFF',offerNote:'Extra LKR 20,000 off',url:'https://www.singersl.com/products?search=SWM-FA70R'},
-  {category:'Washing Machine',product:'Singer Glass Top Fully Automatic Washing Machine',sku:'SWM-FAR75GT',price:84999,url:'https://www.singersl.com/products?search=SWM-FAR75GT'},
-  {category:'Air Conditioner',product:'Sisil Air Conditioner Non-Inverter 12000 BTU',sku:'SL-ELITE12',price:164999,url:'https://www.singersl.com/products?search=SL-ELITE12'},
-  {category:'Air Conditioner',product:'Sisil Air Conditioner Non-Inverter 18000 BTU',sku:'SL-ELITE18',price:199999,url:'https://www.singersl.com/products?search=SL-ELITE18'},
-  {category:'Air Conditioner',product:'Whirlpool Air Conditioner Inverter 12000 BTU',sku:'WP-12KINV',price:204999,url:'https://www.singersl.com/products?search=WP-12KINV'},
-  {category:'Air Conditioner',product:'Samsung Air Conditioner Inverter 18000 BTU',sku:'SMGAR50H19D1J',price:299999,url:'https://www.singersl.com/products?search=SMGAR50H19D1J'},
-  {category:'Rice Cooker',product:'Singer Rice Cooker 2.8L',sku:'SRC-1528HS',price:11874,discount:'5% OFF',offerNote:'Special offer available',url:'https://www.singersl.com/products?search=SRC-1528HS'},
-  {category:'Rice Cooker',product:'Singer Rice Cooker 4.5L',sku:'SRC-2545HS',price:17574,discount:'5% OFF',offerNote:'Special offer available',url:'https://www.singersl.com/products?search=SRC-2545HS'},
-  {category:'Kitchen Appliance',product:'Beko Telescopic Hood 60cm',sku:'B-CTB6250XH',price:89999,url:'https://www.singersl.com/products?search=B-CTB6250XH'},
-  {category:'Audio',product:'Sony Bravia Theatre Bar 5',sku:'HT-B500',price:164999,url:'https://www.singersl.com/products?search=HT-B500'},
-  {category:'Furniture',product:'ENZO Center Table',sku:'LF-ENZO-CT-WHT-WN-S',price:10899,url:'https://www.singersl.com/products?search=LF-ENZO-CT-WHT-WN-S'},
-  {category:'Computer',product:'ASUS Vivobook 15 X1504VAP-BQ7658WS',sku:'AS-14-I7-16-512-7658-SIL',price:344999,url:'https://www.singersl.com/product/asus-vivobook-15-x1504vap-bq7658ws-14th-intel-core-7-150u-16gb-ddr5-ram-512gb-ssd-microsoft-office-home-cool-silver'}
+var CATALOG=[];
+var FALLBACK_CATALOG=[
+ {category:'Television',product:'Singer 32" HD TV',sku:'SLE32E6A',price:44999,url:'https://www.singersl.com/product/singer-32-hd-tv-sle32e6a'},
+ {category:'Television',product:'Singer 43" Full HD Google TV',sku:'SLE43J890',price:119999,url:'https://www.singersl.com/product/singer-43-full-hd-google-tv-sle43j890'},
+ {category:'Refrigerator',product:'Singer GEO Refrigerator 2 Door',sku:'GEO-260NF-TGYF',price:139999,url:'https://www.singersl.com/products?search=GEO-260NF-TGYF'},
+ {category:'Refrigerator',product:'Singer Digital Inverter Refrigerator',sku:'SN-276INV',price:149999,url:'https://www.singersl.com/products?search=SN-276INV'},
+ {category:'Washing Machine',product:'Singer Fully Automatic Washing Machine',sku:'SWM-FA80R',price:86999,discount:'13% OFF',url:'https://www.singersl.com/products?search=SWM-FA80R'},
+ {category:'Washing Machine',product:'Singer Washing Machine Top Load 7Kg',sku:'SWM-FA70R',price:69999,discount:'22.22% OFF',url:'https://www.singersl.com/products?search=SWM-FA70R'},
+ {category:'Air Conditioner',product:'Sisil Air Conditioner Non-Inverter 12000 BTU',sku:'SL-ELITE12',price:164999,discount:'17.5% OFF',url:'https://www.singersl.com/products?search=SL-ELITE12'},
+ {category:'Air Conditioner',product:'Sisil Air Conditioner Non-Inverter 18000 BTU',sku:'SL-ELITE18',price:199999,discount:'9.09% OFF',url:'https://www.singersl.com/products?search=SL-ELITE18'},
+ {category:'Rice Cooker',product:'Singer Rice Cooker 2.8L',sku:'SRC-1528HS',price:11874,discount:'5% OFF',url:'https://www.singersl.com/products?search=SRC-1528HS'},
+ {category:'Rice Cooker',product:'Singer Rice Cooker 4.5L',sku:'SRC-2545HS',price:17574,discount:'5% OFF',url:'https://www.singersl.com/products?search=SRC-2545HS'},
+ {category:'Kitchen Appliance',product:'Beko Telescopic Hood 60cm',sku:'B-CTB6250XH',price:89999,url:'https://www.singersl.com/products?search=B-CTB6250XH'},
+ {category:'Audio',product:'Sony Bravia Theatre Bar 5',sku:'HT-B500',price:164999,url:'https://www.singersl.com/products?search=HT-B500'},
+ {category:'Furniture',product:'ENZO Center Table',sku:'LF-ENZO-CT-WHT-WN-S',price:10899,url:'https://www.singersl.com/products?search=LF-ENZO-CT-WHT-WN-S'},
+ {category:'Computer',product:'ASUS Vivobook 15 X1504VAP-BQ7658WS',sku:'AS-14-I7-16-512-7658-SIL',price:344999,url:'https://www.singersl.com/product/asus-vivobook-15-x1504vap-bq7658ws-14th-intel-core-7-150u-16gb-ddr5-ram-512gb-ssd-microsoft-office-home-cool-silver'}
 ];
-let CATALOG = DEFAULT_CATALOG.map(x=>({...x}));
-const RULES=[
- ['Washing Machine',/washing|washer|wash machine|wm-|swm-/i],
- ['Refrigerator',/refrigerator|fridge|freezer|geo-|sn-\d+inv/i],
- ['Air Conditioner',/air conditioner|a\/c|ac\b|btu|elite\d+/i],
+CATALOG=FALLBACK_CATALOG.slice();
+var liveMeta={checkedAt:null,updated:0,total:CATALOG.length,stale:true,stockKnown:0,inStock:0};
+var sourceRows=[],model=null,selectedCustomerId='',catalogueNameMap=new Map();
+
+var RULES=[
+ ['Washing Machine',/washing|washer|wash machine|swm[-_]/i],
+ ['Refrigerator',/refrigerator|fridge|freezer|geo[-_]|sn-\d+inv/i],
+ ['Air Conditioner',/air conditioner|a\/c|\bbtu\b|elite\d+/i],
  ['Television',/\btv\b|television|led tv|smart tv|google tv|sle\d+/i],
- ['Rice Cooker',/rice cooker|src-/i],
- ['Kitchen Appliance',/blender|grinder|mixer|kettle|oven|microwave|hood|toaster|air fryer|cooker|induction/i],
- ['Audio',/speaker|soundbar|home theatre|theatre bar|audio|ht-b/i],
+ ['Rice Cooker',/rice cooker|src[-_]/i],
+ ['Kitchen Appliance',/blender|grinder|mixer|kettle|oven|microwave|hood|toaster|air fryer|cooker|induction|hob/i],
+ ['Audio',/speaker|soundbar|home theatre|theatre bar|audio|sound system|ht[-_]/i],
  ['Mobile',/mobile|smartphone|phone|galaxy|iphone|oppo|vivo|redmi|realme/i],
- ['Computer',/laptop|notebook|computer|desktop|printer|tablet|ipad|acer|asus|hp |dell/i],
- ['Furniture',/sofa|table|chair|bed|mattress|wardrobe|cupboard|dressing|cabinet|furniture|sectional/i],
- ['Water Pump',/water pump|pump|wp-/i],
- ['Sewing Machine',/sewing|sewing machine/i],
- ['Personal Care',/trimmer|shaver|hair dryer|hair care|fitness|massager/i]
+ ['Computer',/laptop|notebook|computer|desktop|printer|tablet|ipad|acer|asus|hp\b|dell/i],
+ ['Furniture',/sofa|table|chair|bed|mattress|wardrobe|cupboard|dressing|cabinet|furniture/i],
+ ['Water Pump',/water pump|pump|wp[-_]/i],
+ ['Sewing Machine',/sewing machine|sewing/i],
+ ['Personal Care',/trimmer|shaver|hair dryer|hair care|fitness|massager/i],
+ ['Fan',/\bfan\b|ceiling fan|pedestal fan|stand fan/i],
+ ['Iron',/\biron\b|steam iron/i]
 ];
-function categoryOf(s){for(const [c,r] of RULES){if(r.test(s||''))return c}return 'Other';}
-function fmtDate(v){if(v==null||v==='')return ''; if(typeof v==='number'){const d=new Date(Math.round((v-25569)*86400*1000)); return isNaN(d)?'':d.toISOString().slice(0,10)} const d=new Date(v); return isNaN(d)?String(v):d.toISOString().slice(0,10)}
-function numDate(v){const s=fmtDate(v); const t=Date.parse(s); return isNaN(t)?0:t;}
-function norm(v){return String(v??'').trim().replace(/\s+/g,' ')}
-function findCol(headers, candidates){const lower=headers.map(x=>String(x).toLowerCase().replace(/[^a-z0-9]/g,'')); for(const c of candidates){const i=lower.indexOf(c); if(i>=0)return headers[i]} for(let i=0;i<lower.length;i++)for(const c of candidates)if(lower[i].includes(c))return headers[i]; return null}
-function escapeHtml(s){return String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function money(v){return v==null?'—':'LKR '+Number(v).toLocaleString('en-LK')}
+var BRANDS=['Singer','Samsung','Sony','Whirlpool','Beko','Sisil','ASUS','LG','Philips','Panasonic','Dell','HP','Acer','Apple','Oppo','Vivo','Redmi','Realme','Haier','TCL','Hitachi'];
+var COMPLEMENTS={Television:['Audio','Furniture'],Audio:['Television'],Refrigerator:['Kitchen Appliance'],Washing Machine:['Personal Care','Kitchen Appliance'],Air Conditioner:['Fan'],Fan:['Air Conditioner'],Computer:['Mobile','Audio'],Mobile:['Computer'],Rice Cooker:['Kitchen Appliance'],Kitchen Appliance:['Furniture','Rice Cooker'],Furniture:['Television'],Sewing Machine:['Personal Care'],Personal Care:['Mobile'],Water Pump:['Refrigerator'],Iron:['Personal Care']};
+
+function norm(v){return String(v==null?'':v).trim().toLowerCase().replace(/\s+/g,' ')}
+function normKey(v){return norm(v).replace(/[^a-z0-9]/g,'')}
+function safeNum(v){if(typeof v==='number'&&isFinite(v))return v;var s=String(v==null?'':v).replace(/,/g,'');var m=s.match(/-?[0-9]+(?:\.[0-9]+)?/);return m?Number(m[0]):0}
+function fmtMoney(n){return 'LKR '+Number(n||0).toLocaleString('en-LK',{maximumFractionDigits:0})}
+function parseDate(v){
+ if(v==null||v==='')return null;
+ if(v instanceof Date&&!isNaN(v.getTime()))return new Date(v.getTime());
+ if(typeof v==='number'){var d=new Date(Math.round((v-25569)*86400000));return isNaN(d.getTime())?null:d}
+ var s=String(v).trim(),m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/);
+ if(m){var d2=new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));return isNaN(d2.getTime())?null:d2}
+ var d3=new Date(s);return isNaN(d3.getTime())?null:d3
+}
+function fmtDate(d){return d?d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'2-digit'}):''}
+function daysBetween(a,b){return Math.max(0,Math.round((a-b)/86400000))}
+function median(arr){if(!arr.length)return 0;var a=arr.slice().sort(function(x,y){return x-y}),m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2}
+function percentile(arr,p){if(!arr.length)return 0;var a=arr.slice().sort(function(x,y){return x-y}),idx=(a.length-1)*p,lo=Math.floor(idx),hi=Math.ceil(idx);return lo===hi?a[lo]:a[lo]+(a[hi]-a[lo])*(idx-lo)}
+function rankShare(v,vals){if(!vals.length)return .5;var min=Math.min.apply(null,vals),max=Math.max.apply(null,vals);return max===min?.5:(v-min)/(max-min)}
+function quantileScore(value,values,reverse){
+ if(values.length<=1)return 3;
+ var sorted=values.slice().sort(function(a,b){return a-b}),rank=sorted.filter(function(x){return x<=value}).length/sorted.length,score=Math.min(5,Math.max(1,Math.ceil(rank*5)));
+ return reverse?6-score:score
+}
+function categoryOf(text){for(var i=0;i<RULES.length;i++)if(RULES[i][1].test(text||''))return RULES[i][0];return 'Other'}
+function brandOf(text){
+ var parts=norm(text).split(/[^a-z0-9]+/);
+ for(var i=0;i<BRANDS.length;i++)if(parts.indexOf(norm(BRANDS[i]))>=0)return BRANDS[i];
+ return ''
+}
+function normProduct(v){return norm(v).replace(/[^a-z0-9]+/g,'')}
+function modelTokens(v){return norm(v).split(/[^a-z0-9]+/).filter(function(x){return x.length>=5&&/\d/.test(x)})}
+function sameModel(a,b){var set={};modelTokens(b).forEach(function(x){set[x]=1});return modelTokens(a).some(function(x){return set[x]})}
+function pctFromText(v){var m=String(v==null?'':v).match(/(\d+(?:\.\d+)?)\s*%/);return m?Number(m[1]):0}
+function findCol(keys,aliases){
+ var nk=keys.map(function(k){return {k:k,n:normKey(k)}});
+ for(var i=0;i<aliases.length;i++){var a=normKey(aliases[i]),e=nk.find(function(x){return x.n===a});if(e)return e.k}
+ for(var j=0;j<aliases.length;j++){var b=normKey(aliases[j]),p=nk.find(function(x){return x.n.indexOf(b)>=0});if(p)return p.k}
+ return ''
+}
 function normalizePhone(v){
-  let s=String(v??'').replace(/[^\d+]/g,'');
-  if(!s)return '';
-  if(s.startsWith('+'))s=s.slice(1);
-  if(s.startsWith('00'))s=s.slice(2);
-  if(s.startsWith('0'))s='94'+s.slice(1);
-  else if(s.length===9)s='94'+s;
-  return s;
+ var s=String(v==null?'':v).replace(/\D/g,'');if(!s)return '';
+ if(s.indexOf('94')===0&&s.length===11)return s;
+ if(s.length===10&&s.charAt(0)==='0')return '94'+s.slice(1);
+ if(s.length===9)return '94'+s;
+ return ''
 }
-function waUrl(phone,message){const n=normalizePhone(phone); return n?'https://wa.me/'+n+'?text='+encodeURIComponent(message):'';}
-function smsUrl(phone,message){const n=normalizePhone(phone); return n?'sms:'+n+'?body='+encodeURIComponent(message):'';}
-function recLine(x){if(!x||!x.product)return ''; const price=x.price==null?'':` — ${money(x.price)}`; const sku=x.sku?` (${x.sku})`:''; const offer=x.discount?` | ${x.discount}${x.offerNote?` — ${x.offerNote}`:''}`:''; return `${x.product}${sku}${price}${offer}`;}
-function buildSalesMessage(r,lang='en'){
-  const greeting=r.name?({en:'Hi '+r.name+',',si:'හිතවත් '+r.name+',',ta:'அன்புள்ள '+r.name+','}[lang]):({en:'Hi,',si:'හිතවත් පාරිභෝගிகருமனே,',ta:'அன்புள்ள வாடிக்கையாளரே,'}[lang]);
-  const items=[r.primary,r.alt1,r.alt2].filter(function(x){return x&&x.product;});
-  const productLines=items.map(function(x,i){
-    const price=x.price!=null?' — '+money(x.price):'';
-    const off=x.discount?' | '+x.discount:'';
-    const link=x.url?'\\n   '+x.url:'';
-    return (i+1)+'. '+x.product+price+off+link;
-  });
-  const offerItems=items.filter(function(x){return x.discount;});
-  const offerText=offerItems.length
-    ?({en:'🔥 Selected items have current promotions: '+offerItems.map(function(x){return x.product+' – '+x.discount;}).join('; ')+'. Offers can change.',
-       si:'🔥 තෝරාගත් නිෂ්පාදන සඳහා වර්තමාන විශේෂ දීමනා ඇත: '+offerItems.map(function(x){return x.product+' – '+x.discount;}).join('; ')+'. දීමනා වෙනස් විය හැක.',
-       ta:'🔥 தேர்ந்தெடுக்கப்பட்ட பொருட்களுக்கு தற்போதைய சிறப்பு சலுகைகள் உள்ளன: '+offerItems.map(function(x){return x.product+' – '+x.discount;}).join('; ')+'. சலுகைகள் மாறக்கூடும்.'}[lang])
-    :({en:'✨ Prices and promotions can change. Please check the latest details with our team.',
-       si:'✨ මිල සහ දීමනා වෙනස් විය හැක. නවතම විස්තර සඳහා අපගේ කණ්ඩායම සමඟ පරීක්ෂා කරන්න.',
-       ta:'✨ விலைகள் மற்றும் சலுகைகள் மாறக்கூடும். சமீபத்திய விவரங்களுக்கு எங்கள் குழுவுடன் சரிபார்க்கவும்.'}[lang]);
-  const textByLang={
-    en:[greeting,'','Based on your previous purchases, here are a few Singer products that may suit your needs:',''].concat(productLines,['',offerText,'','Please use the product links above to view the latest details on the Singer Sri Lanka website.','','Reply to this message and we can help with current pricing, availability and promotions.']).join('\\n'),
-    si:[greeting,'','ඔබගේ පෙර මිලදී ගැනීම් අනුව, ඔබට ගැළපිය හැකි Singer නිෂ්පාදන කිහිපයක් මෙන්න:',''].concat(productLines,['',offerText,'','ඉහත product links මඟින් Singer Sri Lanka website එකේ නවතම විස්තර බලන්න.','','වර්තමාන මිල, ලබාගත හැකි බව සහ දීමනා පිළිබඳ වැඩි විස්තර සඳහා මෙම පණිවිඩයට reply කරන්න.']).join('\\n'),
-    ta:[greeting,'','உங்கள் முந்தைய கொள்முதல்களின் அடிப்படையில், உங்களுக்கு பொருத்தமாக இருக்கக்கூடிய சில Singer தயாரிப்புகள் இதோ:',''].concat(productLines,['',offerText,'','மேலே உள்ள product links மூலம் Singer Sri Lanka இணையதளத்தின் சமீபத்திய விவரங்களைப் பார்க்கலாம்.','','தற்போதைய விலை, கிடைக்கும் நிலை மற்றும் சலுகைகளுக்கு இந்த செய்திக்கு பதிலளிக்கவும்.']).join('\\n')
-  };
-  return textByLang[lang];
+function escapeHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+function escapeAttr(v){return escapeHtml(v)}
+function rebuildCatalogueMaps(){catalogueNameMap=new Map();CATALOG.forEach(function(p){if(p.product)catalogueNameMap.set(normProduct(p.product),p)})}
+function catalogueMatch(text){
+ var t=norm(text);if(!t)return null;
+ for(var i=0;i<CATALOG.length;i++){var p=CATALOG[i];if(p.sku&&t.indexOf(norm(p.sku))>=0)return p}
+ var exact=catalogueNameMap.get(normProduct(text));if(exact)return exact;
+ var nt=normProduct(text),best=null,bestScore=0;
+ for(var j=0;j<CATALOG.length;j++){var c=CATALOG[j],tokens=modelTokens(c.product||''),hits=tokens.filter(function(x){return nt.indexOf(x)>=0}).length,score=tokens.length?hits/tokens.length:0;if(score>.65&&score>bestScore){best=c;bestScore=score}}
+ return best
 }
-function buildWhatsAppMessage(r){ return buildSalesMessage(r,'en'); }
-function openWhatsApp(r){
-  const lang=document.getElementById('msgLang')?.value||'en';
-  const url=waUrl(r.phone,buildSalesMessage(r,lang));
-  if(!url){alert('No valid phone/mobile number is available for this customer.');return;}
-  window.open(url,'_blank');
-}
-function openSms(r){
-  const lang=document.getElementById('msgLang')?.value||'en';
-  const url=smsUrl(r.phone,buildSalesMessage(r,lang));
-  if(!url){alert('No valid phone/mobile number is available for this customer.');return;}
-  window.location.href=url;
-}
-function openMessagePreview(r){
-  const renderMessage=()=>{
-    const lang=document.getElementById('msgLang').value;
-    const m=buildSalesMessage(r,lang);
-    document.getElementById('msgContent').textContent=m;
-    document.getElementById('copyMsg').onclick=async()=>{try{await navigator.clipboard.writeText(m);document.getElementById('copyMsg').textContent='Copied ✓';setTimeout(()=>document.getElementById('copyMsg').textContent='Copy Message',1200)}catch(e){alert('Copy failed. Please select and copy the message manually.')}};
-    document.getElementById('sendMsg').onclick=()=>openWhatsApp(r);
-    document.getElementById('sendSms').onclick=()=>openSms(r);
-  };
-  document.getElementById('msgCustomer').textContent=`${r.name||'Customer'}${r.phone?' • '+r.phone:''}`;
-  document.getElementById('msgLang').value='en';
-  document.getElementById('msgLang').onchange=renderMessage;
-  renderMessage();
-  const modal=document.getElementById('msgModal'); modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
-}
-let model=null, uploadedRows=[];
-let liveMeta={checkedAt:null,updated:0,failed:0,source:'github-catalogue'};
+var matchCache=new Map();
+function cachedMatch(text){var k=norm(text);if(matchCache.has(k))return matchCache.get(k);var m=catalogueMatch(text);matchCache.set(k,m);return m}
 
-async function loadLiveSingerData(manual=false){
-  const btn=document.getElementById('liveBtn'),st=document.getElementById('liveStatus');
-  if(btn&&manual){btn.disabled=true;btn.textContent='Refreshing…';}
-  if(st&&manual){st.textContent='Loading the latest Singer catalogue snapshot…';st.className='status';}
-  try{
-    const candidates=[new URL('catalogue.json',document.baseURI).href,location.origin+'/catalogue.json'];
-    let resp=null,lastError=null;
-    for(const base of Array.from(new Set(candidates))){
-      try{
-        const candidate=base+(base.indexOf('?')>=0?'&':'?')+'ts='+Date.now();
-        const r=await fetch(candidate,{cache:'no-store',headers:{'Accept':'application/json'}});
-        if(r.ok){resp=r;break;}
-        lastError=new Error('HTTP '+r.status+' from '+candidate);
-      }catch(e){lastError=e;}
-    }
-    if(!resp)throw lastError||new Error('catalogue.json could not be fetched');
-    const payload=await resp.json();
-    if(!Array.isArray(payload.products)||!payload.products.length)throw new Error('catalogue.json has no products');
-    const fallbackMap=new Map(DEFAULT_CATALOG.map(function(x){return [String(x.sku||'').trim().toLowerCase(),x];}));
-    const incoming=payload.products.filter(function(x){return x&&x.product&&x.sku;}).map(function(x){return Object.assign({},fallbackMap.get(String(x.sku).trim().toLowerCase())||{},x);});
-    CATALOG=incoming.length>=10?incoming:DEFAULT_CATALOG.map(function(fallback){const live=payload.products.find(function(x){return String(x.sku||'').trim().toLowerCase()===String(fallback.sku||'').trim().toLowerCase();});return live?Object.assign({},fallback,live):Object.assign({},fallback);});
-    const checkedAt=payload.checkedAt?new Date(payload.checkedAt):new Date();
-    const ageHours=Math.max(0,(Date.now()-checkedAt.getTime())/3600000);
-    liveMeta={checkedAt:checkedAt,updated:CATALOG.filter(function(x){return x.live;}).length,failed:CATALOG.filter(function(x){return !x.live;}).length,total:CATALOG.length,stale:ageHours>3,ageHours:ageHours,source:'github-catalogue'};
-    if(st){st.textContent='Singer catalogue loaded: '+liveMeta.updated.toLocaleString()+' live products / '+liveMeta.total.toLocaleString()+' total. Last update: '+liveMeta.checkedAt.toLocaleString()+(liveMeta.stale?' • refresh is older than 3 hours.':'');st.className=liveMeta.stale?'status warn':'status ok';}
-    renderCatalogueOnly();if(model)render();return true;
-  }catch(err){
-    if(st){st.textContent='Live catalogue file could not be loaded ('+(err&&err.message?err.message:'unknown error')+'). Using saved catalogue values.';st.className='status warn';}
-    renderCatalogueOnly();return false;
-  }finally{
-    if(btn&&manual){btn.disabled=false;btn.textContent='Refresh Live Singer Data';}
-  }
+async function loadLiveSingerData(){
+ var el=document.getElementById('liveStatus');el.textContent='Loading latest catalogue.json…';el.className='status';
+ try{
+  var res=await fetch('catalogue.json?ts='+Date.now(),{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);
+  var data=await res.json(),incoming=Array.isArray(data.products)?data.products.filter(function(x){return x&&x.product&&x.sku&&safeNum(x.price)>0}):[];
+  if(incoming.length>=10)CATALOG=incoming;
+  liveMeta={checkedAt:data.checkedAt?new Date(data.checkedAt):null,updated:data.summary?.liveUpdated||incoming.filter(function(x){return x.live}).length,total:data.summary?.total||incoming.length,stale:data.checkedAt?(Date.now()-new Date(data.checkedAt).getTime()>3*3600000):true,stockKnown:data.summary?.stockStatusKnown||0,inStock:data.summary?.inStock||0};
+  rebuildCatalogueMaps();matchCache=new Map();renderCatalogue();renderCatalogueHealth();
+  el.textContent='Singer catalogue: '+CATALOG.length+' products | Live '+liveMeta.updated+' | Snapshot '+(liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Unknown');el.className='status '+(liveMeta.stale?'warn':'ok');
+ }catch(e){
+  CATALOG=FALLBACK_CATALOG.slice();liveMeta={checkedAt:null,updated:0,total:CATALOG.length,stale:true,stockKnown:0,inStock:0};rebuildCatalogueMaps();matchCache=new Map();renderCatalogue();renderCatalogueHealth();
+  el.textContent='Live catalogue refresh failed; using browser fallback catalogue. The scheduled GitHub updater will retry automatically.';el.className='status warn';
+ }
+}
+function renderCatalogueHealth(){
+ var el=document.getElementById('catalogueHealth');if(!el)return;
+ var live=CATALOG.filter(function(x){return x.live!==false}).length,missingPrice=CATALOG.filter(function(x){return !safeNum(x.price)}).length,missingUrl=CATALOG.filter(function(x){return !x.url}).length,dups=CATALOG.length-new Set(CATALOG.map(function(x){return norm(x.sku)}).filter(Boolean)).size,issues=[];
+ if(CATALOG.length<50)issues.push('Catalogue size below 50.');
+ if(missingPrice)issues.push(missingPrice+' missing prices.');
+ if(missingUrl)issues.push(missingUrl+' missing URLs.');
+ if(dups)issues.push(dups+' duplicate SKUs.');
+ if(liveMeta.stale)issues.push('Snapshot older than 3 hours.');
+ el.innerHTML='<div class="qualityGrid" style="grid-template-columns:repeat(4,1fr)"><div class="qualityItem"><div class="qn">'+CATALOG.length+'</div><div class="ql">Catalogue products</div></div><div class="qualityItem"><div class="qn">'+live+'</div><div class="ql">Live products</div></div><div class="qualityItem"><div class="qn">'+(liveMeta.stockKnown||0)+'</div><div class="ql">Stock known (internal)</div></div><div class="qualityItem"><div class="qn">'+(liveMeta.inStock||0)+'</div><div class="ql">In stock (internal)</div></div></div>'+(issues.length?'<div class="note warn" style="margin-top:10px">'+escapeHtml(issues.join(' '))+'</div>':'<div class="note" style="margin-top:10px">Catalogue size, price, URL and duplicate-SKU checks passed. Stock remains internal-only.</div>')
+}
+function renderCatalogue(){
+ var body=document.querySelector('#catalogue tbody');if(!body)return;
+ body.innerHTML=CATALOG.slice().sort(function(a,b){return norm(a.category).localeCompare(norm(b.category))||norm(a.product).localeCompare(norm(b.product))}).map(function(x){
+  var s=x.inStock===true?'In stock':x.inStock===false?'Out of stock':'Unknown',cls=x.inStock===true?'green':x.inStock===false?'red':'amber';
+  return '<tr><td>'+escapeHtml(x.category||'Other')+'</td><td>'+escapeHtml(x.product||'')+'</td><td class="mono">'+escapeHtml(x.sku||'')+'</td><td>'+fmtMoney(x.price||0)+'</td><td>'+escapeHtml(x.discount||'')+'</td><td><a href="'+escapeAttr(x.url||'#')+'" target="_blank" rel="noopener">Singer</a></td><td><span class="pill '+cls+'">'+s+'</span><div class="small muted">Internal only</div></td></tr>'
+ }).join('')
 }
 
-function renderCatalogueOnly(){
-  const body=document.getElementById('catalogue')?.querySelector('tbody');if(!body)return;
-  const stockLabel=function(x){return x.inStock===true?'In stock':x.inStock===false?'Out of stock':'Unknown';};
-  body.innerHTML=CATALOG.map(function(x){return '<tr><td>'+escapeHtml(x.category)+'</td><td>'+escapeHtml(x.product)+'</td><td class="mono">'+escapeHtml(x.sku)+'</td><td>'+money(x.price)+'</td><td>'+(x.discount?'<b>'+escapeHtml(x.discount)+'</b>'+(x.offerNote?'<br><span class="muted">'+escapeHtml(x.offerNote)+'</span>':''):'—')+'</td><td><a href="'+x.url+'" target="_blank" rel="noopener">Singer Sri Lanka</a>'+(x.live?'<br><span class="muted">Live snapshot</span>':'<br><span class="muted">Fallback</span>')+'</td><td><span class="muted">'+stockLabel(x)+' • internal only</span></td></tr>';}).join('');
+function analyse(rows){
+ var keys=Array.from(new Set(rows.flatMap(function(r){return Object.keys(r)}))),cols={
+  order:findCol(keys,['ORDER_NO','ORDER NUMBER','ORDER','INVOICE NO','INVOICE','BILL NO']),
+  product:findCol(keys,['PRODUCT','ITEM','PRODUCT NAME']),desc:findCol(keys,['PRODUCT DESCRIPTION','DESCRIPTION','ITEM DESCRIPTION']),
+  date:findCol(keys,['DATE OF SALE','SALE DATE','DATE','INVOICE DATE']),units:findCol(keys,['UNITS','QTY','QUANTITY']),
+  cid:findCol(keys,['CUSTOMER ID NUMBER','CUSTOMER ID','CUSTOMER CODE','CUST ID','ID NUMBER']),name:findCol(keys,['CUSTOMER NAME','NAME']),
+  phone:findCol(keys,['PHONE / MOBILE NUMBER','MOBILE NUMBER','PHONE','MOBILE','CONTACT NUMBER']),
+  price:findCol(keys,['UNIT PRICE','SELLING PRICE','PRICE','UNIT AMOUNT','RATE']),amount:findCol(keys,['TOTAL AMOUNT','NET AMOUNT','AMOUNT','SALES VALUE','VALUE','TOTAL']),
+  discount:findCol(keys,['DISCOUNT','DISCOUNT %','OFFER','PROMOTION'])
+ };
+ var invalidRequired=0,invalidDate=0,missingHistoricalPrice=0,unmapped=0,orderKeys={},clean=[];
+ rows.forEach(function(r,idx){
+  var cid=String(r[cols.cid]||'').trim(),name=String(r[cols.name]||'').trim(),phone=normalizePhone(r[cols.phone]),product=(String(r[cols.product]||'').trim()||String(r[cols.desc]||'').trim()),desc=String(r[cols.desc]||'').trim(),date=parseDate(r[cols.date]);
+  if(!cid||!product){invalidRequired++;return}if(!date){invalidDate++;return}
+  var units=safeNum(r[cols.units]);if(units<=0)units=1;var unitPrice=safeNum(r[cols.price]),amount=safeNum(r[cols.amount]);if(!unitPrice&&amount)unitPrice=amount/units;if(!unitPrice)missingHistoricalPrice++;
+  var match=cachedMatch(product+' '+desc),cat=match?.category||categoryOf(product+' '+desc),brand=match?.brand||brandOf(product+' '+desc);if(cat==='Other')unmapped++;
+  var disc=pctFromText(r[cols.discount]),order=String(r[cols.order]||'').trim();if(order)orderKeys[order]=(orderKeys[order]||0)+1;
+  clean.push({idx:idx,cid:cid,name:name,phone:phone,product:product,desc:desc,date:date,units:units,unitPrice:unitPrice,amount:amount||unitPrice*units,discountPct:disc,cat:cat,brand:brand,sku:match?.sku||'',catalogue:match||null,order:order})
+ });
+ var duplicateOrderKeys=Object.values(orderKeys).filter(function(v){return v>1}).length,latestDate=new Date(clean.length?Math.max.apply(null,clean.map(function(r){return r.date.getTime()})):Date.now()),by={};
+ clean.forEach(function(r){(by[r.cid]||(by[r.cid]=[])).push(r)});Object.values(by).forEach(function(a){a.sort(function(x,y){return x.date-y.date})});
+ var customers=Object.keys(by).map(function(cid){
+  var a=by[cid],last=a[a.length-1],first=a[0],dateKeys=Array.from(new Set(a.map(function(r){return r.date.toISOString().slice(0,10)}))).sort(),intervals=[];
+  for(var i=1;i<dateKeys.length;i++)intervals.push(daysBetween(new Date(dateKeys[i]),new Date(dateKeys[i-1])));
+  var recency=daysBetween(new Date(),last.date),freq=a.length,units=a.reduce(function(s,r){return s+r.units},0),revenue=a.reduce(function(s,r){return s+r.amount},0),prices=a.map(function(r){return r.unitPrice}).filter(function(v){return v>0}),cats={},brands={},months={},offerCount=0,offerDisc=0;
+  a.forEach(function(r){cats[r.cat]=(cats[r.cat]||0)+r.units;if(r.brand)brands[r.brand]=(brands[r.brand]||0)+r.units;var mo=r.date.getMonth()+1;months[mo]=(months[mo]||0)+1;if(r.discountPct>0){offerCount++;offerDisc+=r.discountPct}});
+  var intMed=median(intervals.filter(function(x){return x>0})),nextDue=intMed?new Date(last.date.getTime()+intMed*86400000):null,daysToDue=nextDue?Math.round((nextDue-new Date())/86400000):null;
+  return {id:cid,name:last.name||a.find(function(x){return x.name})?.name||'',phone:last.phone||a.find(function(x){return x.phone})?.phone||'',rows:a,last:last,first:first,frequency:freq,units:units,revenue:revenue,recencyDays:recency,prices:prices,medPrice:median(prices),p25:percentile(prices,.25),p75:percentile(prices,.75),catCounts:cats,brandCounts:brands,monthCounts:months,offerCount:offerCount,offerSensitivity:freq?offerCount/freq:0,avgDiscount:offerCount?offerDisc/offerCount:0,lastCat:last.cat,intervalMedian:intMed,nextDue:nextDue,daysToDue:daysToDue}
+ });
+ var rv=customers.map(function(c){return Math.min(c.recencyDays,3650)}),fv=customers.map(function(c){return c.frequency}),mv=customers.map(function(c){return c.revenue});
+ customers.forEach(function(c){c.R=quantileScore(Math.min(c.recencyDays,3650),rv,true);c.F=quantileScore(c.frequency,fv,false);c.M=quantileScore(c.revenue,mv,false);var t=c.R+c.F+c.M;c.rfmSegment=c.frequency===1?'New / One-time':t>=13?'Champions':t>=10?'Loyal':t>=8?'Potential':'At Risk'});
+ var globalCat={},globalProd={},transitions={};
+ clean.forEach(function(r){globalCat[r.cat]=globalCat[r.cat]||{units:0,revenue:0,customers:new Set()};globalCat[r.cat].units+=r.units;globalCat[r.cat].revenue+=r.amount;globalCat[r.cat].customers.add(r.cid);var pk=r.sku||normProduct(r.product);globalProd[pk]=globalProd[pk]||{product:r.product,cat:r.cat,sku:r.sku,units:0,revenue:0,count:0};globalProd[pk].units+=r.units;globalProd[pk].revenue+=r.amount;globalProd[pk].count++});
+ customers.forEach(function(c){for(var i=1;i<c.rows.length;i++){var from=c.rows[i-1].cat,to=c.rows[i].cat;transitions[from]=transitions[from]||{};transitions[from][to]=transitions[from][to]||{rows:0,customers:new Set()};transitions[from][to].rows++;transitions[from][to].customers.add(c.id)}});
+ var totalDemand=Object.values(globalCat).reduce(function(s,x){return s+x.revenue+x.units*100},0),catDemand={};Object.keys(globalCat).forEach(function(cat){catDemand[cat]=(globalCat[cat].revenue+globalCat[cat].units*100)/Math.max(1,totalDemand)});
+ var recs=[];
+ customers.forEach(function(c){
+  var purchased=new Set(Object.keys(c.catCounts)),lastTrans=transitions[c.lastCat]||{},customerBrandTotal=Object.values(c.brandCounts).reduce(function(s,v){return s+v},0),thisMonth=new Date().getMonth()+1,catScore={};
+  Object.keys(globalCat).forEach(function(cat){var trans=lastTrans[cat]?lastTrans[cat].rows/Math.max(1,c.rows.length-1):0,gap=purchased.has(cat)?.35:1,comp=(COMPLEMENTS[c.lastCat]||[]).indexOf(cat)>=0?1:0,aff=(c.catCounts[cat]||0)/Math.max(1,c.units);catScore[cat]=Math.min(1,.35*Math.min(1,trans*2)+.18*(catDemand[cat]||0)+.17*gap+.15*comp+.10*Math.min(1,aff*3)+.05*(c.monthCounts[thisMonth]||0?0.75:.45))});
+  CATALOG.forEach(function(p){if(catScore[p.category]==null){var comp=(COMPLEMENTS[c.lastCat]||[]).indexOf(p.category)>=0?1:0;catScore[p.category]=Math.min(1,.65*comp+.2*(catDemand[p.category]||0)+.15*(purchased.has(p.category)?.35:1))}});
+  var candidates=CATALOG.filter(function(p){if(!p.product||!safeNum(p.price))return false;return !c.rows.some(function(r){return (r.sku&&p.sku&&norm(r.sku)===norm(p.sku))||normProduct(r.product)===normProduct(p.product)||sameModel(r.product,p.product)})});
+  var trueByCat={};candidates.forEach(function(p){if(p.inStock===true)trueByCat[p.category]=true});candidates=candidates.filter(function(p){return !(trueByCat[p.category]&&p.inStock===false)});
+  var demandVals=Object.values(globalProd).map(function(x){return x.revenue+x.units*100}),maxDemand=Math.max.apply(null,demandVals.length?demandVals:[1]);
+  var scored=candidates.map(function(p){
+   var priceFit=c.medPrice&&p.price?Math.exp(-Math.abs(Math.log(p.price/c.medPrice))/0.8):.5,brandFit=p.brand&&customerBrandTotal?Math.min(1,(c.brandCounts[p.brand]||0)/Math.max(1,customerBrandTotal)*5):(p.brand==='Singer'?.45:.35),offerPct=pctFromText(p.discount),offerFit=p.discount?(c.offerSensitivity>.2?Math.min(1,.55+offerPct/25):.5):.35,pd=globalProd[p.sku||normProduct(p.product)],demand=pd?Math.min(1,(pd.revenue+pd.units*100)/maxDemand):.15,seasonFit=(c.monthCounts[thisMonth]||0)?Math.min(1,.55+(c.monthCounts[thisMonth]/Math.max(1,c.frequency))*1.2):.35,timingFit=c.intervalMedian?(c.recencyDays>=c.intervalMedian*.8?1:.5):.45,stockFit=p.inStock===true?1:p.inStock===false?.15:.6,fit=100*(.35*(catScore[p.category]||.08)+.20*priceFit+.10*brandFit+.10*demand+.08*offerFit+.07*seasonFit+.05*timingFit+.05*stockFit);
+   return Object.assign({},p,{_score:fit})
+  }).sort(function(a,b){return b._score-a._score});
+  var used=new Set(),primary=scored[0]||null;if(primary)used.add(primary.sku||normProduct(primary.product));
+  function allowed(p){return !used.has(p.sku||normProduct(p.product))}
+  var alt1=primary?scored.find(function(p){return allowed(p)&&p.category===primary.category&&Math.abs(Math.log(Math.max(1,p.price)/Math.max(1,primary.price)))>.12}):null;
+  if(!alt1&&primary)alt1=scored.find(function(p){return allowed(p)&&p.category===primary.category})||scored.find(allowed)||null;if(alt1)used.add(alt1.sku||normProduct(alt1.product));
+  var desired=primary?(COMPLEMENTS[primary.category]||[]):[],alt2=primary?scored.find(function(p){return allowed(p)&&desired.indexOf(p.category)>=0&&p.category!==alt1?.category}):null;
+  if(!alt2)alt2=primary?scored.find(function(p){return allowed(p)&&p.category!==primary.category&&p.category!==alt1?.category})||scored.find(allowed)||null:null;
+  var prop=100*(.38*(1/(1+c.recencyDays/45))+.24*Math.min(1,c.frequency/6)+.18*rankShare(c.revenue,mv)+.20*Math.max(.1,c.offerSensitivity)),dueBoost=c.intervalMedian&&c.recencyDays>=c.intervalMedian*.8?8:0,score=primary?Math.min(100,primary._score*.68+prop*.32+dueBoost):0,action=score>=80?'Contact Today':score>=60?'This Week':'Nurture';if(!c.phone&&action==='Contact Today')action='This Week';
+  var reasons=[];reasons.push('RFM: '+c.rfmSegment+' (R'+c.R+' F'+c.F+' M'+c.M+')');reasons.push('last purchase: '+c.lastCat);
+  if(primary){reasons.push(primary.category!==c.lastCat?'category opportunity: '+primary.category:'same-category upgrade opportunity');if(c.medPrice)reasons.push('price within usual spend range');if(primary.brand&&c.brandCounts[primary.brand])reasons.push('brand affinity: '+primary.brand);if(primary.discount&&c.offerSensitivity>.15)reasons.push('offer-responsive history');if(c.intervalMedian)reasons.push(c.daysToDue<=0?'purchase interval due/overdue':'next purchase window approaching');if(c.monthCounts[thisMonth])reasons.push('repeat purchase month signal');if(primary.inStock===true)reasons.push('internal availability eligible')}
+  var timing=c.intervalMedian?(c.daysToDue<=0?'Due / overdue':c.daysToDue+' days to expected purchase'):'Not enough repeat history',recValue=[primary,alt1,alt2].filter(Boolean).reduce(function(s,p){return s+p.price},0);
+  recs.push({cid:c.id,name:c.name,phone:c.phone,lastDate:fmtDate(c.last.date),lastCat:c.lastCat,lastProduct:c.last.product,customer:c,primary:primary,alt1:alt1,alt2:alt2,score:Math.round(score),priority:action,reason:reasons.join(' • '),timing:timing,offerOpportunity:!!(primary&&primary.discount&&c.offerSensitivity>.15),recValue:recValue,budget:c.medPrice,priceBand:c.p25&&c.p75?fmtMoney(c.p25)+' - '+fmtMoney(c.p75):'Not enough history'})
+ });
+ recs.sort(function(a,b){return b.score-a.score||b.customer.revenue-a.customer.revenue});
+ var globalOpp={},productOpp={};
+ recs.forEach(function(r){if(r.primary){var key=r.lastCat+'→'+r.primary.category;globalOpp[key]=globalOpp[key]||{from:r.lastCat,to:r.primary.category,customers:new Set(),rows:0,value:0};globalOpp[key].customers.add(r.cid);globalOpp[key].rows++;globalOpp[key].value+=r.primary.price||0}[r.primary,r.alt1,r.alt2].filter(Boolean).forEach(function(p){var k=p.sku||normProduct(p.product);productOpp[k]=productOpp[k]||{product:p.product,cat:p.category,sku:p.sku,customers:new Set(),score:0,value:0};productOpp[k].customers.add(r.cid);productOpp[k].score+=r.score;productOpp[k].value+=p.price||0})});
+ var opp=Object.values(globalOpp).map(function(x){return {from:x.from,to:x.to,customers:x.customers.size,rows:x.rows,value:x.value,share:x.rows/Math.max(1,recs.length)}}).sort(function(a,b){return b.customers-a.customers||b.value-a.value}).slice(0,25),prod=Object.values(productOpp).map(function(x){return {product:x.product,cat:x.cat,sku:x.sku,customers:x.customers.size,avgScore:x.score/Math.max(1,x.customers.size),value:x.value}}).sort(function(a,b){return b.customers-a.customers||b.avgScore-a.avgScore}).slice(0,30);
+ return {clean:clean,by:by,customers:customers,recs:recs,opp:opp,productOpp:prod,global:globalCat,latestDate:latestDate,validation:{sourceRows:rows.length,valid:clean.length,invalidRequired:invalidRequired,invalidDate:invalidDate,duplicateOrderKeys:duplicateOrderKeys,missingPhones:customers.filter(function(c){return !c.phone}).length,unmapped:unmapped,missingHistoricalPrice:missingHistoricalPrice,validMobile:customers.filter(function(c){return c.phone}).length},summary:{contactToday:recs.filter(function(r){return r.priority==='Contact Today'}).length,week:recs.filter(function(r){return r.priority==='This Week'}).length,nurture:recs.filter(function(r){return r.priority==='Nurture'}).length,offerOpp:recs.filter(function(r){return r.offerOpportunity}).length,recValue:recs.reduce(function(s,r){return s+r.recValue},0)},columns:cols}
 }
 
-function median(values){
-  const a=values.filter(function(x){return Number.isFinite(x);}).sort(function(x,y){return x-y;});
-  if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2;
+function countBy(arr){var c={};arr.forEach(function(x){if(x)c[x]=(c[x]||0)+1});return Object.keys(c).map(function(k){return [k,c[k]]}).sort(function(a,b){return b[1]-a[1]})}
+function renderBarChart(id,items){
+ var el=document.getElementById(id);if(!el)return;if(!items.length){el.innerHTML='<div class="chartEmpty">No data</div>';return}
+ var max=items[0][1]||1;el.innerHTML=items.slice(0,8).map(function(x){var w=Math.max(5,Math.round(x[1]/max*100));return '<div class="barRow"><div><div class="barLabel">'+escapeHtml(x[0])+'</div><div class="barTrack"><div class="barFill" style="width:'+w+'%;background:#155eef"></div></div></div><div class="barCount">'+x[1]+'</div></div>'}).join('')
 }
-function brandOfText(text){
-  const brands=['Singer','Samsung','Sony','Whirlpool','Beko','Sisil','ASUS','LG','Philips','Panasonic','Dell','HP','Acer','Apple','Oppo','Vivo','Redmi','Realme','Haier','TCL'];
-  const s=String(text||'');
-  for(const b of brands)if(new RegExp('\\\\b'+b+'\\\\b','i').test(s))return b;
-  return '';
+function stockLabel(p){if(!p)return '';return p.inStock===true?'In stock':p.inStock===false?'Out of stock':'Unknown'}
+function recHtml(p,label){
+ if(!p)return '<span class="muted">No recommendation</span>';
+ return '<div class="recCard"><div class="recHead"><div><div class="recName">'+escapeHtml(label+' — '+p.product)+'</div><div class="recMeta">'+escapeHtml((p.category||'')+' | '+(p.sku||'')+' | '+fmtMoney(p.price||0)+(p.discount?' | '+p.discount:''))+'</div></div><div class="pill">'+Math.round(p._score||0)+'</div></div><div class="internal">Internal stock: '+escapeHtml(stockLabel(p))+'</div></div>'
 }
-function catalogueMatchForRow(r){
-  const text=(r.product+' '+r.desc).toLowerCase();
-  const exact=CATALOG.find(function(x){return String(x.sku||'').toLowerCase()===String(r.product||'').trim().toLowerCase();});
-  if(exact)return exact;
-  return CATALOG.find(function(x){return x.product&&text.indexOf(String(x.product).toLowerCase().slice(0,36))>=0;})||null;
-}
-function analyze(rows){
-  const headers=Object.keys(rows[0]||{});
-  const cust=findCol(headers,['customeridnumber','customerid','customer','customernumber','customeridno']);
-  const name=findCol(headers,['customername','name']);
-  const phone=findCol(headers,['phonenumber','mobilephonenumber','mobilenumber','phone','mobile','contactnumber','contactno','telephone']);
-  const product=findCol(headers,['product']);
-  const desc=findCol(headers,['productdescription','description']);
-  const date=findCol(headers,['dateofsale','date','saledate']);
-  const units=findCol(headers,['units','qty','quantity']);
-  const order=findCol(headers,['orderno','ordernumber','orderid','invoice','invoiceno','invoiceid']);
-  const unitPriceCol=findCol(headers,['unitprice','sellingprice','saleprice','unitcost']);
-  if(!cust||!product||!date)throw new Error('Required columns could not be identified. Expected CUSTOMER ID NUMBER, PRODUCT and DATE OF SALE.');
-  const normalized=rows.map(function(r,idx){const rawPrice=unitPriceCol?Number(String(r[unitPriceCol]??'').replace(/,/g,'')):NaN;return {_row:idx+2,cust:norm(r[cust]),name:norm(r[name]),phone:norm(r[phone]),product:norm(r[product]),desc:norm(r[desc]),date:r[date],units:Number(r[units]||1)||1,order:norm(r[order]),unitPrice:rawPrice};});
-  const invalidRequired=normalized.filter(function(r){return !r.cust||!r.product;}),invalidDate=normalized.filter(function(r){return r.cust&&r.product&&!fmtDate(r.date);});
-  const clean=normalized.filter(function(r){return r.cust&&r.product&&fmtDate(r.date);});
-  const orderKeys=new Map();for(const r of clean){const key=r.order||(r.cust+'|'+fmtDate(r.date)+'|'+r.product);orderKeys.set(key,(orderKeys.get(key)||0)+1);}
-  const duplicateOrderKeys=Array.from(orderKeys.values()).filter(function(n){return n>1;}).length;
-  const by={};clean.forEach(function(r){(by[r.cust]??=[]).push(r);});Object.values(by).forEach(function(a){a.sort(function(x,y){return numDate(x.date)-numDate(y.date);});});
-  const trans={},global={};
-  Object.values(by).forEach(function(a){
-    a.forEach(function(r){const c=categoryOf(r.product+' '+r.desc);r.cat=c;global[c]=(global[c]||0)+1;});
-    for(let i=1;i<a.length;i++){const from=a[i-1].cat,to=a[i].cat;if(from!==to){trans[from]??={};trans[from][to]=(trans[from][to]||0)+1;}}
-  });
-  const globalTotal=Object.values(global).reduce(function(x,y){return x+y;},0)||1;
-  const recs=[],allCats=Array.from(new Set(Object.keys(global).concat(CATALOG.map(function(x){return x.category;})))).filter(function(c){return c!=='Other';});
-
-  Object.entries(by).forEach(function(entry){
-    const cid=entry[0],a=entry[1],last=a[a.length-1],lastCat=last.cat,owned=new Set(a.map(function(x){return x.cat;}));
-    const matchedPrices=[],brandCounts={},discounted=0;
-    a.forEach(function(row){const p=catalogueMatchForRow(row);const price=Number.isFinite(row.unitPrice)&&row.unitPrice>0?row.unitPrice:(p&&p.price);if(price)matchedPrices.push(Number(price));const b=brandOfText(row.product+' '+row.desc);if(b)brandCounts[b]=(brandCounts[b]||0)+1;if(p&&p.discount)discounted++;});
-    const budget=median(matchedPrices),preferredBrand=Object.entries(brandCounts).sort(function(x,y){return y[1]-x[1];})[0]?.[0]||'',offerSensitivity=discounted/Math.max(1,matchedPrices.length);
-    const totalTrans=trans[lastCat]?Object.values(trans[lastCat]).reduce(function(x,y){return x+y;},0):0;
-    const scored=allCats.filter(function(c){return !owned.has(c);}).map(function(c){
-      const t=(trans[lastCat]&&trans[lastCat][c])||0,transProb=totalTrans?t/totalTrans:0,pop=(global[c]||0)/globalTotal;
-      const recencyDays=Math.max(0,Math.round((Date.now()-numDate(last.date))/86400000)),freshness=recencyDays?Math.max(0,1-Math.min(recencyDays,1800)/1800):1;
-      const score=Math.min(99,Math.round(100*(0.50*transProb+0.20*pop+0.10*freshness+(budget?0.10:0)+(preferredBrand?0.05:0)+offerSensitivity*0.05)));
-      return {cat:c,score:score,trans:t,transProb:transProb,pop:pop,freshness:freshness};
-    }).sort(function(x,y){return y.score-x.score||y.trans-x.trans||y.pop-x.pop;});
-    const pool=scored.length?scored:allCats.map(function(c){return {cat:c,score:50,trans:0,transProb:0,pop:(global[c]||0)/globalTotal,freshness:.5};}).sort(function(x,y){return y.pop-x.pop;});
-    const selected=[],seen=new Set(),usedCats=new Set();
-    for(const s0 of pool){
-      let products=CATALOG.filter(function(x){return x.category===s0.cat&&x.product&&(x.inStock!==false||!CATALOG.some(function(y){return y.category===s0.cat&&y.inStock===true;}));});
-      if(!products.length)products=CATALOG.filter(function(x){return x.category===s0.cat&&x.product;});
-      products=products.map(function(p){
-        const priceFit=budget&&p.price?Math.max(0,1-Math.abs(p.price-budget)/Math.max(budget,1)):.5;
-        const pBrand=brandOfText(p.product),brandFit=preferredBrand&&pBrand?(pBrand===preferredBrand?1:0):.5,offerFit=p.discount&&offerSensitivity>0?1:0,stockFit=p.inStock===true?1:(p.inStock===false?0:.5);
-        return Object.assign({},p,{productFit:.55*priceFit+.20*brandFit+.15*offerFit+.10*stockFit});
-      }).sort(function(x,y){return y.productFit-x.productFit||Number(y.price||0)-Number(x.price||0);});
-      const p=products[0];if(!p)continue;const key=String(p.sku||p.product||'').toLowerCase();if(seen.has(key)||usedCats.has(s0.cat))continue;
-      selected.push(Object.assign({},s0,p));seen.add(key);usedCats.add(s0.cat);if(selected.length===3)break;
-    }
-    if(selected.length<3){
-      for(const p of CATALOG.filter(function(x){return x.product&&(x.inStock!==false||!CATALOG.some(function(y){return y.inStock===true;}));})){
-        const key=String(p.sku||p.product||'').toLowerCase();if(seen.has(key))continue;
-        selected.push(Object.assign({cat:p.category,score:40,trans:0,transProb:0,pop:(global[p.category]||0)/globalTotal,freshness:.5},p));seen.add(key);if(selected.length===3)break;
-      }
-    }
-    const top=selected,score=top[0]?.score||0,priority=score>=80?'High':score>=60?'Medium':'Low';
-    const reasonParts=[];if(lastCat&&top[0])reasonParts.push('Last purchased '+lastCat);if(budget)reasonParts.push('historical price fit around '+money(Math.round(budget)));if(preferredBrand)reasonParts.push('inferred brand affinity for '+preferredBrand);if(offerSensitivity>=0.25)reasonParts.push('discount-sensitive purchase history');reasonParts.push('category transitions, demand and recency');
-    recs.push({cid:cid,name:a.find(function(x){return x.name;})?.name||'',phone:a.slice().reverse().find(function(x){return normalizePhone(x.phone);})?.phone||'',lastDate:fmtDate(last.date),lastCat:lastCat,lastProduct:last.product,txCount:a.length,primary:top[0],alt1:top[1],alt2:top[2],score:score,priority:priority,reason:reasonParts.join('; ')+'.',budget:budget,preferredBrand:preferredBrand,offerOpportunity:!!top[0]?.discount,recValue:Number(top[0]?.price||0)});
-  });
-  recs.sort(function(a,b){return b.score-a.score||b.txCount-a.txCount;});
-  const opp=[];Object.entries(trans).forEach(function(entry){Object.entries(entry[1]).forEach(function(pair){opp.push({from:entry[0],to:pair[0],n:pair[1],total:Object.values(entry[1]).reduce(function(x,y){return x+y;},0)});});});opp.sort(function(a,b){return b.n-a.n;});
-  const validation={totalRows:rows.length,validRows:clean.length,invalidRequired:invalidRequired.length,invalidDate:invalidDate.length,duplicateOrderKeys:duplicateOrderKeys,customers:Object.keys(by).length,customersMissingPhone:Object.values(by).filter(function(a){return !a.some(function(x){return normalizePhone(x.phone);});}).length,otherRows:clean.filter(function(r){return r.cat==='Other';}).length};
-  return {clean:clean,by:by,global:global,trans:trans,recs:recs,opp:opp,headers:headers,validation:validation};
-}
-function render(){
- const clean=model.clean,by=model.by,global=model.global,recs=model.recs,opp=model.opp,validation=model.validation;
- const customerCount=Object.keys(by).length,repeat=Object.values(by).filter(function(a){return a.length>1;}).length,cats=Object.keys(global).filter(function(c){return c!=='Other';}).length;
- const high=recs.filter(function(r){return r.priority==='High';}).length,validMobile=recs.filter(function(r){return normalizePhone(r.phone);}).length,offerOpps=recs.filter(function(r){return r.offerOpportunity;}).length,recValue=recs.reduce(function(sum,r){return sum+Number(r.recValue||0);},0);
- document.getElementById('kpis').innerHTML=[
-  [clean.length.toLocaleString(),'Transactions'],[customerCount.toLocaleString(),'Customers'],[repeat.toLocaleString(),'Repeat Customers'],[cats,'Categories'],
-  [high.toLocaleString(),'High Opportunity'],[validMobile.toLocaleString(),'Valid WhatsApp/Mobile'],[offerOpps.toLocaleString(),'Offer Opportunities'],[money(recValue),'Indicative Rec. Value']
- ].map(function(x){return '<div class="kpi"><div class="n">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>';}).join('');
- const sortedCats=Object.entries(global).filter(function(x){return x[0]!=='Other';}).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
- document.getElementById('insights').innerHTML='Top historical categories: <b>'+sortedCats.map(function(x){return escapeHtml(x[0])+' ('+x[1]+')';}).join(', ')+'</b>. '+repeat.toLocaleString()+' of '+customerCount.toLocaleString()+' customers have repeat transactions. Recommendations combine category transitions, demand, recency, price fit, inferred brand affinity, offer sensitivity and internal stock eligibility.';
- document.getElementById('qValid').textContent=validation.validRows.toLocaleString();document.getElementById('qInvalid').textContent=(validation.invalidRequired+validation.invalidDate).toLocaleString();document.getElementById('qDup').textContent=validation.duplicateOrderKeys.toLocaleString();document.getElementById('qMissingPhone').textContent=validation.customersMissingPhone.toLocaleString();document.getElementById('qOther').textContent=validation.otherRows.toLocaleString();document.getElementById('qStale').textContent=liveMeta.checkedAt?(liveMeta.stale?'Stale':'Fresh'):'Not loaded';
- const cf=document.getElementById('catFilter');cf.innerHTML='<option value="">All recommended categories</option>'+Array.from(new Set(recs.map(function(r){return r.primary?.cat;}).filter(Boolean))).sort().map(function(c){return '<option>'+escapeHtml(c)+'</option>';}).join('');
- document.getElementById('search').disabled=document.getElementById('catFilter').disabled=document.getElementById('scoreFilter').disabled=document.getElementById('priorityFilter').disabled=false;
- renderRows();renderRecommendationCharts();renderCatalogueOnly();
- document.getElementById('opportunities').querySelector('tbody').innerHTML=opp.slice(0,12).map(function(x){return '<tr><td>'+escapeHtml(x.from)+'</td><td><span class="pill">'+escapeHtml(x.to)+'</span></td><td>'+x.n+'</td><td>'+((x.n/x.total)*100).toFixed(1)+'%</td></tr>';}).join('')||'<tr><td colspan="4">No cross-category transitions available.</td></tr>';
-}
-function openWhatsAppById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(function(x){return String(x.cid)===String(cid);});if(r)openWhatsApp(r);}
-function openMessagePreviewById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(function(x){return String(x.cid)===String(cid);});if(r)openMessagePreview(r);}
-function openSmsById(encodedCid){const cid=decodeURIComponent(encodedCid);const r=model?.recs?.find(function(x){return String(x.cid)===String(cid);});if(r)openSms(r);}
 function renderRows(){
- const q=document.getElementById('search').value.toLowerCase(),cat=document.getElementById('catFilter').value,min=Number(document.getElementById('scoreFilter').value||0),priority=document.getElementById('priorityFilter').value;
- const rows=model.recs.filter(function(r){const txt=[r.cid,r.name,r.lastProduct,r.lastCat,r.primary?.product,r.alt1?.product,r.alt2?.product].join(' ').toLowerCase();return (!q||txt.includes(q))&&(!cat||r.primary?.cat===cat)&&(r.score>=min)&&(!priority||r.priority===priority);});
- document.getElementById('rowCount').textContent=rows.length.toLocaleString()+' shown / '+model.recs.length.toLocaleString();
- document.getElementById('tbody').innerHTML=rows.slice(0,1000).map(function(r){return '<tr><td class="mono">'+escapeHtml(r.cid)+'</td><td>'+escapeHtml(r.name)+'</td><td class="phone">'+escapeHtml(r.phone||'—')+'</td><td>'+(r.phone?'<button class="msgBtn" onclick="openMessagePreviewById(\''+encodeURIComponent(r.cid)+'\')">Preview</button><button class="waBtn" onclick="openWhatsAppById(\''+encodeURIComponent(r.cid)+'\')">WhatsApp</button><button class="msgBtn" onclick="openSmsById(\''+encodeURIComponent(r.cid)+'\')">SMS</button>':'<span class="waBtn disabled">No Number</span>')+'</td><td>'+r.lastDate+'</td><td><span class="pill">'+escapeHtml(r.lastCat)+'</span></td><td><b>'+escapeHtml(r.primary?.product||'—')+'</b><br><span class="muted mono">'+escapeHtml(r.primary?.sku||'')+'</span></td><td>'+escapeHtml(r.alt1?.product||'—')+'</td><td>'+escapeHtml(r.alt2?.product||'—')+'</td><td class="score">'+r.score+'</td><td><span class="pill">'+r.priority+'</span></td><td>'+escapeHtml(r.reason)+'</td></tr>';}).join('')||'<tr><td colspan="12" style="text-align:center;padding:28px">No matching customers.</td></tr>';
+ var tb=document.getElementById('tbody'),search=norm(document.getElementById('search').value),cat=document.getElementById('catFilter').value,priority=document.getElementById('priorityFilter').value,seg=document.getElementById('segmentFilter')?.value||'',minScore=Number(document.getElementById('scoreFilter').value||0);
+ var filtered=model.recs.filter(function(r){var c=r.customer,text=norm([r.cid,r.name,r.phone,r.primary?.product,r.alt1?.product,r.alt2?.product].join(' ')),cats=[r.primary?.category,r.alt1?.category,r.alt2?.category].filter(Boolean);return (!search||text.indexOf(search)>=0)&&(!cat||cats.indexOf(cat)>=0)&&(!priority||r.priority===priority)&&(!seg||c.rfmSegment===seg)&&r.score>=minScore});
+ document.getElementById('rowCount').textContent=filtered.length+' / '+model.recs.length+' customers';
+ if(!filtered.length){tb.innerHTML='<tr><td colspan="12" style="text-align:center;color:#98a2b3;padding:30px">No customers match the current filters.</td></tr>';return}
+ tb.innerHTML=filtered.map(function(r){var c=r.customer,contact=c.phone?'<button class="waBtn" data-msg="'+escapeAttr(r.cid)+'">WhatsApp</button><button class="msgBtn" data-msg="'+escapeAttr(r.cid)+'">SMS</button>':'<span class="waBtn disabled">No Number</span>',pc=r.priority==='Contact Today'?'red':r.priority==='This Week'?'amber':'green';return '<tr><td class="mono">'+escapeHtml(r.cid)+'</td><td><b>'+escapeHtml(r.name||'')+'</b><div class="small muted">'+escapeHtml(c.rfmSegment)+' · R'+c.R+' F'+c.F+' M'+c.M+'</div></td><td class="phone">'+escapeHtml(c.phone?('+'+c.phone):'—')+'</td><td>'+contact+'</td><td>'+escapeHtml(r.lastDate)+'</td><td><span class="pill">'+escapeHtml(r.lastCat)+'</span></td><td>'+recHtml(r.primary,'Primary')+'</td><td>'+recHtml(r.alt1,'Alternative 1')+'</td><td>'+recHtml(r.alt2,'Alternative 2')+'</td><td><span class="score">'+r.score+'</span><div class="small muted">'+escapeHtml(r.timing)+'</div></td><td><span class="pill '+pc+'">'+escapeHtml(r.priority)+'</span></td><td>'+escapeHtml(r.reason)+'</td></tr>'}).join('');
+ tb.querySelectorAll('[data-msg]').forEach(function(btn){btn.addEventListener('click',function(){openMessage(btn.getAttribute('data-msg'))})})
 }
+function populateFilters(){
+ var cats=new Set(),segs=new Set();model.recs.forEach(function(r){[r.primary,r.alt1,r.alt2].filter(Boolean).forEach(function(p){cats.add(p.category)});segs.add(r.customer.rfmSegment)});
+ document.getElementById('catFilter').innerHTML='<option value="">All recommended categories</option>'+Array.from(cats).sort().map(function(c){return '<option>'+escapeHtml(c)+'</option>'}).join('');
+ document.getElementById('segmentFilter').innerHTML='<option value="">All RFM segments</option>'+Array.from(segs).sort().map(function(s){return '<option>'+escapeHtml(s)+'</option>'}).join('');
+ ['search','catFilter','priorityFilter','segmentFilter','scoreFilter'].forEach(function(id){var el=document.getElementById(id);if(el)el.disabled=false})
+}
+function renderCharts(){renderBarChart('chartPrimary',countBy(model.customers.map(function(c){return c.rfmSegment})));renderBarChart('chartAlt1',countBy(model.recs.map(function(r){return r.primary?.category})));renderBarChart('chartAlt2',countBy(model.recs.map(function(r){return r.priority})))}
+function renderOpportunities(){
+ var body=document.querySelector('#opportunities tbody');if(body)body.innerHTML=model.opp.length?model.opp.map(function(x){return '<tr><td>'+escapeHtml(x.from)+'</td><td><b>'+escapeHtml(x.to)+'</b></td><td>'+x.customers+'</td><td>'+x.rows+'</td><td>'+((x.share||0)*100).toFixed(1)+'%</td><td>'+fmtMoney(x.value)+'</td></tr>'}).join(''):'<tr><td colspan="6" class="empty">No category opportunities.</td></tr>';
+ var pb=document.querySelector('#productOpp tbody');if(pb)pb.innerHTML=model.productOpp.length?model.productOpp.map(function(x){return '<tr><td>'+escapeHtml(x.product)+'</td><td>'+escapeHtml(x.cat)+'</td><td class="mono">'+escapeHtml(x.sku||'')+'</td><td>'+x.customers+'</td><td>'+x.avgScore.toFixed(1)+'</td><td>'+fmtMoney(x.value)+'</td></tr>'}).join(''):'<tr><td colspan="6" class="empty">No product opportunities.</td></tr>'
+}
+function renderQuality(){
+ var inv=model.validation.invalidRequired+model.validation.invalidDate,live=CATALOG.filter(function(x){return x.live!==false}).length,dup=CATALOG.length-new Set(CATALOG.map(function(x){return norm(x.sku)}).filter(Boolean)).size;
+ document.getElementById('qValid').textContent=model.validation.valid;document.getElementById('qInvalid').textContent=inv;document.getElementById('qDup').textContent=model.validation.duplicateOrderKeys;document.getElementById('qMissingPhone').textContent=model.validation.missingPhones;document.getElementById('qOther').textContent=model.validation.unmapped;document.getElementById('qStale').textContent=liveMeta.stale?'STALE':(liveMeta.checkedAt?liveMeta.checkedAt.toLocaleTimeString():'Unknown');
+ var more=document.getElementById('qualityDetails');if(more){var notes=[];if(inv)notes.push('Excluded rows: '+inv);if(model.validation.unmapped)notes.push('Unmapped categories: '+model.validation.unmapped);if(model.validation.missingHistoricalPrice)notes.push('Missing historical price: '+model.validation.missingHistoricalPrice);if(model.validation.missingPhones)notes.push('Customers without valid mobile: '+model.validation.missingPhones);if(live/CATALOG.length<.6)notes.push('Live catalogue coverage below 60%');if(dup)notes.push('Duplicate catalogue SKUs: '+dup);more.innerHTML='<b>Quality snapshot:</b> '+(model.validation.valid/Math.max(1,model.validation.sourceRows)*100).toFixed(1)+'% of source rows are valid; '+live+'/'+CATALOG.length+' catalogue records are live. '+(notes.length?'<br><br><b>Attention:</b> '+escapeHtml(notes.join(' · ')):'<br><br>Core checks passed.')+'<br><br>Stock availability is visible only to the internal sales team and is never included in customer-facing messages.'}
+}
+function setKpis(){
+ document.getElementById('kpis').innerHTML=[[model.validation.sourceRows.toLocaleString(),'Transactions'],[model.customers.length.toLocaleString(),'Customers'],[model.customers.filter(function(c){return c.frequency>1}).length.toLocaleString(),'Repeat Customers'],[model.summary.contactToday.toLocaleString(),'Contact Today'],[model.validation.validMobile.toLocaleString(),'Valid Mobile Contacts'],[model.summary.offerOpp.toLocaleString(),'Offer Opportunities'],[fmtMoney(model.summary.recValue),'Indicative Rec. Value'],[model.recs.length.toLocaleString(),'Recommendation Rows']].map(function(x){return '<div class="kpi"><div class="n">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>'}).join('')
+}
+function buildSalesMessage(r,lang){
+ var name=r.name||'Customer',products=[r.primary,r.alt1,r.alt2].filter(Boolean),lines=products.map(function(p){return '• '+p.product+' – '+fmtMoney(p.price)+(p.discount?' ('+p.discount+')':'')+'\\n  '+(p.url||'')}).join('\\n');
+ if(lang==='si')return 'හිතවත් පාරිභෝගිකතුමනි, '+name+' මහතා/මහත්මිය,\\n\\nඔබගේ මිලදී ගැනීමේ ඉතිහාසයට ගැළපෙන නිෂ්පාදන කිහිපයක් අපි තෝරාගෙන ඇත:\\n\\n'+lines+'\\n\\nමිල සහ දීමනා වෙනස් විය හැක. නවතම විස්තර සඳහා අප අමතන්න.\\n\\nස්තුතියි, Singer.';
+ if(lang==='ta')return 'அன்பார்ந்த வாடிக்கையாளரே, '+name+',\\n\\nஉங்கள் கொள்முதல் வரலாற்றிற்கு பொருந்தக்கூடிய சில தயாரிப்புகளை நாங்கள் தேர்ந்தெடுத்துள்ளோம்:\\n\\n'+lines+'\\n\\nவிலை மற்றும் சலுகைகள் மாற்றமடையலாம். சமீபத்திய தகவல்களுக்கு எங்களை தொடர்புகொள்ளவும்.\\n\\nநன்றி, Singer.';
+ return 'Dear '+name+',\\n\\nBased on your previous purchases, we selected a few products that may suit you:\\n\\n'+lines+'\\n\\nPrices and offers can change. Please contact us for the latest details.\\n\\nThank you, Singer.'
+}
+function waUrl(phone,msg){return phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):''}
+function smsUrl(phone,msg){return phone?'sms:+'+phone+'?body='+encodeURIComponent(msg):''}
+function openMessage(cid){var r=model.recs.find(function(x){return x.cid===cid});if(!r)return;selectedCustomerId=cid;document.getElementById('msgCustomer').textContent=r.name+' | '+r.cid+' | '+(r.phone?('+'+r.phone):'No mobile');document.getElementById('msgLang').value='en';updateMessage();document.getElementById('msgModal').classList.add('open');document.getElementById('msgModal').setAttribute('aria-hidden','false')}
+function updateMessage(){var r=model.recs.find(function(x){return x.cid===selectedCustomerId});if(!r)return;var msg=buildSalesMessage(r,document.getElementById('msgLang').value);document.getElementById('msgContent').textContent=msg;document.getElementById('copyMsg').onclick=function(){navigator.clipboard.writeText(msg).then(function(){document.getElementById('copyMsg').textContent='Copied'}).catch(function(){alert('Copy failed; select the message and copy it manually.')})};document.getElementById('sendMsg').onclick=function(){var u=waUrl(r.phone,msg);if(u)window.open(u,'_blank','noopener')};document.getElementById('sendSms').onclick=function(){var u=smsUrl(r.phone,msg);if(u)window.location.href=u}}
+function closeModal(){document.getElementById('msgModal').classList.remove('open');document.getElementById('msgModal').setAttribute('aria-hidden','true')}
 function exportXlsx(){
- const recRows=model.recs.map(function(r){return {'Customer ID':r.cid,'Customer Name':r.name,'Phone / Mobile':r.phone||'','Transaction Count':r.txCount,'Last Purchase Date':r.lastDate,'Last Purchase Category':r.lastCat,'Last Product':r.lastProduct,'Priority':r.priority,'Opportunity Score':r.score,'Estimated Customer Price Band (LKR)':r.budget?Math.round(r.budget):'','Preferred Brand (inferred)':r.preferredBrand||'','Primary Recommendation':r.primary?.product||'','Primary SKU':r.primary?.sku||'','Primary Category':r.primary?.cat||'','Primary Price (LKR)':r.primary?.price||'','Primary Discount':r.primary?.discount||'','Primary Offer Note':r.primary?.offerNote||'','Primary Internal Stock':'INTERNAL: '+(r.primary?.inStock===true?'In stock':r.primary?.inStock===false?'Out of stock':'Unknown'),'Alternative 1':r.alt1?.product||'','Alternative 1 SKU':r.alt1?.sku||'','Alternative 1 Category':r.alt1?.cat||'','Alternative 1 Price (LKR)':r.alt1?.price||'','Alternative 1 Discount':r.alt1?.discount||'','Alternative 1 Internal Stock':'INTERNAL: '+(r.alt1?.inStock===true?'In stock':r.alt1?.inStock===false?'Out of stock':'Unknown'),'Alternative 2':r.alt2?.product||'','Alternative 2 SKU':r.alt2?.sku||'','Alternative 2 Category':r.alt2?.cat||'','Alternative 2 Price (LKR)':r.alt2?.price||'','Alternative 2 Discount':r.alt2?.discount||'','Alternative 2 Internal Stock':'INTERNAL: '+(r.alt2?.inStock===true?'In stock':r.alt2?.inStock===false?'Out of stock':'Unknown'),'Rationale':r.reason,'Singer Catalogue Snapshot':liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded','WhatsApp Message - English':buildSalesMessage(r,'en'),'WhatsApp Message - Sinhala':buildSalesMessage(r,'si'),'WhatsApp Message - Tamil':buildSalesMessage(r,'ta'),'WhatsApp Link - English':waUrl(r.phone,buildSalesMessage(r,'en')),'Normal SMS - English':buildSalesMessage(r,'en'),'Normal SMS - Sinhala':buildSalesMessage(r,'si'),'Normal SMS - Tamil':buildSalesMessage(r,'ta'),'Normal SMS Link - English':smsUrl(r.phone,buildSalesMessage(r,'en'))};});
- const summary=[['Metric','Value'],['Transactions',model.clean.length],['Customers',Object.keys(model.by).length],['Repeat Customers',Object.values(model.by).filter(function(a){return a.length>1;}).length],['High Opportunity Customers',model.recs.filter(function(r){return r.priority==='High';}).length],['Valid Mobile/WhatsApp Contacts',model.recs.filter(function(r){return normalizePhone(r.phone);}).length],['Offer Opportunities',model.recs.filter(function(r){return r.offerOpportunity;}).length],['Indicative Recommended Product Value (LKR)',model.recs.reduce(function(a,r){return a+Number(r.recValue||0);},0)],['Distinct Non-Other Categories',Object.keys(model.global).filter(function(c){return c!=='Other';}).length],['Singer Catalogue Snapshot',liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Not loaded'],['Live Products Updated',liveMeta.updated||0],['Total Catalogue Products',liveMeta.total||CATALOG.length],['Catalogue Freshness',liveMeta.stale?'STALE (>3h)':'Fresh'],['Invalid/Excluded Rows',model.validation.invalidRequired+model.validation.invalidDate],['Duplicate Order Keys',model.validation.duplicateOrderKeys],['Stock Communication','INTERNAL ONLY - never included in customer-facing messages']];
- const opp=model.opp.map(function(x){return {'From Category':x.from,'Next Category':x.to,'Observed Transitions':x.n,'Opportunity Share':x.n/x.total};});
- const cat=CATALOG.map(function(x){return {'Category':x.category,'Product':x.product,'SKU':x.sku,'Current Price (LKR)':x.price,'MRP (LKR)':x.mrp??'','Current Discount':x.discount||'','Current Offer Note':x.offerNote||'','Live Refreshed':x.live?'Yes':'No','Internal Stock':x.inStock===true?'In stock':x.inStock===false?'Out of stock':'Unknown','Singer Source URL':x.url};});
- const wb=XLSX.utils.book_new(),setWidths=function(ws,headers){ws['!cols']=headers.map(function(h){return {wch:Math.min(48,Math.max(12,String(h).length+2))};});};
- const recWs=XLSX.utils.json_to_sheet(recRows);setWidths(recWs,Object.keys(recRows[0]||{}));
- const linkCol=Object.keys(recRows[0]||{}).indexOf('WhatsApp Link - English');if(linkCol>=0)for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:linkCol}),url=recRows[i]['WhatsApp Link - English'];if(url&&recWs[addr])recWs[addr].l={Target:url,Tooltip:'Open WhatsApp with pre-filled customer message'};}
- const smsLinkCol=Object.keys(recRows[0]||{}).indexOf('Normal SMS Link - English');if(smsLinkCol>=0)for(let i=0;i<recRows.length;i++){const addr=XLSX.utils.encode_cell({r:i+1,c:smsLinkCol}),url=recRows[i]['Normal SMS Link - English'];if(url&&recWs[addr])recWs[addr].l={Target:url,Tooltip:'Open normal SMS with pre-filled customer message'};}
- const summaryWs=XLSX.utils.aoa_to_sheet(summary);setWidths(summaryWs,['Metric','Value']);
- const oppWs=XLSX.utils.json_to_sheet(opp);setWidths(oppWs,Object.keys(opp[0]||{}));
- const catWs=XLSX.utils.json_to_sheet(cat);setWidths(catWs,Object.keys(cat[0]||{}));
- const mWs=XLSX.utils.aoa_to_sheet([['Step','Logic'],['1','Validate and normalize transaction history; invalid required rows and invalid dates are counted and excluded.'],['2','Map transaction product text to categories and measure next-category transitions.'],['3','Score opportunities using transitions, category demand, recency, historical price fit, inferred brand affinity and offer sensitivity.'],['4','Choose up to three different products using internal stock as an eligibility signal when stock data is available.'],['5','Load live Singer public prices, MRP, discounts, offers and internal stock metadata through the hourly GitHub Action.'],['6','Uploaded Excel data is processed in the browser and is not uploaded by the page.'],['7','Stock status is internal-only and deliberately excluded from customer-facing WhatsApp/SMS messages.']]);setWidths(mWs,['Step','Logic']);
- XLSX.utils.book_append_sheet(wb,summaryWs,'Executive Summary');XLSX.utils.book_append_sheet(wb,recWs,'Customer Recommendations');XLSX.utils.book_append_sheet(wb,oppWs,'Category Opportunities');XLSX.utils.book_append_sheet(wb,catWs,'Singer Product Catalogue');XLSX.utils.book_append_sheet(wb,mWs,'Methodology');
- XLSX.writeFile(wb,'Singer_Customer_Next_Product_Recommendations.xlsx');
+ if(!model)return;
+ var recRows=model.recs.map(function(r){var c=r.customer;return {'Customer ID':r.cid,'Customer Name':r.name,'Mobile':r.phone?'+'+r.phone:'','RFM Segment':c.rfmSegment,'RFM Score':'R'+c.R+' F'+c.F+' M'+c.M,'Transactions':c.frequency,'Units':c.units,'Revenue (LKR)':c.revenue,'Last Purchase':r.lastDate,'Last Category':r.lastCat,'Recency Days':c.recencyDays,'Median Historical Price (LKR)':c.medPrice||'','Historical Price Band (LKR)':r.priceBand,'Median Purchase Interval (Days)':c.intervalMedian||'','Timing Signal':r.timing,'Sales Action':r.priority,'Recommendation Score':r.score,'Primary Product':r.primary?.product||'','Primary SKU':r.primary?.sku||'','Primary Category':r.primary?.category||'','Primary Price (LKR)':r.primary?.price||'','Primary Discount':r.primary?.discount||'','Primary Internal Stock':'INTERNAL: '+stockLabel(r.primary),'Alternative 1':r.alt1?.product||'','Alternative 1 SKU':r.alt1?.sku||'','Alternative 1 Category':r.alt1?.category||'','Alternative 1 Price (LKR)':r.alt1?.price||'','Alternative 1 Discount':r.alt1?.discount||'','Alternative 1 Internal Stock':'INTERNAL: '+stockLabel(r.alt1),'Alternative 2':r.alt2?.product||'','Alternative 2 SKU':r.alt2?.sku||'','Alternative 2 Category':r.alt2?.category||'','Alternative 2 Price (LKR)':r.alt2?.price||'','Alternative 2 Discount':r.alt2?.discount||'','Alternative 2 Internal Stock':'INTERNAL: '+stockLabel(r.alt2),'Why This Customer':r.reason,'Indicative Recommendation Value (LKR)':r.recValue,'WhatsApp - English':buildSalesMessage(r,'en'),'WhatsApp - Sinhala':buildSalesMessage(r,'si'),'WhatsApp - Tamil':buildSalesMessage(r,'ta'),'WhatsApp Link - English':waUrl(r.phone,buildSalesMessage(r,'en')),'SMS Link - English':smsUrl(r.phone,buildSalesMessage(r,'en'))}});
+ var summary=[['Metric','Value'],['Source Rows',model.validation.sourceRows],['Valid Rows',model.validation.valid],['Excluded Rows',model.validation.invalidRequired+model.validation.invalidDate],['Customers',model.customers.length],['Repeat Customers',model.customers.filter(function(c){return c.frequency>1}).length],['Contact Today',model.summary.contactToday],['This Week',model.summary.week],['Nurture',model.summary.nurture],['Offer Opportunities',model.summary.offerOpp],['Indicative Recommendation Value (LKR)',model.summary.recValue],['Valid Mobile Contacts',model.validation.validMobile],['Repeated Order Keys',model.validation.duplicateOrderKeys],['Unmapped Category Rows',model.validation.unmapped],['Missing Historical Price Rows',model.validation.missingHistoricalPrice],['Catalogue Products',CATALOG.length],['Live Catalogue Products',CATALOG.filter(function(x){return x.live!==false}).length],['Catalogue Snapshot',liveMeta.checkedAt?liveMeta.checkedAt.toLocaleString():'Unknown'],['Catalogue Freshness',liveMeta.stale?'STALE (>3h)':'Fresh'],['Stock Communication','INTERNAL ONLY - never included in customer-facing messages']];
+ var rfm=model.customers.map(function(c){return {'Customer ID':c.id,'Customer Name':c.name,'Segment':c.rfmSegment,'R':c.R,'F':c.F,'M':c.M,'Transactions':c.frequency,'Units':c.units,'Revenue (LKR)':c.revenue,'Recency Days':c.recencyDays,'Median Purchase Interval':c.intervalMedian||'','Offer Sensitivity':c.offerSensitivity,'Average Observed Discount %':c.avgDiscount}});
+ var q=[['Check','Result'],['Valid transaction rows',model.validation.valid+'/'+model.validation.sourceRows],['Rows excluded',model.validation.invalidRequired+model.validation.invalidDate],['Repeated order keys',model.validation.duplicateOrderKeys],['Customers without valid mobile',model.validation.missingPhones],['Unmapped categories',model.validation.unmapped],['Rows without historical price',model.validation.missingHistoricalPrice],['Catalogue total',CATALOG.length],['Catalogue live',CATALOG.filter(function(x){return x.live!==false}).length],['Catalogue duplicate SKU count',CATALOG.length-new Set(CATALOG.map(function(x){return norm(x.sku)}).filter(Boolean)).size],['Catalogue stale',liveMeta.stale?'YES':'NO']];
+ var opp=model.opp.map(function(x){return {'From Category':x.from,'Next Category':x.to,'Customers':x.customers,'Observed Transitions':x.rows,'Opportunity Share':x.share,'Indicative Value (LKR)':x.value}});
+ var pro=model.productOpp.map(function(x){return {'Product':x.product,'Category':x.cat,'SKU':x.sku,'Recommended Customers':x.customers,'Average Score':x.avgScore,'Indicative Value (LKR)':x.value}});
+ var cat=CATALOG.map(function(x){return {'Category':x.category,'Product':x.product,'SKU':x.sku,'Current Price (LKR)':x.price,'MRP (LKR)':x.mrp||'','Current Discount':x.discount||'','Offer Note':x.offerNote||'','Live':x.live?'Yes':'No','Internal Stock':stockLabel(x),'Singer Source URL':x.url||''}});
+ var meth=[['Step','Logic'],['1','Validate and normalize transaction history; exclude rows missing customer/product or valid date.'],['2','Build RFM, recency, frequency, monetary value, purchase interval and seasonality signals.'],['3','Measure category transitions, category gaps, category demand and complementary categories.'],['4','Score individual Singer products using price affinity, brand affinity, offer sensitivity, product demand, timing, seasonality and internal availability.'],['5','Exclude exact purchased products/SKUs and strong model-token matches; same-category upgrades remain eligible.'],['6','Choose Primary + Alternative 1 + Alternative 2 with product/category diversity.'],['7','Assign Contact Today / This Week / Nurture workflow action.'],['8','Generate English/Sinhala/Tamil customer messages without stock information.'],['9','Export executive, sales, RFM, category, product, catalogue, quality and methodology sheets.']];
+ var wb=XLSX.utils.book_new();function addJson(name,data){var ws=XLSX.utils.json_to_sheet(data);ws['!cols']=(data.length?Object.keys(data[0]):['A']).map(function(k){return {wch:Math.min(54,Math.max(12,String(k).length+3))}});XLSX.utils.book_append_sheet(wb,ws,name)}
+ var ws=XLSX.utils.aoa_to_sheet(summary);ws['!cols']=[{wch:36},{wch:30}];XLSX.utils.book_append_sheet(wb,ws,'Executive Summary');addJson('Customer Recommendations',recRows);addJson('RFM Segments',rfm);addJson('Category Opportunities',opp);addJson('Product Opportunities',pro);addJson('Singer Catalogue',cat);var qws=XLSX.utils.aoa_to_sheet(q);qws['!cols']=[{wch:36},{wch:28}];XLSX.utils.book_append_sheet(wb,qws,'Data Quality');var mws=XLSX.utils.aoa_to_sheet(meth);mws['!cols']=[{wch:8},{wch:100}];XLSX.utils.book_append_sheet(wb,mws,'Methodology');XLSX.writeFile(wb,'Singer_Customer_Next_Product_Recommendations.xlsx')
 }
-
+function runAnalysis(){
+ if(!sourceRows.length)return;
+ var st=document.getElementById('status');st.textContent='Analyzing RFM, customer timing, product-level fit and catalogue signals…';st.className='status';
+ try{model=analyse(sourceRows);setKpis();document.getElementById('insights').innerHTML='<b>Modelled signals:</b> RFM, purchase recency, frequency, monetary value, purchase interval, category transitions, category gaps, product demand, price affinity, brand affinity, offer sensitivity, seasonality and internal catalogue availability. <b>Customer-facing stock communication is disabled.</b>';renderQuality();renderCharts();renderOpportunities();populateFilters();renderRows();document.getElementById('xlsxBtn').disabled=false;st.textContent='Analysis complete. '+model.recs.length+' customer recommendation rows generated.';st.className='status ok'}catch(e){console.error(e);st.textContent='Analysis failed: '+e.message;st.className='status bad'}
+}
+function processFile(file){
+ var reader=new FileReader();reader.onload=function(ev){try{var data=new Uint8Array(ev.target.result),wb=XLSX.read(data,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});sourceRows=rows;document.getElementById('fileName').textContent=file.name+' | '+rows.length+' source rows';document.getElementById('status').textContent='File loaded. Click Analyze & Build Recommendations.';document.getElementById('status').className='status ok';document.getElementById('analyze').disabled=false}catch(e){document.getElementById('status').textContent='Could not read file: '+e.message;document.getElementById('status').className='status bad'}};reader.readAsArrayBuffer(file)
+}
+document.addEventListener('DOMContentLoaded',function(){
+ rebuildCatalogueMaps();renderCatalogue();renderCatalogueHealth();loadLiveSingerData();
+ document.getElementById('file').addEventListener('change',function(e){if(e.target.files[0])processFile(e.target.files[0])});
+ var drop=document.getElementById('drop');drop.addEventListener('dragover',function(e){e.preventDefault();drop.style.background='#f5f8ff'});drop.addEventListener('dragleave',function(){drop.style.background='#fbfcfe'});drop.addEventListener('drop',function(e){e.preventDefault();drop.style.background='#fbfcfe';var f=e.dataTransfer.files[0];if(f)processFile(f)});
+ document.getElementById('analyze').addEventListener('click',runAnalysis);document.getElementById('xlsxBtn').addEventListener('click',exportXlsx);document.getElementById('reset').addEventListener('click',function(){location.reload()});document.getElementById('liveBtn').addEventListener('click',loadLiveSingerData);
+ ['search','catFilter','priorityFilter','segmentFilter','scoreFilter'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',function(){if(model)renderRows()})});
+ document.getElementById('msgLang').addEventListener('change',updateMessage);document.getElementById('closeModal').addEventListener('click',closeModal);document.getElementById('msgModal').addEventListener('click',function(e){if(e.target===this)closeModal()})
+});
+</script>
+</body>
+</html>
