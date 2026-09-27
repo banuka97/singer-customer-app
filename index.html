@@ -275,6 +275,12 @@ function normalizePhone(v){
 }
 function escapeHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
 function escapeAttr(v){return escapeHtml(v)}
+function cleanMessageText(v){
+ var raw=String(v==null?'':v);
+ var ta=document.createElement('textarea');
+ ta.innerHTML=raw;
+ return ta.value.replace(/\uFFFD/g,'').replace(/\s+/g,' ').trim();
+}
 function rebuildCatalogueMaps(){catalogueNameMap=new Map();CATALOG.forEach(function(p){if(p.product)catalogueNameMap.set(normProduct(p.product),p)})}
 function catalogueMatch(text){
  var t=norm(text);if(!t)return null;
@@ -441,38 +447,59 @@ function plainCustomerReason(r,lang){
  return parts.join(' ');
 }
 function buildSalesMessage(r,lang){
- var name=r.name||'Customer',p=r.primary,price=p&&p.price?fmtMoney(p.price):'';
- var promotion='';
- if(p){
-   var promoParts=[];
-   if(p.discount) promoParts.push(p.discount);
-   if(p.offerNote) promoParts.push(String(p.offerNote).split('|')[0].trim());
-   promotion=promoParts.filter(Boolean).join(' • ');
- }
- var productLine=function(x,label,langCode){
+ var name=cleanMessageText(r.name||'Customer');
+ var lastProduct=cleanMessageText(r.lastProduct||'your previous purchase');
+ var p=r.primary;
+ var alt1=r.alt1,alt2=r.alt2,alt3=r.alt3;
+
+ function promoText(x){
    if(!x)return '';
-   var promo=[];
-   if(x.discount) promo.push(x.discount);
-   if(x.offerNote) promo.push(String(x.offerNote).split('|')[0].trim());
-   var offer=promo.filter(Boolean).join(' • ');
+   var parts=[];
+   if(x.discount)parts.push(cleanMessageText(x.discount));
+   if(x.offerNote){
+     var note=String(x.offerNote).split('|')[0].trim();
+     if(note)parts.push(cleanMessageText(note));
+   }
+   return parts.filter(Boolean).join(' • ');
+ }
+
+ function whyText(langCode){
+   var text=plainCustomerReason(r,langCode)||'';
+   return cleanMessageText(text);
+ }
+
+ function productBlock(x,label,langCode){
+   if(!x)return '';
+   var product=cleanMessageText(x.product||'');
+   var price=x.price?fmtMoney(x.price):'';
+   var promo=promoText(x);
+   var url=x.url||'';
    if(langCode==='si'){
-     return '\\n\\n'+label+'\\n⭐ '+x.product+'\\n'+(x.price?'💰 මිල: '+fmtMoney(x.price)+'\\n':'')+(offer?'🎁 විශේෂ දීමනාව: '+offer+'\\n':'')+(x.url?'🔗 '+x.url:'');
+     return '\\n\\n'+label+'\\n'+product+'\\n'+(price?'මිල: '+price+'\\n':'')+(promo?'දීමනාව: '+promo+'\\n':'')+(url?'බලන්න: '+url:'');
    }
    if(langCode==='ta'){
-     return '\\n\\n'+label+'\\n⭐ '+x.product+'\\n'+(x.price?'💰 விலை: '+fmtMoney(x.price)+'\\n':'')+(offer?'🎁 சிறப்பு சலுகை: '+offer+'\\n':'')+(x.url?'🔗 '+x.url:'');
+     return '\\n\\n'+label+'\\n'+product+'\\n'+(price?'விலை: '+price+'\\n':'')+(promo?'சலுகை: '+promo+'\\n':'')+(url?'பார்க்க: '+url:'');
    }
-   return '\\n\\n'+label+'\\n⭐ '+x.product+'\\n'+(x.price?'💰 Price: '+fmtMoney(x.price)+'\\n':'')+(offer?'🎁 Promotion: '+offer+'\\n':'')+(x.url?'🔗 '+x.url:'');
- };
- var alt1=r.alt1,alt2=r.alt2,alt3=r.alt3;
- var en='Hi '+name+' 👋\\n\\nThank you for choosing Singer.\\n\\nBased on your previous purchase of '+r.lastProduct+', we found a few products that may be good next choices for you.\\n\\n⭐ '+(p?p.product:'A Singer product')+'\\n'+(price?'💰 Price: '+price+'\\n':'')+(promotion?'🎁 Promotion: '+promotion+'\\n':'')+'\\nWhy it may suit you:\\n'+plainCustomerReason(r,'en')+
- productLine(alt1,'Alternative 1','en')+productLine(alt2,'Alternative 2','en')+productLine(alt3,'Alternative 3','en')+
- '\\n\\nInterested? Just reply to this message and our sales team will be happy to help.\\n\\nThank you, Singer.';
- var si='හිතවත් '+name+' 👋\\n\\nSinger තෝරාගැනීම ගැන ස්තුතියි.\\n\\nඔබ අවසන් වරට මිලදීගත් '+r.lastProduct+' අනුව, ඔබට ගැළපිය හැකි ඊළඟ නිෂ්පාදන කිහිපයක් අපි තෝරාගෙන ඇත.\\n\\n⭐ '+(p?p.product:'Singer නිෂ්පාදනයක්')+'\\n'+(price?'💰 මිල: '+price+'\\n':'')+(promotion?'🎁 විශේෂ දීමනාව: '+promotion+'\\n':'')+'\\nඇයි මෙය ඔබට ගැළපිය හැක්කේ:\\n'+plainCustomerReason(r,'si')+
- productLine(alt1,'විකල්පය 1','si')+productLine(alt2,'විකල්පය 2','si')+productLine(alt3,'විකල්පය 3','si')+
- '\\n\\nඔබ කැමති නම්, මේ පණිවිඩයට reply කරන්න. අපගේ sales team එක ඔබට උදව් කරන්න සූදානම්.\\n\\nස්තුතියි, Singer.';
- var ta='அன்பார்ந்த '+name+' 👋\\n\\nSinger-ஐ தேர்வு செய்ததற்கு நன்றி.\\n\\nநீங்கள் கடைசியாக வாங்கிய '+r.lastProduct+' அடிப்படையில், உங்களுக்கு பொருந்தக்கூடிய அடுத்த தயாரிப்புகளில் சிலவற்றை நாங்கள் தேர்ந்தெடுத்துள்ளோம்.\\n\\n⭐ '+(p?p.product:'ஒரு Singer தயாரிப்பு')+'\\n'+(price?'💰 விலை: '+price+'\\n':'')+(promotion?'🎁 சிறப்பு சலுகை: '+promotion+'\\n':'')+'\\nஏன் இது உங்களுக்கு பொருந்தலாம்:\\n'+plainCustomerReason(r,'ta')+
- productLine(alt1,'மாற்று 1','ta')+productLine(alt2,'மாற்று 2','ta')+productLine(alt3,'மாற்று 3','ta')+
- '\\n\\nவிருப்பம் இருந்தால், இந்த செய்திக்கு reply செய்யுங்கள். எங்கள் sales team உதவ தயாராக உள்ளது.\\n\\nநன்றி, Singer.';
+   return '\\n\\n'+label+'\\n'+product+'\\n'+(price?'Price: '+price+'\\n':'')+(promo?'Promotion: '+promo+'\\n':'')+(url?'View: '+url:'');
+ }
+
+ var primaryProduct=cleanMessageText(p&&p.product||'A Singer product');
+ var primaryPrice=p&&p.price?fmtMoney(p.price):'';
+ var primaryPromo=promoText(p);
+ var primaryUrl=p&&p.url?p.url:'';
+
+ var en='Hi '+name+',\\n\\nThank you for choosing Singer.\\n\\nBased on your previous purchase of '+lastProduct+', we found some products you may like.\\n\\nRECOMMENDED FOR YOU\\n'+primaryProduct+'\\n'+(primaryPrice?'Price: '+primaryPrice+'\\n':'')+(primaryPromo?'Promotion: '+primaryPromo+'\\n':'')+(primaryUrl?'View: '+primaryUrl+'\\n':'')+'\\nWhy this may suit you\\n'+whyText('en')+
+ productBlock(alt1,'ALTERNATIVE 1','en')+productBlock(alt2,'ALTERNATIVE 2','en')+productBlock(alt3,'ALTERNATIVE 3','en')+
+ '\\n\\nInterested? Reply to this message and our Singer sales team will be happy to help you.\\n\\nThank you,\\nSinger.';
+
+ var si='ආයුබෝවන් '+name+',\\n\\nSinger තෝරාගැනීම ගැන ස්තුතියි.\\n\\nඔබ අවසන් වරට මිලදීගත් '+lastProduct+' අනුව, ඔබට කැමති විය හැකි නිෂ්පාදන කිහිපයක් අපි තෝරාගෙන ඇත.\\n\\nඔබ සඳහා නිර්දේශිතයි\\n'+primaryProduct+'\\n'+(primaryPrice?'මිල: '+primaryPrice+'\\n':'')+(primaryPromo?'දීමනාව: '+primaryPromo+'\\n':'')+(primaryUrl?'බලන්න: '+primaryUrl+'\\n':'')+'\\nමෙය ඔබට ගැළපිය හැක්කේ\\n'+whyText('si')+
+ productBlock(alt1,'විකල්පය 1','si')+productBlock(alt2,'විකල්පය 2','si')+productBlock(alt3,'විකල්පය 3','si')+
+ '\\n\\nඔබ කැමති නම්, මේ පණිවිඩයට reply කරන්න. අපගේ Singer sales team එක ඔබට සතුටින් උදව් කරනු ඇත.\\n\\nස්තුතියි,\\nSinger.';
+
+ var ta='வணக்கம் '+name+',\\n\\nSinger-ஐ தேர்வு செய்ததற்கு நன்றி.\\n\\nநீங்கள் கடைசியாக வாங்கிய '+lastProduct+' அடிப்படையில், உங்களுக்கு பிடிக்கக்கூடிய சில தயாரிப்புகளைத் தேர்ந்தெடுத்துள்ளோம்.\\n\\nஉங்களுக்கான பரிந்துரை\\n'+primaryProduct+'\\n'+(primaryPrice?'விலை: '+primaryPrice+'\\n':'')+(primaryPromo?'சலுகை: '+primaryPromo+'\\n':'')+(primaryUrl?'பார்க்க: '+primaryUrl+'\\n':'')+'\\nஏன் இது உங்களுக்கு பொருந்தலாம்\\n'+whyText('ta')+
+ productBlock(alt1,'மாற்று 1','ta')+productBlock(alt2,'மாற்று 2','ta')+productBlock(alt3,'மாற்று 3','ta')+
+ '\\n\\nவிருப்பம் இருந்தால், இந்த செய்திக்கு reply செய்யுங்கள். எங்கள் Singer sales team உங்களுக்கு உதவ தயாராக உள்ளது.\\n\\nநன்றி,\\nSinger.';
+
  return lang==='si'?si:lang==='ta'?ta:en;
 }
 function waUrl(phone,msg){return phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):''}
