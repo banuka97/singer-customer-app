@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-27T07:39:57.353091Z",
+  "checkedAt": "2026-09-27T07:42:53.551046Z",
   "source": "https://www.singersl.com/products",
   "refreshMethod": "GitHub Actions catalogue crawl + exact product pages + structured ecommerce data",
   "refreshFrequency": "hourly",
@@ -16,7 +16,7 @@
       "offerNote": "",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:54.947669Z"
+      "liveCheckedAt": "2026-09-27T07:42:50.116716Z"
     },
     {
       "category": "Television",
@@ -29,7 +29,7 @@
       "mrp": 379999,
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:53.640430Z"
+      "liveCheckedAt": "2026-09-27T07:42:50.443118Z"
     },
     {
       "category": "Television",
@@ -42,7 +42,7 @@
       "offerNote": "",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:54.390143Z"
+      "liveCheckedAt": "2026-09-27T07:42:50.363372Z"
     },
     {
       "category": "Refrigerator",
@@ -52,7 +52,7 @@
       "url": "https://www.singersl.com/product/singer-geo-refrigerator-geo-260nf-tgyf-2-doors-no-frost-227l-yellow-floral",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:53.855685Z"
+      "liveCheckedAt": "2026-09-27T07:42:48.977153Z"
     },
     {
       "category": "Refrigerator",
@@ -62,7 +62,7 @@
       "url": "https://www.singersl.com/product/singer-geo-refrigerator-geo-200d-inv-2-doors-inverter-185l-silver",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:53.568838Z"
+      "liveCheckedAt": "2026-09-27T07:42:48.761709Z"
     },
     {
       "category": "Refrigerator",
@@ -72,7 +72,7 @@
       "url": "https://www.singersl.com/product/singer-digital-inverter-refrigerator-sn-276inv-276l-silver",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:54.404634Z"
+      "liveCheckedAt": "2026-09-27T07:42:48.537233Z"
     },
     {
       "category": "Washing Machine",
@@ -82,7 +82,7 @@
       "url": "https://www.singersl.com/product/singer-semi-automatic-washing-machine-swm-sar65-65kg",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:52.534517Z"
+      "liveCheckedAt": "2026-09-27T07:42:49.686956Z"
     },
     {
       "category": "Washing Machine",
@@ -95,7 +95,7 @@
       "mrp": 99999,
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:54.630673Z"
+      "liveCheckedAt": "2026-09-27T07:42:50.238216Z"
     },
     {
       "category": "Washing Machine",
@@ -108,7 +108,7 @@
       "mrp": 79999,
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:52.916792Z"
+      "liveCheckedAt": "2026-09-27T07:42:49.192862Z"
     },
     {
       "category": "Washing Machine",
@@ -121,7 +121,7 @@
       "offerNote": "Extra 15,000.00 off (Price is inclusive of Discount)",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:54.799097Z"
+      "liveCheckedAt": "2026-09-27T07:42:49.968930Z"
     },
     {
       "category": "Air Conditioner",
@@ -131,7 +131,7 @@
       "url": "https://www.singersl.com/product/sisil-air-conditioner-non-inverter-12000-btu-sl-elite12",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:55.212219Z"
+      "liveCheckedAt": "2026-09-27T07:42:51.726102Z"
     },
     {
       "category": "Air Conditioner",
@@ -141,7 +141,7 @@
       "url": "https://www.singersl.com/product/sisil-air-conditioner-non-inverter-18000-btu-sl-elite18",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:55.375109Z"
+      "liveCheckedAt": "2026-09-27T07:42:51.183951Z"
     },
     {
       "category": "Air Conditioner",
@@ -151,7 +151,7 @@
       "url": "https://www.singersl.com/product/whirlpool-air-conditioner-inverter-12000-btu-wp-12kinv",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:56.097570Z"
+      "liveCheckedAt": "2026-09-27T07:42:51.564621Z"
     },
     {
       "category": "Air Conditioner",
@@ -161,7 +161,7 @@
       "url": "https://www.singersl.com/product/samsung-air-conditioner-inverter-18000-btu-wi-fi-smgar50h19d1j",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:55.983654Z"
+      "liveCheckedAt": "2026-09-27T07:42:51.895962Z"
     },
     {
       "category": "Rice Cooker",
@@ -174,7 +174,7 @@
       "live": true,
       "sourceStatus": "Live Singer product page",
       "mrp": 11999,
-      "liveCheckedAt": "2026-09-27T07:39:55.616847Z"
+      "liveCheckedAt": "2026-09-27T07:42:52.781883Z"
     },
     {
       "category": "Rice Cooker",
@@ -187,7 +187,7 @@
       "live": true,
       "sourceStatus": "Live Singer product page",
       "mrp": 17999,
-      "liveCheckedAt": "2026-09-27T07:39:56.587830Z"
+      "liveCheckedAt": "2026-09-27T07:42:52.280302Z"
     },
     {
       "category": "Kitchen Appliance",
@@ -197,7 +197,7 @@
       "url": "https://www.singersl.com/product/beko-telescopic-hood-60-cm-stainless-steel-b-ctb6250xh",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:57.349818Z"
+      "liveCheckedAt": "2026-09-27T07:42:53.111141Z"
     },
     {
       "category": "Audio",
@@ -210,7 +210,7 @@
       "mrp": 179999,
       "discount": "8.33% OFF",
       "offerNote": "Extra 15000 off (Price is inclusive of Discount) | Checkout using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO payment method and get extra 5% off | Checkout Using Sampath, Commercial, NTB, BOC, Peoples, HNB, NDB, Pan Asia, Seylan, UNION, Union Pay International, DFCC, LOLC, CDB Banks, Mintpay, KOKO Payment Methods And Get Extra Discount.",
-      "liveCheckedAt": "2026-09-27T07:39:56.361934Z"
+      "liveCheckedAt": "2026-09-27T07:42:53.542593Z"
     },
     {
       "category": "Furniture",
@@ -223,7 +223,7 @@
       "offerNote": "Extra 1,300.00 off (Price is inclusive of Discount)",
       "live": true,
       "sourceStatus": "Live Singer product page",
-      "liveCheckedAt": "2026-09-27T07:39:57.161163Z"
+      "liveCheckedAt": "2026-09-27T07:42:53.171690Z"
     },
     {
       "category": "Computer",
@@ -236,7 +236,7 @@
       "discount": "4.35% OFF",
       "offerNote": "",
       "mrp": null,
-      "liveCheckedAt": "2026-09-27T07:39:56.937685Z"
+      "liveCheckedAt": "2026-09-27T07:42:53.547391Z"
     }
   ],
   "notes": [
