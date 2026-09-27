@@ -37,7 +37,7 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
         <strong>Excel file (.xlsx) required</strong>
         <small>Expected fields: ORDER_NO, PRODUCT, PRODUCT DESCRIPTION, DATE OF SALE, UNITS, CUSTOMER ID NUMBER, CUSTOMER NAME, PHONE / MOBILE NUMBER (optional but recommended)</small><br>
         <label class="filebtn"><input id="file" type="file" accept=".xlsx,.xls,.csv">Choose Excel File</label>
-        <div id="fileName" class="status"></div>
+        <div id="fileName" class="status"></div><div id="inputDiagnostics" class="note" style="margin-top:10px;display:none"></div>
       </div>
       <div style="margin-top:14px">
         <button class="btn primary" id="analyze" disabled>Analyze & Build Recommendations</button>
@@ -77,7 +77,7 @@ input[type=file]{display:none}.filebtn,.btn{display:inline-flex;align-items:cent
       <select id="scoreFilter" disabled><option value="0">All scores</option><option value="70">70+ only</option><option value="80">80+ only</option><option value="90">90+ only</option></select><select id="priorityFilter" disabled><option value="">All priorities</option><option value="High">High opportunity</option><option value="Medium">Medium opportunity</option><option value="Low">Low opportunity</option></select><select id="segmentFilter" disabled><option value="">All RFM segments</option></select>
       <span class="muted" id="rowCount"></span>
     </div>
-    <div class="tablewrap"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Priority</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="11" style="text-align:center;color:#98a2b3;padding:30px">No analysis yet.</td></tr></tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th>Customer ID</th><th>Customer Name</th><th>Phone</th><th>Contact</th><th>Last Purchase</th><th>Last Category</th><th>Primary Recommendation</th><th>Alternative 1 (Different Product)</th><th>Alternative 2 (Different Product)</th><th>Score</th><th>Priority</th><th>Why This Customer</th></tr></thead><tbody id="tbody"><tr><td colspan="12" style="text-align:center;color:#98a2b3;padding:30px">Upload an Excel file. The app will process it automatically and show customer recommendations here.</td></tr></tbody></table></div>
   </div>
 
   <div class="card" style="margin-top:20px">
@@ -381,11 +381,76 @@ function exportXlsx(){
 }
 function runAnalysis(){
  if(!sourceRows.length)return;
- var st=document.getElementById('status');st.textContent='Analyzing RFM, customer timing, product-level fit and catalogue signals…';st.className='status';
- try{model=analyse(sourceRows);setKpis();document.getElementById('insights').innerHTML='<b>Modelled signals:</b> RFM, purchase recency, frequency, monetary value, purchase interval, category transitions, category gaps, product demand, price affinity, brand affinity, offer sensitivity, seasonality and internal catalogue availability. <b>Customer-facing stock communication is disabled.</b>';renderQuality();renderCharts();renderOpportunities();populateFilters();renderRows();document.getElementById('xlsxBtn').disabled=false;st.textContent='Analysis complete. '+model.recs.length+' customer recommendation rows generated.';st.className='status ok'}catch(e){console.error(e);st.textContent='Analysis failed: '+e.message;st.className='status bad'}
+ var st=document.getElementById('status');
+ st.textContent='Analyzing RFM, customer timing, product-level fit and live Singer catalogue signals…';
+ st.className='status';
+ try{
+  model=analyse(sourceRows);
+  setKpis();renderQuality();renderCharts();renderOpportunities();populateFilters();renderRows();
+  document.getElementById('xlsxBtn').disabled=false;
+  if(!model.recs.length){
+   st.textContent='Analysis completed, but no customer recommendation rows were generated. Check the Input Diagnostics and Data Quality sections.';
+   st.className='status warn';
+   document.getElementById('insights').innerHTML='<b>No recommendation rows generated.</b> The file was read successfully, but one or more required fields may not contain usable customer/product/date values.';
+  }else{
+   document.getElementById('insights').innerHTML='<b>Recommendation engine active:</b> RFM, purchase recency, frequency, monetary value, purchase interval, category transitions, category gaps, product demand, price affinity, brand affinity, offer sensitivity, seasonality and internal catalogue availability. <b>Customer-facing stock communication is disabled.</b>';
+   st.textContent='Analysis complete. '+model.recs.length.toLocaleString()+' customer recommendation rows generated.';
+   st.className='status ok';
+  }
+ }catch(e){
+  console.error(e);
+  st.textContent='Analysis failed: '+e.message;
+  st.className='status bad';
+  document.getElementById('insights').innerHTML='<b>Analysis error:</b> '+escapeHtml(e.message)+'<br>Please check Input Diagnostics and the Data Quality section.';
+ }
 }
 function processFile(file){
- var reader=new FileReader();reader.onload=function(ev){try{var data=new Uint8Array(ev.target.result),wb=XLSX.read(data,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});sourceRows=rows;document.getElementById('fileName').textContent=file.name+' | '+rows.length+' source rows';document.getElementById('status').textContent='File loaded. Click Analyze & Build Recommendations.';document.getElementById('status').className='status ok';document.getElementById('analyze').disabled=false}catch(e){document.getElementById('status').textContent='Could not read file: '+e.message;document.getElementById('status').className='status bad'}};reader.readAsArrayBuffer(file)
+ var reader=new FileReader();
+ reader.onload=function(ev){
+  try{
+   var data=new Uint8Array(ev.target.result),
+       wb=XLSX.read(data,{type:'array',cellDates:true}),
+       ws=wb.Sheets[wb.SheetNames[0]],
+       rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
+   sourceRows=rows;
+   var keys=Array.from(new Set(rows.flatMap(function(r){return Object.keys(r)})));
+   var detected={
+    customer:findCol(keys,['CUSTOMER ID NUMBER','CUSTOMER ID','CUSTOMER CODE','CUST ID','ID NUMBER']),
+    name:findCol(keys,['CUSTOMER NAME','NAME']),
+    product:findCol(keys,['PRODUCT','ITEM','PRODUCT NAME']),
+    description:findCol(keys,['PRODUCT DESCRIPTION','DESCRIPTION','ITEM DESCRIPTION']),
+    date:findCol(keys,['DATE OF SALE','SALE DATE','DATE','INVOICE DATE']),
+    units:findCol(keys,['UNITS','QTY','QUANTITY']),
+    phone:findCol(keys,['PHONE / MOBILE NUMBER','MOBILE NUMBER','PHONE','MOBILE','CONTACT NUMBER']),
+    price:findCol(keys,['UNIT PRICE','SELLING PRICE','PRICE','UNIT AMOUNT','RATE'])
+   };
+   var missing=[];
+   if(!detected.customer)missing.push('Customer ID');
+   if(!detected.product&&!detected.description)missing.push('Product');
+   if(!detected.date)missing.push('Sale Date');
+   document.getElementById('fileName').textContent=file.name+' | '+rows.length.toLocaleString()+' source rows';
+   var diag=document.getElementById('inputDiagnostics');
+   if(diag){
+    diag.style.display='block';
+    diag.innerHTML='<b>Detected fields:</b> Customer='+(detected.customer||'NOT FOUND')+' | Product='+(detected.product||detected.description||'NOT FOUND')+' | Date='+(detected.date||'NOT FOUND')+' | Units='+(detected.units||'not provided')+' | Mobile='+(detected.phone||'not provided')+' | Price='+(detected.price||'not provided')+(missing.length?'<br><br><b>Required fields missing:</b> '+escapeHtml(missing.join(', '))+' — analysis may produce no customer recommendations.':'<br><br><b>Input looks ready.</b> Analysis will run automatically now.');
+   }
+   if(missing.length){
+    document.getElementById('analyze').disabled=true;
+    document.getElementById('status').textContent='File loaded, but required fields were not detected: '+missing.join(', ')+'.';
+    document.getElementById('status').className='status bad';
+    return;
+   }
+   document.getElementById('analyze').disabled=false;
+   document.getElementById('status').textContent='File loaded. Running customer-wise recommendation analysis automatically…';
+   document.getElementById('status').className='status';
+   setTimeout(runAnalysis,50);
+  }catch(e){
+   document.getElementById('status').textContent='Could not read the file: '+e.message;
+   document.getElementById('status').className='status bad';
+  }
+ };
+ reader.onerror=function(){document.getElementById('status').textContent='Could not read the selected file.';document.getElementById('status').className='status bad'};
+ reader.readAsArrayBuffer(file);
 }
 document.addEventListener('DOMContentLoaded',function(){
  rebuildCatalogueMaps();renderCatalogue();renderCatalogueHealth();loadLiveSingerData();
