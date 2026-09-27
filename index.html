@@ -214,6 +214,8 @@ function findCustomerCol(keys){
   var a=normKey(exactAliases[i]),e=nk.find(function(x){return x.n===a});
   if(e)return e.k;
  }
+ var generic=nk.find(function(x){return x.n==='customer'});
+ if(generic)return generic.k;
  var semantic=nk.find(function(x){
   var n=x.n;
   if(!n||n.indexOf('name')>=0)return false;
