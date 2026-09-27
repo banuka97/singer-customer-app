@@ -25,9 +25,34 @@ OFFER_RE = re.compile(
     re.I,
 )
 
+# Known public Singer product URLs. These are used first so the updater does not
+# depend entirely on search/listing page markup.
+KNOWN_URLS = {
+    "SLE32E6A": f"{BASE_URL}/product/singer-32-hd-tv-sle32e6a",
+    "SLE40F600A": f"{BASE_URL}/product/singer-40-full-hd-tv-sle40f600a",
+    "SLE43J890": f"{BASE_URL}/product/singer-43-full-hd-google-tv-sle43j890",
+    "GEO-260NF-TGYF": f"{BASE_URL}/product/singer-geo-refrigerator-geo-260nf-tgyf-2-doors-no-frost-227l-yellow-floral",
+    "GEO-200D-INV": f"{BASE_URL}/product/singer-geo-refrigerator-geo-200d-inv-2-doors-inverter-185l-silver",
+    "SN-276INV": f"{BASE_URL}/product/singer-digital-inverter-refrigerator-sn-276inv-276l-silver",
+    "SWM-SAR65": f"{BASE_URL}/product/singer-semi-automatic-washing-machine-swm-sar65-65kg",
+    "SWM-FA80R": f"{BASE_URL}/product/singer-fully-automatic-washing-machine-top-loading-swm-fa80r-8kg",
+    "SWM-FA70R": f"{BASE_URL}/product/singer-washing-machine-top-load-7kg",
+    "SWM-FAR75GT": f"{BASE_URL}/product/singer-glass-top-fully-automatic-washing-machine-swm-far75gt-75kg",
+    "SL-ELITE12": f"{BASE_URL}/product/sisil-air-conditioner-non-inverter-12000-btu-sl-elite12",
+    "SL-ELITE18": f"{BASE_URL}/product/sisil-air-conditioner-non-inverter-18000-btu-sl-elite18",
+    "WP-12KINV": f"{BASE_URL}/product/whirlpool-air-conditioner-inverter-12000-btu-wp-12kinv",
+    "SMGAR50H19D1J": f"{BASE_URL}/product/samsung-air-conditioner-inverter-18000-btu-wi-fi-smgar50h19d1j",
+    "SRC-1528HS": f"{BASE_URL}/product/singer-rice-cooker-28l",
+    "SRC-2545HS": f"{BASE_URL}/product/singer-rice-cooker-45l",
+    "B-CTB6250XH": f"{BASE_URL}/product/beko-telescopic-hood-60-cm-stainless-steel-b-ctb6250xh",
+    "HT-B500": f"{BASE_URL}/product/sony-bravia-theatre-bar-5-250w-31ch-soundbar-with-powerful-wireless-subwoofer",
+    "LF-ENZO-CT-WHT-WN-S": f"{BASE_URL}/product/enzo-center-table-white-and-walnut-lf-enzo-ct-wht-wn-s",
+    "AS-14-I7-16-512-7658-SIL": f"{BASE_URL}/product/asus-vivobook-15-x1504vap-bq7658ws-14th-intel-core-7-150u-16gb-ddr5-ram-512gb-ssd-microsoft-office-home-cool-silver",
+}
+
 LISTING_URLS = [
     f"{BASE_URL}/products?listview=true&order_by=nf&page={page}"
-    for page in range(1, 16)
+    for page in range(1, 21)
 ]
 
 
@@ -42,7 +67,11 @@ def now_iso() -> str:
 def get(url: str, timeout: int = 25):
     return requests.get(
         url,
-        headers={"User-Agent": USER_AGENT, "Accept-Language": "en-US,en;q=0.9"},
+        headers={
+            "User-Agent": USER_AGENT,
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        },
         timeout=timeout,
     )
 
@@ -57,22 +86,119 @@ def page_lines(html: str) -> tuple[BeautifulSoup, list[str]]:
     return soup, lines
 
 
-def extract_values(text: str, result: dict) -> None:
-    prices = [
-        int(m.group(1).replace(",", ""))
-        for m in PRICE_RE.finditer(text)
-        if int(m.group(1).replace(",", "")) > 0
-    ]
-    if prices:
-        result["price"] = prices[0]
-        higher = [p for p in prices[1:] if p > prices[0]]
-        if higher:
-            result["mrp"] = min(higher)
+def numbers_from_value(value):
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        m = re.search(r"[0-9][0-9,]*(?:\.[0-9]+)?", value.replace(" ", ""))
+        if m:
+            return float(m.group(0).replace(",", ""))
+    return None
 
-    pct = PCT_RE.search(text)
-    if pct:
-        number = pct.group(1).rstrip("0").rstrip(".")
-        result["discount"] = f"{number}% OFF"
+
+def structured_product_data(soup: BeautifulSoup) -> tuple[float | None, float | None, str, str]:
+    current = None
+    mrp = None
+    discount = ""
+    offer_note = ""
+
+    def inspect(obj):
+        nonlocal current, mrp, discount, offer_note
+        if isinstance(obj, list):
+            for x in obj:
+                inspect(x)
+            return
+        if not isinstance(obj, dict):
+            return
+
+        typ = obj.get("@type")
+        types = typ if isinstance(typ, list) else [typ]
+        is_product = any(str(t).lower() == "product" for t in types if t)
+        if is_product:
+            offers = obj.get("offers")
+            if isinstance(offers, list):
+                offers = offers[0] if offers else {}
+            if isinstance(offers, dict):
+                p = numbers_from_value(offers.get("price"))
+                hp = numbers_from_value(offers.get("highPrice"))
+                if p is not None:
+                    current = p
+                if hp is not None and hp > (current or 0):
+                    mrp = hp
+
+        if "price" in obj and current is None:
+            p = numbers_from_value(obj.get("price"))
+            if p is not None:
+                current = p
+
+        if "highPrice" in obj and mrp is None:
+            hp = numbers_from_value(obj.get("highPrice"))
+            if hp is not None and hp > (current or 0):
+                mrp = hp
+
+        text_blob = json.dumps(obj, ensure_ascii=False)
+        pct = PCT_RE.search(text_blob)
+        if pct and not discount:
+            number = pct.group(1).rstrip("0").rstrip(".")
+            discount = f"{number}% OFF"
+
+    for tag in soup.find_all("script", type="application/ld+json"):
+        raw = tag.string or tag.get_text(strip=True)
+        if not raw:
+            continue
+        try:
+            inspect(json.loads(raw))
+        except Exception:
+            continue
+
+    # Meta tags sometimes carry the exact ecommerce price.
+    for key in ["product:price:amount", "og:price:amount", "price"]:
+        tag = soup.find("meta", attrs={"property": key}) or soup.find("meta", attrs={"name": key})
+        if tag and current is None:
+            p = numbers_from_value(tag.get("content"))
+            if p is not None:
+                current = p
+
+    return current, mrp, discount, offer_note
+
+
+def extract_values(text: str, result: dict, soup: BeautifulSoup | None = None) -> None:
+    current = mrp = None
+    discount = ""
+    if soup is not None:
+        current, mrp, discount, _ = structured_product_data(soup)
+
+    if current is not None:
+        result["price"] = int(round(current))
+    else:
+        # Narrow regex fallback: ignore delivery/shipping amounts by taking values
+        # from the text section near the product title/code.
+        prices = [
+            int(m.group(1).replace(",", ""))
+            for m in PRICE_RE.finditer(text)
+            if int(m.group(1).replace(",", "")) > 1000
+        ]
+        if prices:
+            result["price"] = prices[0]
+
+    if mrp is not None:
+        result["mrp"] = int(round(mrp))
+    elif result.get("price"):
+        candidates = [
+            int(m.group(1).replace(",", ""))
+            for m in PRICE_RE.finditer(text)
+            if int(m.group(1).replace(",", "")) > int(result["price"])
+        ]
+        if candidates:
+            result["mrp"] = min(candidates)
+
+    if discount:
+        result["discount"] = discount
+    else:
+        pct = PCT_RE.search(text)
+        if pct:
+            number = pct.group(1).rstrip("0").rstrip(".")
+            result["discount"] = f"{number}% OFF"
 
     offers = []
     for match in OFFER_RE.finditer(text):
@@ -84,7 +210,9 @@ def extract_values(text: str, result: dict) -> None:
 
 
 def discover_product_urls(session: requests.Session, wanted_skus: set[str]) -> dict[str, str]:
-    found: dict[str, str] = {}
+    found: dict[str, str] = {
+        sku: url for sku, url in KNOWN_URLS.items() if sku in wanted_skus
+    }
 
     def fetch_listing(url: str):
         try:
@@ -98,7 +226,11 @@ def discover_product_urls(session: requests.Session, wanted_skus: set[str]) -> d
         except Exception:
             return ""
 
-    with ThreadPoolExecutor(max_workers=6) as pool:
+    missing = wanted_skus - set(found)
+    if not missing:
+        return found
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
         futures = [pool.submit(fetch_listing, url) for url in LISTING_URLS]
         for future in as_completed(futures):
             html = future.result()
@@ -107,31 +239,18 @@ def discover_product_urls(session: requests.Session, wanted_skus: set[str]) -> d
             soup = BeautifulSoup(html, "html.parser")
             anchors = soup.find_all("a", href=True)
 
-            for sku in list(wanted_skus - set(found)):
-                sku_low = sku.lower()
+            for sku in list(missing):
+                low = sku.lower()
                 for anchor in anchors:
                     href = anchor.get("href", "")
                     label = clean_spaces(anchor.get_text(" ", strip=True))
-                    if sku_low in href.lower() or sku_low in label.lower():
+                    if low in href.lower() or low in label.lower():
                         if "/product/" in href.lower():
                             found[sku] = urljoin(BASE_URL, href)
+                            missing.discard(sku)
                             break
 
-                if sku in found:
-                    continue
-
-                # Fallback: locate SKU text inside a product card and then its nearest product link.
-                for node in soup.find_all(string=re.compile(re.escape(sku), re.I)):
-                    parent = node.parent
-                    for ancestor in [parent] + list(parent.parents)[:5]:
-                        link = ancestor.find("a", href=True)
-                        if link and "/product/" in link.get("href", "").lower():
-                            found[sku] = urljoin(BASE_URL, link["href"])
-                            break
-                    if sku in found:
-                        break
-
-            if len(found) == len(wanted_skus):
+            if not missing:
                 break
 
     return found
@@ -149,11 +268,14 @@ def parse_product_page(sku: str, url: str, fallback: dict) -> dict:
         soup, lines = page_lines(resp.text)
         page_text = "\n".join(lines)
 
-        # Require the actual product code, not just a generic search page.
         if sku.lower() not in page_text.lower():
             raise ValueError("SKU not found on Singer product page")
 
-        extract_values(page_text, result)
+        # Product pages may show multiple products/variants in text. Restrict
+        # fallback price extraction to a window near the product code.
+        idx = page_text.lower().find(sku.lower())
+        block = page_text[max(0, idx - 800): idx + 5000] if idx >= 0 else page_text[:5000]
+        extract_values(block, result, soup)
 
         for heading in soup.find_all(["h1", "h2", "h3", "h4", "h5"]):
             txt = clean_spaces(heading.get_text(" ", strip=True))
@@ -174,35 +296,6 @@ def parse_product_page(sku: str, url: str, fallback: dict) -> dict:
         return result
 
 
-def parse_listing_fallback(sku: str, html: str, fallback: dict) -> dict:
-    result = dict(fallback)
-    result["live"] = False
-    result["sourceStatus"] = "Fallback retained"
-
-    soup, lines = page_lines(html)
-    page_text = "\n".join(lines)
-    idx = page_text.lower().find(sku.lower())
-    if idx < 0:
-        return result
-
-    block = page_text[max(0, idx - 500): idx + 1800]
-    extract_values(block, result)
-
-    for heading in soup.find_all(["h1", "h2", "h3", "h4", "h5"]):
-        txt = clean_spaces(heading.get_text(" ", strip=True))
-        if sku.lower() in txt.lower() and len(txt) < 260:
-            result["product"] = re.sub(
-                rf"\s*[-–—]\s*{re.escape(sku)}\b", "", txt, flags=re.I
-            ).strip()
-            break
-
-    result["live"] = True
-    result["sourceStatus"] = "Live Singer public catalogue listing"
-    result["liveCheckedAt"] = now_iso()
-    result.pop("liveError", None)
-    return result
-
-
 def main() -> None:
     payload = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
     products = payload.get("products", [])
@@ -210,57 +303,45 @@ def main() -> None:
     wanted = {
         str(item.get("sku", "")).strip()
         for item in products
-        if str(item.get("sku", "")).strip() and str(item.get("sku", "")).strip().upper() != "CATALOGUE"
+        if str(item.get("sku", "")).strip()
     }
+
+    # The old placeholder SKU was replaced with a real current Singer-listed laptop.
+    wanted.discard("CATALOGUE")
 
     session = requests.Session()
     discovered = discover_product_urls(session, wanted)
 
-    # Fetch exact product pages concurrently.
     updated_by_sku: dict[str, dict] = {}
 
-    def fetch_one(item: dict) -> tuple[str, dict]:
-        sku = str(item.get("sku", "")).strip()
-        if not sku or sku.upper() == "CATALOGUE":
-            result = dict(item)
-            result["live"] = False
-            result["sourceStatus"] = "Fallback retained (placeholder SKU)"
-            return sku, result
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        futures = []
+        for item in products:
+            sku = str(item.get("sku", "")).strip()
+            if sku.upper() == "CATALOGUE":
+                continue
+            url = discovered.get(sku)
+            if url:
+                futures.append(pool.submit(parse_product_page, sku, url, item))
+            else:
+                fallback = dict(item)
+                fallback["live"] = False
+                fallback["sourceStatus"] = "Fallback retained"
+                fallback["liveError"] = "Product URL not discovered in Singer catalogue"
+                updated_by_sku[sku] = fallback
 
-        product_url = discovered.get(sku)
-        if product_url:
-            result = parse_product_page(sku, product_url, item)
-            if result.get("live"):
-                return sku, result
-
-        # Final fallback: the original search endpoint, in case the listing crawler missed it.
-        search_url = f"{BASE_URL}/products?search={sku}"
-        result = dict(item)
-        result["url"] = product_url or search_url
-        result["live"] = False
-        result["sourceStatus"] = "Fallback retained"
-        try:
-            resp = get(search_url, timeout=20)
-            resp.raise_for_status()
-            result = parse_listing_fallback(sku, resp.text, result)
-            if result.get("live"):
-                return sku, result
-        except Exception as exc:
-            result["liveError"] = str(exc)
-
-        if not product_url:
-            result.setdefault("liveError", "Product URL not discovered in Singer catalogue")
-        return sku, result
-
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        futures = [pool.submit(fetch_one, item) for item in products]
         for future in as_completed(futures):
-            sku, result = future.result()
-            updated_by_sku[sku] = result
+            result = future.result()
+            updated_by_sku[str(result.get("sku", "")).strip()] = result
 
-    updated = [updated_by_sku.get(str(item.get("sku", "")).strip(), item) for item in products]
+    updated = []
+    for item in products:
+        sku = str(item.get("sku", "")).strip()
+        if sku.upper() == "CATALOGUE":
+            continue
+        updated.append(updated_by_sku.get(sku, item))
 
-    live_count = sum(1 for x in updated if x.get("live") and str(x.get("sku", "")).upper() != "CATALOGUE")
+    live_count = sum(1 for x in updated if x.get("live"))
     checked_at = now_iso()
 
     out = {
@@ -268,7 +349,7 @@ def main() -> None:
         "schemaVersion": 1,
         "checkedAt": checked_at,
         "source": f"{BASE_URL}/products",
-        "refreshMethod": "GitHub Actions catalogue crawl + exact product pages",
+        "refreshMethod": "GitHub Actions catalogue crawl + exact product pages + structured ecommerce data",
         "refreshFrequency": "hourly",
         "products": updated,
         "summary": {
@@ -278,10 +359,11 @@ def main() -> None:
             "productUrlsDiscovered": len(discovered),
         },
         "notes": [
-            "The updater first crawls public Singer catalogue pages to discover real product URLs by SKU.",
-            "It then reads the exact product page for current price, MRP, discount and visible offers.",
+            "The updater prefers known public Singer product URLs and supplements them by crawling catalogue pages.",
+            "Current price/MRP are read from structured ecommerce data where available, avoiding delivery-fee amounts.",
+            "Discounts and visible offers are also extracted from the product page.",
             "If an exact lookup fails, the previous saved value is retained.",
-            "The placeholder SKU CATALOGUE is never counted as a live product.",
+            "The obsolete CATALOGUE placeholder was replaced with a real Singer-listed laptop SKU.",
             "Stock is not used as a hard recommendation filter in the app.",
         ],
     }
@@ -293,7 +375,7 @@ def main() -> None:
     print(
         "Catalogue refresh complete: "
         f"{live_count}/{len(updated)} live lookups; "
-        f"{len(discovered)} product URLs discovered."
+        f"{len(discovered)} product URLs available."
     )
 
 
