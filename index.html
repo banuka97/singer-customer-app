@@ -448,55 +448,45 @@ function plainCustomerReason(r,lang){
 }
 function buildSalesMessage(r,lang){
  var name=cleanMessageText(r.name||'Customer');
- var items=[r.primary,r.alt1,r.alt2,r.alt3].filter(Boolean);
+ var items=[r.primary,r.alt1,r.alt2,r.alt3].filter(Boolean).slice(0,3);
 
  function productName(x){return cleanMessageText(x&&x.product||'Singer product')}
- function itemPromotion(x){
+ function promotion(x){
    if(!x)return '';
    var parts=[];
    if(x.discount)parts.push(cleanMessageText(x.discount));
-   return parts.join(' | ');
+   if(x.offerNote){
+     var note=String(x.offerNote).split('|')[0].trim()
+       .replace(/\(Price is inclusive of Discount\)/ig,'')
+       .replace(/\.+$/,'')
+       .trim();
+     var m=note.match(/extra\s+([\d,]+)\s+off/i);
+     if(m) note='Extra LKR '+m[1]+' off';
+     if(note)parts.push(cleanMessageText(note));
+   }
+   return parts.join(' • ');
  }
- function itemOffer(x){
-   if(!x||!x.offerNote)return '';
-   var note=String(x.offerNote).split('|')[0].trim();
-   return cleanMessageText(note);
- }
- function line(x,i){
+ function line(x,i,langCode){
    if(!x)return '';
-   var p=[];
-   var promo=itemPromotion(x);
-   if(promo)p.push(promo);
-   return '\\n'+i+'. '+productName(x)+(x.price?' — '+fmtMoney(x.price):'')+(p.length?' | '+p.join(' | '):'')+'\\n   '+(x.url||'');
+   var product=productName(x),price=x.price?fmtMoney(x.price):'',promo=promotion(x),url=x.url||'';
+   if(langCode==='si')
+     return '\\n'+i+'. '+product+(price?' — '+price:'')+(promo?' | '+promo:'')+'\\n   '+url;
+   if(langCode==='ta')
+     return '\\n'+i+'. '+product+(price?' — '+price:'')+(promo?' | '+promo:'')+'\\n   '+url;
+   return '\\n'+i+'. '+product+(price?' — '+price:'')+(promo?' | '+promo:'')+'\\n   '+url;
  }
- function specialOffers(){
-   var offers=[];
-   items.forEach(function(x){
-     var promo=itemPromotion(x);
-     var note=itemOffer(x);
-     if(promo||note){
-       var detail=promo;
-       if(note)detail=detail?(detail+' ('+note+'.)'):note;
-       offers.push(productName(x)+' – '+detail);
-     }
-   });
-   return offers;
- }
+ var linesEn=items.map(function(x,i){return line(x,i+1,'en')}).join('');
+ var linesSi=items.map(function(x,i){return line(x,i+1,'si')}).join('');
+ var linesTa=items.map(function(x,i){return line(x,i+1,'ta')}).join('');
 
- var lines=[];
- items.forEach(function(x,i){lines.push(line(x,i+1))});
- var offers=specialOffers();
- var offerBlock=offers.length?'\\n\\nSpecial offers currently shown on selected items: '+offers.join('; ')+'.':'';
- var en='Hi '+name+',\\n\\nWe have some great Singer products available that may suit your home and everyday needs:'+lines.join('')+
- offerBlock+'\\n\\nTap the product link above to view the item on the Singer Sri Lanka website.\\n\\nReply to this message and we can share the latest price, availability and offer details for you.';
+ var en='Hi '+name+',\\n\\nHere are a few Singer products that may suit your home and everyday needs:'+linesEn+
+ '\\n\\nPlease tap a product link above to view the latest details on the Singer Sri Lanka website.\\n\\nReply to this message for the latest price, availability and promotion details.';
 
- var si='ආයුබෝවන් '+name+',\\n\\nඔබගේ නිවසට සහ දෛනික අවශ්‍යතාවලට ගැළපිය හැකි Singer නිෂ්පාදන කිහිපයක් මෙන්න:'+lines.map(function(v){return v}).join('')+
- (offers.length?'\\n\\nතෝරාගත් නිෂ්පාදන සඳහා දැනට පෙන්වන විශේෂ දීමනා: '+offers.join('; ')+'.':'')+
- '\\n\\nඉහත product link එකෙන් Singer Sri Lanka website එකේ විස්තර බලන්න.\\n\\nනවතම මිල, ලබාගත හැකිද යන්න සහ දීමනා පිළිබඳ විස්තර සඳහා මේ පණිවිඩයට reply කරන්න.';
+ var si='ආයුබෝවන් '+name+',\\n\\nඔබගේ නිවසට සහ දෛනික අවශ්‍යතාවලට ගැළපිය හැකි Singer නිෂ්පාදන කිහිපයක් මෙන්න:'+linesSi+
+ '\\n\\nඉහත product link එකක් tap කර Singer Sri Lanka website එකේ නවතම විස්තර බලන්න.\\n\\nනවතම මිල, ලබාගත හැකිද යන්න සහ දීමනා පිළිබඳ විස්තර සඳහා මේ පණිවිඩයට reply කරන්න.';
 
- var ta='வணக்கம் '+name+',\\n\\nஉங்கள் வீட்டு மற்றும் தினசரி தேவைகளுக்கு பொருந்தக்கூடிய சில Singer தயாரிப்புகள் இதோ:'+lines.join('')+
- (offers.length?'\\n\\nதேர்ந்தெடுக்கப்பட்ட தயாரிப்புகளில் தற்போது காணப்படும் சிறப்பு சலுகைகள்: '+offers.join('; ')+'.':'')+
- '\\n\\nமேலுள்ள product link மூலம் Singer Sri Lanka இணையதளத்தில் தயாரிப்பைப் பார்க்கலாம்.\\n\\nசமீபத்திய விலை, கிடைக்கும் நிலை மற்றும் சலுகை விவரங்களுக்கு இந்த செய்திக்கு reply செய்யுங்கள்.';
+ var ta='வணக்கம் '+name+',\\n\\nஉங்கள் வீட்டு மற்றும் தினசரி தேவைகளுக்கு பொருந்தக்கூடிய சில Singer தயாரிப்புகள் இதோ:'+linesTa+
+ '\\n\\nமேலுள்ள product link மூலம் Singer Sri Lanka இணையதளத்தில் சமீபத்திய விவரங்களைப் பார்க்கலாம்.\\n\\nசமீபத்திய விலை, கிடைக்கும் நிலை மற்றும் சலுகை விவரங்களுக்கு இந்த செய்திக்கு reply செய்யுங்கள்.';
  return lang==='si'?si:lang==='ta'?ta:en;
 }
 function waUrl(phone,msg){return phone?'https://wa.me/'+phone+'?text='+encodeURIComponent(msg):''}
