@@ -21,6 +21,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: github-pages
     steps:
@@ -32,6 +33,38 @@ jobs:
           python-version: "3.12"
       - name: Install scraper dependencies
         run: pip install requests beautifulsoup4
+      - name: Validate frontend JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path("index.html").read_text(encoding="utf-8")
+          if "<!DOCTYPE html>" not in html.upper():
+              raise SystemExit("index.html is missing a valid DOCTYPE.")
+          if "</html>" not in html.lower():
+              raise SystemExit("index.html is incomplete.")
+          scripts=re.findall(r"<script(?:[^>]*)>(.*?)</script>", html, flags=re.S|re.I)
+          if not scripts:
+              raise SystemExit("No inline application script found.")
+          Path("/tmp/singer-app.js").write_text(scripts[-1],encoding="utf-8")
+          print("Frontend markup/script extraction passed.")
+          PY
+          node --check /tmp/singer-app.js
+      - name: Validate frontend data contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("catalogue.json").read_text(encoding="utf-8"))
+          products=data.get("products", [])
+          if not isinstance(products, list) or not products:
+              raise SystemExit("catalogue.json does not contain a usable products list.")
+          required={"product","sku","price","url"}
+          bad=[i for i,x in enumerate(products) if not required.issubset(x.keys())]
+          if bad:
+              raise SystemExit(f"Catalogue data contract failed for {len(bad)} records.")
+          print(f"Data contract passed: {len(products)} products.")
+          PY
       - name: Refresh Singer catalogue
         run: python scripts/update_catalogue.py
       - name: Validate catalogue health
